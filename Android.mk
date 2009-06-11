@@ -16,7 +16,7 @@ LOCAL_MODULE_TAGS := user
 
 LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
-LOCAL_PACKAGE_NAME := svox
+LOCAL_PACKAGE_NAME := PicoTts
 
 LOCAL_JNI_SHARED_LIBRARIES := libttspico
 
