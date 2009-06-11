@@ -22,12 +22,6 @@
     android:versionName="1.0">
     <uses-sdk android:minSdkVersion="2" />
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".PicoConfig" android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:enabled="true" android:name=".Pico"
             android:hasCode="false"
             android:label="@string/app_name"
