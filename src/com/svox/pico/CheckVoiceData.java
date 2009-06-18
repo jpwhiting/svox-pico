@@ -20,15 +20,16 @@ import java.io.File;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 
 /*
  * Checks if the voice data for the SVOX Pico Engine is present on the
  * sd card.
  */
 public class CheckVoiceData extends Activity {
-    private final static String mDataDir = "/sdcard/svox/";
+    private final static String dataDir = "/sdcard/svox/";
 
-    private final static String[] mDatafiles = {
+    private final static String[] datafiles = {
             "de-DE_gl0_sg.bin", "de-DE_ta.bin", "en-GB_kh0_sg.bin", "en-GB_ta.bin",
             "en-US_lh0_sg.bin", "en-US_ta.bin", "es-ES_ta.bin", "es-ES_zl0_sg.bin",
             "fr-FR_nk0_sg.bin", "fr-FR_ta.bin", "it-IT_cm0_sg.bin", "it-IT_ta.bin"
@@ -38,18 +39,18 @@ public class CheckVoiceData extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setResult(Activity.RESULT_OK);
+        setResult(TextToSpeech.Engine.CHECK_VOICE_DATA_PASS);
 
         // Make sure the SD card is accessible
         if (!new File("/sdcard/").canRead()) {
-            setResult(Activity.RESULT_CANCELED);
+            setResult(TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA_NO_SDCARD);
         }
 
         // Check for files
-        for (int i = 0; i < mDatafiles.length; i++) {
-            File tempFile = new File(mDataDir + mDatafiles[i]);
+        for (int i = 0; i < datafiles.length; i++) {
+            File tempFile = new File(dataDir + datafiles[i]);
             if (!tempFile.exists()) {
-                setResult(Activity.RESULT_CANCELED);
+                setResult(TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA);
             }
         }
 
