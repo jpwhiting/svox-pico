@@ -39,13 +39,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.START_TTS_ENGINE" />
                 <category android:name="android.intent.category.tts_engine.PICO" />
-                <category android:name="android.intent.category.tts_lang.en" />
-                <category android:name="android.intent.category.tts_lang.en.US" />
-                <category android:name="android.intent.category.tts_lang.en.GB" />
-                <category android:name="android.intent.category.tts_lang.fr" />
-                <category android:name="android.intent.category.tts_lang.de" />
-                <category android:name="android.intent.category.tts_lang.it" />
-                <category android:name="android.intent.category.tts_lang.es" />
+                <category android:name="android.intent.category.tts_lang.eng" />
+                <category android:name="android.intent.category.tts_lang.eng.USA" />
+                <category android:name="android.intent.category.tts_lang.eng.GBR" />
+                <category android:name="android.intent.category.tts_lang.fra" />
+                <category android:name="android.intent.category.tts_lang.deu" />
+                <category android:name="android.intent.category.tts_lang.ita" />
+                <category android:name="android.intent.category.tts_lang.spa" />
             </intent-filter>
         </activity>
     </application>
