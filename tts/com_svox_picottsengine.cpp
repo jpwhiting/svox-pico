@@ -60,7 +60,7 @@ const char* PICO_PHONEME_OPEN_TAG           = "<phoneme ph=\"%s\">";
 
 /* supported voices     */
 const char* picoSupportedLangIso3[]         = { "eng",               "eng",               "deu",               "spa",               "fra",               "ita" };
-const char* picoSupportedCountryIso3[]      = { "USA",               "GB",               "DEU",               "ESP",               "FRA",               "ITA" };
+const char* picoSupportedCountryIso3[]      = { "USA",               "GBR",               "DEU",               "ESP",               "FRA",               "ITA" };
 const char* picoSupportedLang[]             = { "en-rUS",           "en-rGB",           "de-rDE",           "es-rES",           "fr-rFR",           "it-rIT" };
 const char* picoInternalLang[]              = { "en-US",            "en-GB",            "de-DE",            "es-ES",            "fr-FR",            "it-IT" };
 const char* picoInternalTaLingware[]        = { "en-US_ta.bin",     "en-GB_ta.bin",     "de-DE_ta.bin",     "es-ES_ta.bin",     "fr-FR_ta.bin",     "it-IT_ta.bin" };
