@@ -35,14 +35,18 @@ using namespace android;
 /* adaptation layer defines */
 #define PICO_MEM_SIZE       2500000
 #define PICO_MIN_RATE       20
+/* speaking rate    */
 #define PICO_DEF_RATE       100
 #define PICO_MAX_RATE       500
 #define PICO_MIN_PITCH      50
+/* speaking pitch   */
 #define PICO_DEF_PITCH      100
 #define PICO_MAX_PITCH      200
 #define PICO_MIN_VOLUME     0
+/* speaking volume  */
 #define PICO_DEF_VOLUME     250
 #define PICO_MAX_VOLUME     500
+/* string constants */
 #define MAX_OUTBUF_SIZE     128
 const char* PICO_LINGWARE_PATH              = "/sdcard/svox/";
 const char* PICO_VOICE_NAME                 = "PicoVoice";
@@ -52,10 +56,11 @@ const char* PICO_PITCH_OPEN_TAG             = "<pitch level='%d'>";
 const char* PICO_PITCH_CLOSE_TAG            = "</pitch>";
 const char* PICO_VOLUME_OPEN_TAG            = "<volume level='%d'>";
 const char* PICO_VOLUME_CLOSE_TAG           = "</volume>";
+const char* PICO_PHONEME_OPEN_TAG           = "<phoneme ph=\"%s\">";
 
+/* supported voices     */
 const char* picoSupportedLangIso3[]         = { "eng",               "eng",               "deu",               "spa",               "fra",               "ita" };
 const char* picoSupportedCountryIso3[]      = { "USA",               "GB",               "DEU",               "ESP",               "FRA",               "ITA" };
-
 const char* picoSupportedLang[]             = { "en-rUS",           "en-rGB",           "de-rDE",           "es-rES",           "fr-rFR",           "it-rIT" };
 const char* picoInternalLang[]              = { "en-US",            "en-GB",            "de-DE",            "es-ES",            "fr-FR",            "it-IT" };
 const char* picoInternalTaLingware[]        = { "en-US_ta.bin",     "en-GB_ta.bin",     "de-DE_ta.bin",     "es-ES_ta.bin",     "fr-FR_ta.bin",     "it-IT_ta.bin" };
@@ -63,41 +68,45 @@ const char* picoInternalSgLingware[]        = { "en-US_lh0_sg.bin", "en-GB_kh0_s
 const char* picoInternalUtppLingware[]      = { "en-US_utpp.bin",   "en-GB_utpp.bin",   "de-DE_utpp.bin",   "es-ES_utpp.bin",   "fr-FR_utpp.bin",   "it-IT_utpp.bin" };
 const int picoNumSupportedLang              = 6;
 
+/* supported properties */
 const char* picoSupportedProperties[]       = { "language", "rate", "pitch", "volume" };
 const int picoNumSupportedProperties        = 4;
 
-/* adapation layer globals */
+
+/* adapation layer global variables */
 synthDoneCB_t* picoSynthDoneCBPtr;
 void* picoMemArea = NULL;
-pico_System picoSystem = NULL;
-pico_Resource picoTaResource = NULL;
-pico_Resource picoSgResource = NULL;
-pico_Resource picoUtppResource = NULL;
-pico_Engine picoEngine = NULL;
+pico_System     picoSystem = NULL;
+pico_Resource   picoTaResource = NULL;
+pico_Resource   picoSgResource = NULL;
+pico_Resource   picoUtppResource = NULL;
+pico_Engine     picoEngine = NULL;
 pico_Char* picoTaFileName = NULL;
 pico_Char* picoSgFileName = NULL;
 pico_Char* picoUtppFileName = NULL;
 pico_Char* picoTaResourceName = NULL;
 pico_Char* picoSgResourceName = NULL;
 pico_Char* picoUtppResourceName = NULL;
-int picoSynthAbort = 0;
-char* picoProp_currLang = NULL;
-int picoProp_currRate = PICO_DEF_RATE;
-int picoProp_currPitch = PICO_DEF_PITCH;
-int picoProp_currVolume = PICO_DEF_VOLUME;
+int     picoSynthAbort = 0;
+char*   picoProp_currLang   = NULL;                 /* current language */
+int     picoProp_currRate   = PICO_DEF_RATE;        /* current rate     */
+int     picoProp_currPitch  = PICO_DEF_PITCH;       /* current pitch    */
+int     picoProp_currVolume = PICO_DEF_VOLUME;      /* current volume   */
+
 
 
 /* internal helper functions */
 
 /** checkForLanguage
- *  Checks if the requested language is among the supported languages
+ *  Check if the requested language is among the supported languages.
  *  @language -  the language to check, either in xx or xx-rYY format
- *  return index of the language, or -1 if not supported
+ *  return index of the language, or -1 if not supported.
 */
-static int checkForLanguage(const char* language)
+static int checkForLanguage( const char * language )
 {
-    // verify that it's a language we support
-    int found = -1;
+     int found = -1;                                         /* language not found   */
+
+    /* Verify that the requested locale is a locale that we support.    */
     for (int i = 0; i < picoNumSupportedLang; i++)
     {
         if (strcmp(language, picoSupportedLang[i]) == 0)
@@ -105,10 +114,11 @@ static int checkForLanguage(const char* language)
             found = i;
             break;
         }
-    }
+    };
     if (found < 0)
     {
-        // didn't find an exact match, may have been specified with only the first 2 characters
+        /* We didn't find an exact match; it may have been specified with only the first 2 characters.
+           This could overmatch ISO 639-3 language codes.                                   */
         for (int i = 0; i < picoNumSupportedLang; i++)
         {
             if (strncmp(language, picoSupportedLang[i], 2) == 0)
@@ -121,42 +131,44 @@ static int checkForLanguage(const char* language)
         {
             LOGE("TtsEngine::set language called with unsupported language");
         }
-    }
+    };
     return found;
 }
 
+
 /** cleanResources
- *  Unloads any loaded pico resources
+ *  Unloads any loaded Pico resources.
 */
-static void cleanResources()
+static void cleanResources( void )
 {
     if (picoEngine)
     {
-        pico_disposeEngine(picoSystem, &picoEngine);
+        pico_disposeEngine( picoSystem, &picoEngine );
         pico_releaseVoiceDefinition(picoSystem, (pico_Char*)PICO_VOICE_NAME);
         picoEngine = NULL;
     }
     if (picoUtppResource)
     {
-        pico_unloadResource(picoSystem, &picoUtppResource);
+        pico_unloadResource( picoSystem, &picoUtppResource );
         picoUtppResource = NULL;
     }
     if (picoTaResource)
     {
-        pico_unloadResource(picoSystem, &picoTaResource);
+        pico_unloadResource( picoSystem, &picoTaResource );
         picoTaResource = NULL;
     }
     if (picoSgResource)
     {
-        pico_unloadResource(picoSystem, &picoSgResource);
+        pico_unloadResource( picoSystem, &picoSgResource );
         picoSgResource = NULL;
     }
 }
 
+
 /** cleanFiles
- *  Frees any memory allocated for file and resource strings
+ *  Frees any memory allocated for file and resource strings.
 */
-static void cleanFiles()
+static void cleanFiles( void )
 {
     if (picoProp_currLang)
     {
@@ -383,8 +395,8 @@ static tts_result doLanguageSwitch(const char* language)
 }
 
 /** doAddProperties
- *  add <speed>, <pitch> and <volume> tags to text if properties have been set to non-default values
- *  and returns the new string. Calling function is responsible for freeing returned string
+ *  Add <speed>, <pitch> and <volume> tags to text, if the properties have been set to non-default values,
+ *  and return the new string.  The calling function is responsible for freeing the returned string.
  *  @str - text to apply tags to
  *  return new string with tags applied
 */
@@ -394,19 +406,19 @@ static char* doAddProperties(const char* str)
     int haspitch = 0, hasspeed = 0, hasvol = 0;
     int textlen = strlen(str) + 1;
 
-    if (picoProp_currPitch != PICO_DEF_PITCH)
+    if (picoProp_currPitch != PICO_DEF_PITCH)           /* non-default pitch    */
     {
         textlen += strlen(PICO_PITCH_OPEN_TAG) + 5;
         textlen += strlen(PICO_PITCH_CLOSE_TAG);
         haspitch = 1;
     }
-    if (picoProp_currRate != PICO_DEF_RATE)
+    if (picoProp_currRate != PICO_DEF_RATE)             /* non-default rate     */
     {
         textlen += strlen(PICO_SPEED_OPEN_TAG) + 5;
         textlen += strlen(PICO_SPEED_CLOSE_TAG);
         hasspeed = 1;
     }
-    if (picoProp_currVolume != PICO_DEF_VOLUME)
+    if (picoProp_currVolume != PICO_DEF_VOLUME)         /* non-default volume   */
     {
         textlen += strlen(PICO_VOLUME_OPEN_TAG) + 5;
         textlen += strlen(PICO_VOLUME_CLOSE_TAG);
@@ -418,7 +430,7 @@ static char* doAddProperties(const char* str)
     {
         return NULL;
     }
-    memset(data, 0, textlen);
+    memset(data, 0, textlen);                           /* clear it             */
     if (haspitch)
     {
         char* tmp = (char*)malloc(strlen(PICO_PITCH_OPEN_TAG) + strlen(PICO_PITCH_CLOSE_TAG) + 5);
@@ -463,14 +475,15 @@ static char* doAddProperties(const char* str)
     return data;
 }
 
+
 /* API function implementations */
 
 /** init
- *  allocates pico memory block and initializes pico system
+ *  Allocates Pico memory block and initializes Pico system.
  *  synthDoneCBPtr - Pointer to callback function which will receive generated samples
  *  return tts_result
 */
-tts_result TtsEngine::init(synthDoneCB_t synthDoneCBPtr)
+tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr )
 {
     if (synthDoneCBPtr == NULL)
     {
@@ -498,11 +511,12 @@ tts_result TtsEngine::init(synthDoneCB_t synthDoneCBPtr)
     return TTS_SUCCESS;
 }
 
+
 /** shutdown
- *  unloads all pico resources, terminates pico system and frees pico memory block
+ *  Unloads all Pico resources; terminates Pico system and frees Pico memory block.
  *  return tts_result
 */
-tts_result TtsEngine::shutdown()
+tts_result TtsEngine::shutdown( void )
 {
     cleanResources();
 
@@ -523,12 +537,12 @@ tts_result TtsEngine::shutdown()
 }
 
 /** loadLanguage
- *  Load a new language
+ *  Load a new language.
  *  @value - language string in xx or xx-rYY format (i.e. "en" or "en-rUS")
  *  @size - size of value
  *  return tts_result
 */
-tts_result TtsEngine::loadLanguage(const char *value, const size_t size)
+tts_result TtsEngine::loadLanguage( const char * value, const size_t size )
 {
     return setProperty("language", value, size);
 }
@@ -597,26 +611,27 @@ tts_result TtsEngine::setLanguage(const char *lang, const char *country, const c
 
 
 /** getLanguage
- *  Get currently loaded language - if any
+ *  Get the currently loaded language - if any.
  *  @value - buffer which will receive value
  *  @iosize - size of value - if value is too small to contain the return string, this will contain the actual size needed
  *  return tts_result
 */
-tts_result TtsEngine::getLanguage(char *value, size_t *iosize)
+tts_result TtsEngine::getLanguage( char * value, size_t * iosize )
 {
     return getProperty("language", value, iosize);
 }
 
+
 /** setProperty
- *  set property, supported properties are language, rate, pitch and volume
+ *  Set property. The supported properties are:  language, rate, pitch and volume.
  *  @property - name of property to set
  *  @value - value to set
  *  @size - size of value
  *  return tts_result
 */
-tts_result TtsEngine::setProperty(const char *property, const char *value, const size_t size)
+tts_result TtsEngine::setProperty( const char * property, const char * value, const size_t size )
 {
-    // sanity check
+    /* Sanity check */
     if (property == NULL)
     {
         LOGE("setProperty called with property NULL");
@@ -677,8 +692,9 @@ tts_result TtsEngine::setProperty(const char *property, const char *value, const
     return TTS_PROPERTY_UNSUPPORTED;
 }
 
+
 /** getProperty
- *  get property, supported properties are language, rate, pitch and volume
+ *  Get the property.  Supported properties are:  language, rate, pitch and volume.
  *  @property - name of property to get
  *  @value - buffer which will receive value of property
  *  @iosize - size of value - if size is too small on return this will contain actual size needed
@@ -686,7 +702,7 @@ tts_result TtsEngine::setProperty(const char *property, const char *value, const
 */
 tts_result TtsEngine::getProperty(const char *property, char *value, size_t* iosize)
 {
-    // sanity check
+    /* sanity check */
     if (property == NULL)
     {
         LOGE("getProperty called with property NULL");
@@ -759,8 +775,9 @@ tts_result TtsEngine::getProperty(const char *property, char *value, size_t* ios
     }
 }
 
+
 /** synthesizeText
- *  synthesizes a text string
+ *  Synthesizes a text string.
  *  @text - text to synthesize
  *  @buffer - buffer which will receive generated samples
  *  @bufferSize - size of buffer
@@ -788,7 +805,7 @@ tts_result TtsEngine::synthesizeText(const char *text, int8_t *buffer, size_t bu
         return TTS_FAILURE;
     }
 
-    // add property tags to string - if any
+    /* Add property tags to the string - if any.    */
     local_text = (pico_Char*)doAddProperties(text);
     if (!local_text)
     {
@@ -802,7 +819,7 @@ tts_result TtsEngine::synthesizeText(const char *text, int8_t *buffer, size_t bu
 
     size_t bufused = 0;
 
-    // synthesis loop
+    /* synthesis loop   */
     while (text_remaining)
     {
         if (picoSynthAbort)
@@ -811,7 +828,7 @@ tts_result TtsEngine::synthesizeText(const char *text, int8_t *buffer, size_t bu
             break;
         }
 
-        // feed text into engine
+        /* Feed the text into the engine.   */
         ret = pico_putTextUtf8(picoEngine, inp, text_remaining, &bytes_sent);
         if (ret != PICO_OK)
         {
@@ -828,18 +845,18 @@ tts_result TtsEngine::synthesizeText(const char *text, int8_t *buffer, size_t bu
             {
                 break;
             }
-            // retrieve samples and add to buffer
+            /* Retrieve the samples and add them to the buffer. */
             ret = pico_getData(picoEngine, (void*)outbuf, MAX_OUTBUF_SIZE, &bytes_recv, &out_data_type);
             if (bytes_recv)
             {
-                if (bufused + bytes_recv <= bufferSize)
+                if ((bufused + bytes_recv) <= bufferSize)
                 {
                     memcpy(buffer+bufused, (int8_t*)outbuf, bytes_recv);
                     bufused += bytes_recv;
                 }
                 else
                 {
-                    // buffer filled, pass on to callback function
+                    /* The buffer filled; pass this on to the callback function.    */
                     int cbret = picoSynthDoneCBPtr(userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_PENDING);
                     if (cbret == TTS_CALLBACK_HALT)
                     {
@@ -854,10 +871,11 @@ tts_result TtsEngine::synthesizeText(const char *text, int8_t *buffer, size_t bu
             }
         } while (PICO_STEP_BUSY == ret);
 
-        // synthesis is finished, notify caller and pass remaining samples
+        /* The synthesis is finished; notify the caller and pass the remaining samples.
+           Use 16 KHz, 16-bit samples.                                              */
         if (!picoSynthAbort)
         {
-            picoSynthDoneCBPtr(userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_DONE);
+            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_DONE);
         }
         picoSynthAbort = 0;
 
@@ -873,22 +891,130 @@ tts_result TtsEngine::synthesizeText(const char *text, int8_t *buffer, size_t bu
     return TTS_SUCCESS;
 }
 
+
 /** synthesizeIpa
- *  synthesizes a phonetic string in IPA format
+ *  Synthesizes a phonetic string in IPA format.
  *  @ipa - phonetic string to synthesize
  *  @buffer - buffer which will receive generated samples
  *  @bufferSize - size of buffer
  *  @userdata - pointer to user data which will be passed back to callback function
  *  return tts_result
 */
-tts_result TtsEngine::synthesizeIpa(const char * /*ipa*/, int8_t * /*buffer*/, size_t /*bufferSize*/, void * /*userdata*/)
+tts_result TtsEngine::synthesizeIpa( const char * ipa, int8_t * buffer, size_t bufferSize, void * userdata )
 {
-    LOGI("synthIPA not supported in this release");
-    return TTS_FEATURE_UNSUPPORTED;
+    pico_Char*  inp = NULL;
+    pico_Char*  local_text = NULL;
+    short       outbuf[MAX_OUTBUF_SIZE/2];
+    pico_Int16  bytes_sent, bytes_recv, text_remaining, out_data_type;
+    pico_Status ret;
+
+    picoSynthAbort = 0;
+    if (ipa == NULL)
+    {
+        LOGE("synthesizeIpa called with NULL string");
+        return TTS_FAILURE;
+    }
+
+    if (buffer == NULL)
+    {
+        LOGE("synthesizeIpa called with NULL buffer");
+        return TTS_FAILURE;
+    }
+
+    /* Append phoneme tag. %%%
+       <phoneme ph="xxx"/>  */
+
+    /* Add property tags to the string - if any.    */
+    local_text = (pico_Char*)doAddProperties( ipa );
+    if (!local_text)
+    {
+        LOGE("Failed to allocate memory for text string");
+        return TTS_FAILURE;
+    }
+
+    text_remaining = strlen((const char*)local_text) + 1;
+
+    inp = (pico_Char*)local_text;
+
+    size_t bufused = 0;
+
+    /* synthesis loop   */
+    while (text_remaining)
+    {
+        if (picoSynthAbort)
+        {
+            ret = pico_resetEngine( picoEngine );
+            break;
+        }
+
+        /* Feed the text into the engine.   */
+        ret = pico_putTextUtf8( picoEngine, inp, text_remaining, &bytes_sent );
+        if (ret != PICO_OK)
+        {
+            LOGE("Error synthesizing string '%s': [%d]", ipa, ret);
+            if (local_text) free(local_text);
+            return TTS_FAILURE;
+        }
+
+        /* Process the remaining string.    */
+        text_remaining -= bytes_sent;
+        inp += bytes_sent;
+        do
+        {
+            if (picoSynthAbort)
+            {
+                break;
+            }
+            /* Retrieve the samples and add them to the buffer. */
+            ret = pico_getData( picoEngine, (void*)outbuf, MAX_OUTBUF_SIZE, &bytes_recv, &out_data_type );
+            if (bytes_recv)
+            {
+                if ((bufused + bytes_recv) <= bufferSize)
+                {
+                    memcpy(buffer+bufused, (int8_t*)outbuf, bytes_recv);
+                    bufused += bytes_recv;
+                }
+                else
+                {
+                    /* The buffer filled; pass this on to the callback function.    */
+                    int cbret = picoSynthDoneCBPtr(userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_PENDING);
+                    if (cbret == TTS_CALLBACK_HALT)
+                    {
+                        LOGI("Halt requested by caller. Halting.");
+                        picoSynthAbort = 1;
+                        break;
+                    }
+                    bufused = 0;
+                    memcpy(buffer, (int8_t*)outbuf, bytes_recv);
+                    bufused += bytes_recv;
+                }
+            }
+        } while (PICO_STEP_BUSY == ret);
+
+        /* The synthesis is finished; notify the caller and pass the remaining samples.
+           Use 16 KHz, 16-bit samples.                                              */
+        if (!picoSynthAbort)
+        {
+            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_DONE );
+        }
+        picoSynthAbort = 0;                 /* succeeded    */
+
+        if (ret != PICO_STEP_IDLE)
+        {
+            LOGE("Error occurred during synthesis [%d]", ret);
+            if (local_text) free(local_text);
+            return TTS_FAILURE;
+        }
+    }
+
+    if (local_text)
+        free(local_text);
+    return TTS_SUCCESS;             /* succeeded    */
 }
 
+
 /** stop
- *  aborts running synthesis
+ *  Aborts the running synthesis.
  *  return tts_result
 */
 tts_result TtsEngine::stop()
@@ -896,6 +1022,7 @@ tts_result TtsEngine::stop()
     picoSynthAbort = 1;
     return TTS_SUCCESS;
 }
+
 
 #ifdef __cplusplus
 extern "C" {
