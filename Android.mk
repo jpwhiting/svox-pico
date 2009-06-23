@@ -1,1 +1,1 @@
-include $(all-subdir-makefiles)
+include $(call first-makefiles-under,pico)

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pico TTS Language Pack Installer</string>
+    <string name="installing_message">Installing voice data on SD card.</string>
+    <string name="uninstall_message">The voice data has been installed successfully on your SD card. You can now uninstall this installer to save space in your phone memory; the voice data from this installer will safely remain on your SD card.</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="retry_message">The voice data could not be installed on your SD card. Please make sure your SD card is inserted in your device and that there is at least 6 MB of free space on that card. If your card is already in your device, please try removing the card and reinserting it.</string>
+    <string name="retry">Retry</string>
+</resources>
