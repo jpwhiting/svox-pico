@@ -1,1 +1,1 @@
-include $(call first-makefiles-under,pico)
+include ./external/svox/pico/Android.mk
