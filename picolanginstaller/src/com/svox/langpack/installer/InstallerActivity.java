@@ -51,8 +51,6 @@ public class InstallerActivity extends Activity {
     }
 
     private boolean unzipLangPack(InputStream stream) {
-        File baseDir = new File("/sdcard/svox");
-        baseDir.mkdir();
         FileOutputStream out;
         byte buf[] = new byte[16384];
         try {
