@@ -536,15 +536,39 @@ tts_result TtsEngine::shutdown( void )
     return TTS_SUCCESS;
 }
 
-/** loadLanguage
- *  Load a new language.
- *  @value - language string in xx or xx-rYY format (i.e. "en" or "en-rUS")
- *  @size - size of value
+/** isLanguageAvailable
+ *  Returns the level of support for a language.
+ *  @lang - string with ISO 3 letter language code.
+ *  @country - string with ISO 3 letter country code .
+ *  @variant - string with language variant for that language and country pair.
  *  return tts_result
 */
-tts_result TtsEngine::loadLanguage( const char * value, const size_t size )
+tts_support_result TtsEngine::isLanguageAvailable(const char *lang, const char *country,
+            const char *variant) {
+    // TODO implement
+    // look for language
+    // look for country
+    // no variants supported in this library, skip the variant check
+    // check if the resources are installed
+    
+    //return TTS_LANG_COUNTRY_VAR_AVAILABLE;
+    //return TTS_LANG_COUNTRY_AVAILABLE;
+    //return TTS_LANG_AVAILABLE;
+    //return TTS_LANG_MISSING_DATA;
+    return TTS_LANG_NOT_SUPPORTED;
+}
+
+/** loadLanguage
+ *  Load a new language.
+ *  @lang - string with ISO 3 letter language code.
+ *  @country - string with ISO 3 letter country code .
+ *  @variant - string with language variant for that language and country pair.
+ *  return tts_result
+*/
+tts_result TtsEngine::loadLanguage(const char *lang, const char *country, const char *variant)
 {
-    return setProperty("language", value, size);
+    return TTS_FAILURE;
+    //return setProperty("language", value, size);
 }
 
 /** setLanguage
