@@ -44,7 +44,7 @@ using namespace android;
 #define PICO_MAX_PITCH      200
 #define PICO_MIN_VOLUME     0
 /* speaking volume  */
-#define PICO_DEF_VOLUME     250
+#define PICO_DEF_VOLUME     400
 #define PICO_MAX_VOLUME     500
 /* string constants */
 #define MAX_OUTBUF_SIZE     128
@@ -93,6 +93,7 @@ int     picoProp_currRate   = PICO_DEF_RATE;        /* current rate     */
 int     picoProp_currPitch  = PICO_DEF_PITCH;       /* current pitch    */
 int     picoProp_currVolume = PICO_DEF_VOLUME;      /* current volume   */
 
+int picoCurrentLangIndex = -1;
 
 
 /* internal helper functions */
@@ -162,6 +163,7 @@ static void cleanResources( void )
         pico_unloadResource( picoSystem, &picoSgResource );
         picoSgResource = NULL;
     }
+    picoCurrentLangIndex = -1;
 }
 
 
@@ -210,6 +212,39 @@ static void cleanFiles( void )
     {
         free(picoUtppResourceName);
         picoUtppResourceName = NULL;
+    }
+}
+
+/** hasResourcesForLanguage
+ *  Check to see if the resources required to load the language at the specified index
+ *  are properly installed
+ *  @langIndex - the index of the language to check the resources for. The index is valid.
+ *  return true if the required resources are installed, false otherwise
+ */
+static bool hasResourcesForLanguage(int langIndex) {
+    FILE * pFile;
+    char* fileName = (char*)malloc(PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE);
+    
+    strcpy((char*)fileName, PICO_LINGWARE_PATH);
+    strcat((char*)fileName, (const char*)picoInternalTaLingware[langIndex]);
+    pFile = fopen(fileName,"r");
+    if (pFile == NULL){
+        free(fileName);
+        return false;
+    } else {
+        fclose (pFile);
+    }
+
+    strcpy((char*)fileName, PICO_LINGWARE_PATH);
+    strcat((char*)fileName, (const char*)picoInternalSgLingware[langIndex]);
+    pFile = fopen(fileName, "r");
+    if (pFile == NULL) {
+        free(fileName);
+        return false;
+    } else {
+        fclose(pFile);
+        free(fileName);
+        return true;
     }
 }
 
@@ -367,6 +402,7 @@ static tts_result doLanguageSwitchFromLangIndex(int langIndex)
     }
 
     strcpy(picoProp_currLang, picoSupportedLang[langIndex]);
+    picoCurrentLangIndex = langIndex;
 
     LOGI("loaded %s successfully", picoProp_currLang);
 
@@ -508,6 +544,9 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr )
     }
 
     picoSynthDoneCBPtr = synthDoneCBPtr;
+    
+    picoCurrentLangIndex = -1;
+    
     return TTS_SUCCESS;
 }
 
@@ -541,21 +580,62 @@ tts_result TtsEngine::shutdown( void )
  *  @lang - string with ISO 3 letter language code.
  *  @country - string with ISO 3 letter country code .
  *  @variant - string with language variant for that language and country pair.
- *  return tts_result
+ *  return tts_support_result
 */
 tts_support_result TtsEngine::isLanguageAvailable(const char *lang, const char *country,
             const char *variant) {
-    // TODO implement
-    // look for language
-    // look for country
-    // no variants supported in this library, skip the variant check
-    // check if the resources are installed
+    int langIndex = -1;
+    int countryIndex = -1;
+    //-------------------------
+    // language matching
+    // if no language specified
+    if (lang == NULL)  {
+        LOGE("TtsEngine::isLanguageAvailable called with no language");
+        return TTS_LANG_NOT_SUPPORTED;
+    }
+
+    // find a match on the language
+    for (int i = 0; i < picoNumSupportedLang; i++)
+    {
+        if (strcmp(lang, picoSupportedLangIso3[i]) == 0) {
+            langIndex = i;
+            break;
+        }
+    }
+    if (langIndex < 0) {
+        // language isn't supported
+        LOGV("TtsEngine::isLanguageAvailable called with unsupported language");
+        return TTS_LANG_NOT_SUPPORTED;
+    }
+
+    //-------------------------
+    // country matching
+    // if no country specified
+    if ((country == NULL) || (strlen(country) == 0)) {
+        // check installation of matched language
+        return (hasResourcesForLanguage(langIndex) ? TTS_LANG_AVAILABLE : TTS_LANG_MISSING_DATA);
+    }
     
-    //return TTS_LANG_COUNTRY_VAR_AVAILABLE;
-    //return TTS_LANG_COUNTRY_AVAILABLE;
-    //return TTS_LANG_AVAILABLE;
-    //return TTS_LANG_MISSING_DATA;
-    return TTS_LANG_NOT_SUPPORTED;
+    // find a match on the country
+    for (int i = langIndex; i < picoNumSupportedLang; i++) {
+        if ((strcmp(lang, picoSupportedLangIso3[i]) == 0)
+                && (strcmp(country, picoSupportedCountryIso3[i]) == 0)) {
+            countryIndex = i;
+            break;
+        }
+    }
+    if (countryIndex < 0)  {
+        // we didn't find a match on the country, but we had a match on the language
+        // check installation of matched language
+        return (hasResourcesForLanguage(langIndex) ? TTS_LANG_AVAILABLE : TTS_LANG_MISSING_DATA);
+    } else {
+        // we have a match on the language and the country
+        langIndex = countryIndex;
+        // check installation of matched language + country
+        return (hasResourcesForLanguage(langIndex) ? TTS_LANG_COUNTRY_AVAILABLE : TTS_LANG_MISSING_DATA);
+    }
+   
+    // no variants supported in this library, TTS_LANG_COUNTRY_VAR_AVAILABLE cannot be returned.
 }
 
 /** loadLanguage
@@ -636,13 +716,42 @@ tts_result TtsEngine::setLanguage(const char *lang, const char *country, const c
 
 /** getLanguage
  *  Get the currently loaded language - if any.
- *  @value - buffer which will receive value
- *  @iosize - size of value - if value is too small to contain the return string, this will contain the actual size needed
+ *  @lang - string with current ISO 3 letter language code, empty string if no loaded language.
+ *  @country - string with current ISO 3 letter country code, empty string if no loaded language.
+ *  @variant - string with current language variant, empty string if no loaded language.
  *  return tts_result
 */
-tts_result TtsEngine::getLanguage( char * value, size_t * iosize )
+tts_result TtsEngine::getLanguage(char *language, char *country, char *variant)
 {
-    return getProperty("language", value, iosize);
+    if (picoCurrentLangIndex == -1) {
+        strcpy(language, "\0");
+        strcpy(country, "\0");
+        strcpy(variant, "\0");
+    } else {
+        strncpy(language, picoSupportedLangIso3[picoCurrentLangIndex], 3);
+        strncpy(country, picoSupportedCountryIso3[picoCurrentLangIndex], 3);
+        // no variant in this implementation
+        strcpy(variant, "\0");
+    }
+    return TTS_SUCCESS;
+}
+
+
+/** setAudioFormat
+ * sets the audio format to use for synthesis, returns what is actually used.
+ * @encoding - reference to encoding format
+ * @rate - reference to sample rate
+ * @channels - reference to number of channels
+ * return tts_result
+ * */
+tts_result TtsEngine::setAudioFormat(AudioSystem::audio_format& encoding, uint32_t& rate,
+            int& channels)
+{
+    // ignore the input parameters, the enforced audio parameters are fixed here
+    encoding = AudioSystem::PCM_16_BIT;
+    rate = 16000;
+    channels = 1;
+    return TTS_SUCCESS;
 }
 
 
