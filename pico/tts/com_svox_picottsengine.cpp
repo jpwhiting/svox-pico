@@ -728,8 +728,8 @@ tts_result TtsEngine::getLanguage(char *language, char *country, char *variant)
         strcpy(country, "\0");
         strcpy(variant, "\0");
     } else {
-        strncpy(language, picoSupportedLangIso3[picoCurrentLangIndex], 3);
-        strncpy(country, picoSupportedCountryIso3[picoCurrentLangIndex], 3);
+        strcpy(language, picoSupportedLangIso3[picoCurrentLangIndex]);
+        strcpy(country, picoSupportedCountryIso3[picoCurrentLangIndex]);
         // no variant in this implementation
         strcpy(variant, "\0");
     }
