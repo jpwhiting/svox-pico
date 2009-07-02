@@ -25,7 +25,7 @@ include $(BUILD_PACKAGE)
 LOCAL_PATH:= $(TOP_LOCAL_PATH)/tts
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES:= com_svox_picottsengine.cpp
+LOCAL_SRC_FILES:= com_svox_picottsengine.cpp svox_ssml_parser.cpp
 
 LOCAL_C_INCLUDES += \
 	external/svox/pico/lib \
@@ -33,7 +33,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_STATIC_LIBRARIES:= libsvoxpico
 
-LOCAL_SHARED_LIBRARIES:= libcutils
+LOCAL_SHARED_LIBRARIES:= libcutils libexpat libutils
 
 LOCAL_MODULE:= libttspico
 
