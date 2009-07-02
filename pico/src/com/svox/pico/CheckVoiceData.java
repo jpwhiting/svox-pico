@@ -19,6 +19,7 @@ package com.svox.pico;
 import java.io.File;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 
@@ -29,31 +30,43 @@ import android.speech.tts.TextToSpeech;
 public class CheckVoiceData extends Activity {
     private final static String dataDir = "/sdcard/svox/";
 
-    private final static String[] datafiles = {
+    private final static String[] dataFiles = {
             "de-DE_gl0_sg.bin", "de-DE_ta.bin", "en-GB_kh0_sg.bin", "en-GB_ta.bin",
             "en-US_lh0_sg.bin", "en-US_ta.bin", "es-ES_ta.bin", "es-ES_zl0_sg.bin",
             "fr-FR_nk0_sg.bin", "fr-FR_ta.bin", "it-IT_cm0_sg.bin", "it-IT_ta.bin"
+    };
+
+    private final static String[] dataFilesInfo = {
+        "deu-DEU", "deu-DEU", "eng-GBR", "eng-GBR", "eng-USA", "eng-USA",
+        "spa-ESP", "spa-ESP", "fra-FRA", "fra-FRA", "ita-ITA", "ita-ITA"
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setResult(TextToSpeech.Engine.CHECK_VOICE_DATA_PASS);
+        int result = TextToSpeech.Engine.CHECK_VOICE_DATA_PASS;
 
         // Make sure the SD card is accessible
         if (!new File("/sdcard/").canRead()) {
-            setResult(TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA_NO_SDCARD);
+            result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA_NO_SDCARD;
         }
 
         // Check for files
-        for (int i = 0; i < datafiles.length; i++) {
-            File tempFile = new File(dataDir + datafiles[i]);
+        for (int i = 0; i < dataFiles.length; i++) {
+            File tempFile = new File(dataDir + dataFiles[i]);
             if (!tempFile.exists()) {
-                setResult(TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA);
+                result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA;
             }
         }
 
+        // Put the root directory for the sd card data + the data filenames
+        Intent returnData = new Intent();
+        returnData.putExtra(TextToSpeech.Engine.VOICE_DATA_ROOT_DIRECTORY, dataDir);
+        returnData.putExtra(TextToSpeech.Engine.VOICE_DATA_FILES, dataFiles);
+        returnData.putExtra(TextToSpeech.Engine.VOICE_DATA_FILES_INFO, dataFilesInfo);
+
+        setResult(result, returnData);
         finish();
     }
 
