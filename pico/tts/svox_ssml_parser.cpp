@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * History:
- * 2009-06-29 -- initial version
- *
- */
+*/
 
 #include "svox_ssml_parser.h"
 #include <utils/Log.h>
 #include <cutils/jstring.h>
 #include <string.h>
-
+#include <utils/String16.h>
 
 #define SSML_PITCH_XLOW     "50"
 #define SSML_PITCH_LOW      "75"
@@ -47,847 +44,861 @@
 #define SSML_BREAK_STRONG   "1s"
 #define SSML_BREAK_XSTRONG  "3s"
 
-//TODO JMT remove comment
-//extern int cnvIpaToXsampa(const char16_t* ipaString, char** outXsampaString);
+extern int cnvIpaToXsampa(const char16_t* ipaString, size_t ipaStringSize, char** outXsampaString);
+extern char * createPhonemeString( const char * xsampa, int length );
 
 SvoxSsmlParser::SvoxSsmlParser() : m_isInBreak(0), m_appendix(NULL), m_docLanguage(NULL)
 {
-  mParser = XML_ParserCreate("UTF-8");
-  if (mParser)
+    mParser = XML_ParserCreate("UTF-8");
+    if (mParser)
     {
-      XML_SetElementHandler(mParser, starttagHandler, endtagHandler);
-      XML_SetCharacterDataHandler(mParser, textHandler);
-      XML_SetUserData(mParser, (void*)this);
-      m_datasize = 512;
-      m_data = new char[m_datasize];
-      m_data[0] = '\0';
+        XML_SetElementHandler(mParser, starttagHandler, endtagHandler);
+        XML_SetCharacterDataHandler(mParser, textHandler);
+        XML_SetUserData(mParser, (void*)this);
+        m_datasize = 512;
+        m_data = new char[m_datasize];
+        m_data[0] = '\0';
     }
 }
 
 SvoxSsmlParser::~SvoxSsmlParser()
 {
-  if (mParser)
-    XML_ParserFree(mParser);
-  if (m_data)
-    delete [] m_data;
-  if (m_appendix)
-    delete [] m_appendix;
-  if (m_docLanguage)
-    delete [] m_docLanguage;
+    if (mParser)
+        XML_ParserFree(mParser);
+    if (m_data)
+        delete [] m_data;
+    if (m_appendix)
+        delete [] m_appendix;
+    if (m_docLanguage)
+        delete [] m_docLanguage;
 }
 
 int SvoxSsmlParser::initSuccessful()
 {
-  return (mParser && m_data);
+    return (mParser && m_data);
 }
 
 int SvoxSsmlParser::parseDocument(const char* ssmldoc, int isFinal)
 {
-  int doclen = (int)strlen(ssmldoc) + 1;
-  int status = XML_Parse(mParser, ssmldoc, doclen, isFinal);
-  if (status == XML_STATUS_ERROR)
+    int doclen = (int)strlen(ssmldoc) + 1;
+    int status = XML_Parse(mParser, ssmldoc, doclen, isFinal);
+    if (status == XML_STATUS_ERROR)
     {
-      /* Note: for some reason Expat almost always complains about invalid tokens, even when document is well formed */
-      LOGI("Parser error at line %d: %s\n", (int)XML_GetCurrentLineNumber(mParser), XML_ErrorString(XML_GetErrorCode(mParser)));
+        /* Note: for some reason Expat almost always complains about invalid tokens, even when document is well formed */
+        LOGI("Parser error at line %d: %s\n", (int)XML_GetCurrentLineNumber(mParser), XML_ErrorString(XML_GetErrorCode(mParser)));
     }
-  return status;
+    return status;
 }
 
 char* SvoxSsmlParser::getParsedDocument()
 {
-  return m_data;
+    return m_data;
 }
 
 char* SvoxSsmlParser::getParsedDocumentLanguage()
 {
-  return m_docLanguage;
+    return m_docLanguage;
 }
 
 void SvoxSsmlParser::starttagHandler(void* data, const XML_Char* element, const XML_Char** attributes)
 {
-  ((SvoxSsmlParser*)data)->startElement(element, attributes);
+    ((SvoxSsmlParser*)data)->startElement(element, attributes);
 }
 
 void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attributes)
 {
-  if (strcmp(element, "speak") == 0)
+    if (strcmp(element, "speak") == 0)
     {
-      if (strlen(m_data) > 0)
-    {
-      /* we have old data, get rid of it and reallocate memory */
-      delete m_data;
-      m_data = NULL;
-      m_datasize = 512;
-      m_data = new char[m_datasize];
-      if (!m_data)
+        if (strlen(m_data) > 0)
         {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
+            /* we have old data, get rid of it and reallocate memory */
+            delete m_data;
+            m_data = NULL;
+            m_datasize = 512;
+            m_data = new char[m_datasize];
+            if (!m_data)
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
         }
-    }
 
-      /* the only attribute supported in the speak tag is xml:lang, all others are ignored */
-      for (int i = 0; attributes[i]; i += 2)
-    {
-      if (strcmp(attributes[i], "xml:lang") == 0)
+        /* the only attribute supported in the speak tag is xml:lang, all others are ignored */
+        for (int i = 0; attributes[i]; i += 2)
         {
-          if (!m_docLanguage)
-        {
-          m_docLanguage = new char[strlen(attributes[i+1])+1];
-        }
-          strcpy(m_docLanguage, attributes[i+1]);
-          break;
-        }
-    }
-    }
-  else if (strcmp(element, "p") == 0) /* currently no attributes are supported for <p> */
-    {
-      if (strlen(m_data) + 4 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
+            if (strcmp(attributes[i], "xml:lang") == 0)
+            {
+                if (!m_docLanguage)
+                {
+                    m_docLanguage = new char[strlen(attributes[i+1])+1];
+                }
+                strcpy(m_docLanguage, attributes[i+1]);
+                break;
+            }
         }
     }
-      strcat(m_data, "<p>");
-    }
-  else if (strcmp(element, "s") == 0) /* currently no attributes are supported for <s> */
+    else if (strcmp(element, "p") == 0) /* currently no attributes are supported for <p> */
     {
-      if (strlen(m_data) + 4 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
+        if (strlen(m_data) + 4 > (size_t)m_datasize)
         {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
+            if (!growDataSize(100))
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
         }
+        strcat(m_data, "<p>");
     }
-      strcat(m_data, "<s>");
-    }
-  else if (strcmp(element, "phoneme") == 0) /* only ipa and xsampa alphabets are supported */
+    else if (strcmp(element, "s") == 0) /* currently no attributes are supported for <s> */
     {
-      if (strlen(m_data) + 9 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
+        if (strlen(m_data) + 4 > (size_t)m_datasize)
         {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
+            if (!growDataSize(100))
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
         }
+        strcat(m_data, "<s>");
     }
-      strcat(m_data, "<phoneme");
+    else if (strcmp(element, "phoneme") == 0) /* only ipa and xsampa alphabets are supported */
+    {
+        int alpha = 1; /* set to 1 if alphabet is ipa */
+        int tagComplete = 0; /* set to 1 if phoneme tag has already been added */
+    char16_t* ph = NULL;
+        char* xsampastr = NULL;
+    size_t phsize = 0;
+    size_t xsampasize = 0;
 
-      int alpha = 1; /* set to 1 if alphabet is ipa */
-      char* ph = NULL;
+        for (int i = 0; attributes[i]; i += 2)
+        {
+            if (strcmp(attributes[i], "alphabet") == 0)
+            {
+                if (strcmp(attributes[i+1], "xsampa") == 0)
+                {
+                    alpha = 0;
+                }
+            }
+            if (strcmp(attributes[i], "ph") == 0)
+            {
+          ph = new char16_t[strlen8to16(attributes[i+1]) + 1];
+          ph = strdup8to16(attributes[i+1], &phsize);
+            }
+        }
+        if (!ph)
+        {
+            /* error, no phonetic string */
+            LOGE("Error: bad SSML syntax, ph attribute not supplied.");
+            return;
+        }
 
-      for (int i = 0; attributes[i]; i += 2)
-    {
-      if (strcmp(attributes[i], "alphabet") == 0)
+        if (alpha)
         {
-          if (strcmp(attributes[i+1], "xsampa") == 0)
+          /* need to convert phoneme string to xsampa */
+      xsampasize = cnvIpaToXsampa(ph, phsize, &xsampastr);
+      delete [] ph;
+      if (!xsampastr)
+            {
+                LOGE("Error: failed to allocate memory for IPA string conversion");
+                return;
+            }
+        }
+        else
         {
-          alpha = 0;
+      xsampastr = strndup16to8(ph, phsize);
+      xsampasize = strlen(xsampastr);
+          delete [] ph;
         }
-        }
-      if (strcmp(attributes[i], "ph") == 0)
-        {
-          ph = new char[strlen(attributes[i+1]) + 1];
-          strcpy(ph, attributes[i+1]);
-        }
-    }
-      if (alpha)
-    {
-      /* need to convert phoneme string to xsampa */
-      size_t size = 0;
-      char16_t* ipastr = strdup8to16(ph, &size);
-      char16_t* xsampastr = NULL;
-      if (!ipastr)
-        {
-          LOGE("Error: failed to allocate memory for IPA string conversion");
-          return;
-        }
-      //TODO JMT remove comment
-      //size = cnvIpaToXsampa(ipastr, &xsampastr);
-      free(ipastr);
-      char* xsampa = strndup16to8(xsampastr, size);
-      if (!xsampa)
-        {
-          LOGE("Error: failed to allocate memory for IPA string conversion");
-          delete [] xsampastr;
-          return;
-        }
-      if (strlen(m_data) + strlen(xsampa) + 7 > (size_t)m_datasize)
-        {
-          if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!");
-          delete [] xsampastr;
-          free(xsampa);
-          return;
-        }
-        }
-      strcat(m_data, " ph='");
-      strcat(m_data, xsampa);
-      delete [] xsampastr;
-      free(xsampa);
-    }
-      else
-    {
-      strcat(m_data, " ph='");
-      strcat(m_data, ph);
-    }
-      if (ph)
-    delete [] ph;
 
-      if (strlen(m_data) + 3 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
+        /* split XSAMPA string into multiple phonemes if needed */
+        if (strstr(xsampastr, " ") || strstr(xsampastr, "#")) /* check again to see if we have multiple words */
         {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
+            char* phonstr = createPhonemeString(xsampastr, strlen(xsampastr) + 1);
+            free(xsampastr);
+            xsampastr = NULL;
+            xsampastr = (char*)malloc(strlen(phonstr) + 1);
+            strcpy(xsampastr, phonstr);
+            free(phonstr);
+            phonstr = NULL;
+            tagComplete = 1;
         }
-    }
-      strcat(m_data, "'>");
-    }
-  else if (strcmp(element, "break") == 0)
-    {
-      if (strlen(m_data) + 17 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-    }
-      strcat(m_data, "<break time='");
-      char* time = NULL;
 
-      for (int i = 0; attributes[i]; i += 2)
-    {
-      if (strcmp(attributes[i], "time") == 0)
+        if (tagComplete)
         {
-          time = new char[strlen(attributes[i+1]) + 1];
-          if (!time)
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-          strcpy(time, attributes[i+1]);
-        }
-      else if (strcmp(attributes[i], "strength") == 0 && !time)
-        {
-          time = convertBreakStrengthToTime(attributes[i+1]);
-        }
-    }
-      if (!time)
-    {
-      time = new char[6];
-      if (!time)
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-      strcpy(time, SSML_BREAK_WEAK); /* if no time or strength attributes are specified, default to weak break */
-    }
-      if (strlen(m_data) + strlen(time) + 4 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-    }
-      strcat(m_data, time);
-      strcat(m_data, "'/>");
-      m_isInBreak = 1;
-    }
-  else if (strcmp(element, "prosody") == 0) /* only pitch, rate and volume attributes are supported */
-    {
-      for (int i = 0; attributes[i]; i += 2)
-    {
-      if (strcmp(attributes[i], "pitch") == 0)
-        {
-          char* svoxpitch = convertToSvoxPitch(attributes[i+1]);
-          if (!svoxpitch)
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-          if (!svoxpitch)
-        {
-          svoxpitch = new char[4];
-          if (!svoxpitch)
+            if (strlen(m_data) + strlen(xsampastr) + 1 > (size_t)m_datasize)
             {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
-            }
-          strcpy(svoxpitch, "100");
-        }
-          char* pitch = new char[17 + strlen(svoxpitch)];
-          if (!pitch)
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-          sprintf(pitch, "<pitch level='%s'>", svoxpitch);
-          if (strlen(m_data) + strlen(pitch) + 1 > (size_t)m_datasize)
-        {
-          if (!growDataSize(100))
-            {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
+                if (!growDataSize(100))
+                {
+                    LOGE("Error: failed to allocate memory for string!");
+                    free(xsampastr);
+                    return;
+                }
             }
         }
-          strcat(m_data, pitch);
-          if (!m_appendix)
+        else
         {
-          m_appendix = new char[30];
-          m_appendix[0] = '\0';
-        }
-          strcat(m_appendix, "</pitch>");
-          delete [] svoxpitch;
-          delete [] pitch;
-        }
-      else if (strcmp(attributes[i], "rate") == 0)
-        {
-          char* svoxrate = convertToSvoxRate(attributes[i+1]);
-          if (!svoxrate)
-        {
-          svoxrate = new char[4];
-          if (!svoxrate)
+            if (strlen(m_data) + strlen(xsampastr) + 17 > (size_t)m_datasize)
             {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
+                if (!growDataSize(100))
+                {
+                    LOGE("Error: failed to allocate memory for string!");
+                    free(xsampastr);
+                    return;
+                }
             }
-          strcpy(svoxrate, "100");
+            strcat(m_data, "<phoneme ph='");
         }
-          char* rate = new char[17 + strlen(svoxrate)];
-          if (!rate)
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-          sprintf(rate, "<speed level='%s'>", svoxrate);
-          if (strlen(m_data) + strlen(rate) + 1 > (size_t)m_datasize)
-        {
-          if (!growDataSize(100))
-            {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
-            }
-        }
-          strcat(m_data, rate);
-          if (!m_appendix)
-        {
-          m_appendix = new char[30];
-          if (!m_appendix)
-            {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
-            }
-          m_appendix[0] = '\0';
-        }
-          strcat(m_appendix, "</speed>");
-          delete [] svoxrate;
-          delete [] rate;
-        }
-      else if (strcmp(attributes[i], "volume") == 0)
-        {
-          char* svoxvol = convertToSvoxVolume(attributes[i+1]);
-          if (!svoxvol)
-        {
-          svoxvol = new char[4];
-          if (!svoxvol)
-            {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
-            }
-          strcpy(svoxvol, "100");
-        }
-          char* volume = new char[18 + strlen(svoxvol)];
-          if (!volume)
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-          sprintf(volume, "<volume level='%s'>", svoxvol);
-          if (strlen(m_data) + strlen(volume) + 1 > (size_t)m_datasize)
-        {
-          if (!growDataSize(100))
-            {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
-            }
-        }
-          strcat(m_data, volume);
-          if (!m_appendix)
-        {
-          m_appendix = new char[30];
-          m_appendix[0] = '\0';
-        }
-          strcat(m_appendix, "</volume>");
-          delete [] svoxvol;
-          delete [] volume;
-        }
-    }
-    }
-  else if (strcmp(element, "audio") == 0) /* only 16kHz 16bit wav files are supported as src */
-    {
-      if (strlen(m_data) + 17 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-    }
-      strcat(m_data, "<usesig file='");
 
-      for (int i = 0; attributes[i]; i += 2)
+        strcat(m_data, xsampastr);
+        free(xsampastr);
+
+    if (!tagComplete)
+      {
+        if (strlen(m_data) + 4 > (size_t)m_datasize)
+          {
+        if (!growDataSize(100))
+          {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return;
+          }
+          }
+        strcat(m_data, "'/>");
+      }
+
+        m_isInBreak = 1; /* set flag to indicate any text between open and close tag is to be discarded */
+    }
+    else if (strcmp(element, "break") == 0)
     {
-      if (strcmp(attributes[i], "src") == 0)
+        if (strlen(m_data) + 17 > (size_t)m_datasize)
         {
-          if (strlen(m_data) + strlen(attributes[i+1]) + 1 > (size_t)m_datasize)
-        {
-          if (!growDataSize(100))
+            if (!growDataSize(100))
             {
-              LOGE("Error: failed to allocate memory for string!\n");
-              return;
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
             }
         }
-          strcat(m_data, attributes[i+1]);
+        strcat(m_data, "<break time='");
+        char* time = NULL;
+
+        for (int i = 0; attributes[i]; i += 2)
+        {
+            if (strcmp(attributes[i], "time") == 0)
+            {
+                time = new char[strlen(attributes[i+1]) + 1];
+                if (!time)
+                {
+                    LOGE("Error: failed to allocate memory for string!\n");
+                    return;
+                }
+                strcpy(time, attributes[i+1]);
+            }
+            else if (strcmp(attributes[i], "strength") == 0 && !time)
+            {
+                time = convertBreakStrengthToTime(attributes[i+1]);
+            }
+        }
+        if (!time)
+        {
+            time = new char[6];
+            if (!time)
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
+            strcpy(time, SSML_BREAK_WEAK); /* if no time or strength attributes are specified, default to weak break */
+        }
+        if (strlen(m_data) + strlen(time) + 4 > (size_t)m_datasize)
+        {
+            if (!growDataSize(100))
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
+        }
+        strcat(m_data, time);
+        strcat(m_data, "'/>");
+        m_isInBreak = 1; /* set flag to indicate any text between open and close tag is to be discarded */
+    }
+    else if (strcmp(element, "prosody") == 0) /* only pitch, rate and volume attributes are supported */
+    {
+        for (int i = 0; attributes[i]; i += 2)
+        {
+            if (strcmp(attributes[i], "pitch") == 0)
+            {
+                char* svoxpitch = convertToSvoxPitch(attributes[i+1]);
+                if (!svoxpitch)
+                {
+                    LOGE("Error: failed to allocate memory for string!\n");
+                    return;
+                }
+                if (!svoxpitch)
+                {
+                    svoxpitch = new char[4];
+                    if (!svoxpitch)
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                    strcpy(svoxpitch, "100");
+                }
+                char* pitch = new char[17 + strlen(svoxpitch)];
+                if (!pitch)
+                {
+                    LOGE("Error: failed to allocate memory for string!\n");
+                    return;
+                }
+                sprintf(pitch, "<pitch level='%s'>", svoxpitch);
+                if (strlen(m_data) + strlen(pitch) + 1 > (size_t)m_datasize)
+                {
+                    if (!growDataSize(100))
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                }
+                strcat(m_data, pitch);
+                if (!m_appendix)
+                {
+                    m_appendix = new char[30];
+                    m_appendix[0] = '\0';
+                }
+                strcat(m_appendix, "</pitch>");
+                delete [] svoxpitch;
+                delete [] pitch;
+            }
+            else if (strcmp(attributes[i], "rate") == 0)
+            {
+                char* svoxrate = convertToSvoxRate(attributes[i+1]);
+                if (!svoxrate)
+                {
+                    svoxrate = new char[4];
+                    if (!svoxrate)
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                    strcpy(svoxrate, "100");
+                }
+                char* rate = new char[17 + strlen(svoxrate)];
+                if (!rate)
+                {
+                    LOGE("Error: failed to allocate memory for string!\n");
+                    return;
+                }
+                sprintf(rate, "<speed level='%s'>", svoxrate);
+                if (strlen(m_data) + strlen(rate) + 1 > (size_t)m_datasize)
+                {
+                    if (!growDataSize(100))
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                }
+                strcat(m_data, rate);
+                if (!m_appendix)
+                {
+                    m_appendix = new char[30];
+                    if (!m_appendix)
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                    m_appendix[0] = '\0';
+                }
+                strcat(m_appendix, "</speed>");
+                delete [] svoxrate;
+                delete [] rate;
+            }
+            else if (strcmp(attributes[i], "volume") == 0)
+            {
+                char* svoxvol = convertToSvoxVolume(attributes[i+1]);
+                if (!svoxvol)
+                {
+                    svoxvol = new char[4];
+                    if (!svoxvol)
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                    strcpy(svoxvol, "100");
+                }
+                char* volume = new char[18 + strlen(svoxvol)];
+                if (!volume)
+                {
+                    LOGE("Error: failed to allocate memory for string!\n");
+                    return;
+                }
+                sprintf(volume, "<volume level='%s'>", svoxvol);
+                if (strlen(m_data) + strlen(volume) + 1 > (size_t)m_datasize)
+                {
+                    if (!growDataSize(100))
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                }
+                strcat(m_data, volume);
+                if (!m_appendix)
+                {
+                    m_appendix = new char[30];
+                    m_appendix[0] = '\0';
+                }
+                strcat(m_appendix, "</volume>");
+                delete [] svoxvol;
+                delete [] volume;
+            }
         }
     }
-      strcat(m_data, "'>");
+    else if (strcmp(element, "audio") == 0) /* only 16kHz 16bit wav files are supported as src */
+    {
+        if (strlen(m_data) + 17 > (size_t)m_datasize)
+        {
+            if (!growDataSize(100))
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
+        }
+        strcat(m_data, "<usesig file='");
+
+        for (int i = 0; attributes[i]; i += 2)
+        {
+            if (strcmp(attributes[i], "src") == 0)
+            {
+                if (strlen(m_data) + strlen(attributes[i+1]) + 1 > (size_t)m_datasize)
+                {
+                    if (!growDataSize(100))
+                    {
+                        LOGE("Error: failed to allocate memory for string!\n");
+                        return;
+                    }
+                }
+                strcat(m_data, attributes[i+1]);
+            }
+        }
+        strcat(m_data, "'>");
     }
 }
 
 void SvoxSsmlParser::endtagHandler(void* data, const XML_Char* element)
 {
-  ((SvoxSsmlParser*)data)->endElement(element);
+    ((SvoxSsmlParser*)data)->endElement(element);
 }
 
 void SvoxSsmlParser::endElement(const XML_Char* element)
 {
-  if (strcmp(element, "speak") == 0)
+    if (strcmp(element, "speak") == 0)
     {
-      
+      /* do nothing */
     }
-  else if (strcmp(element, "p") == 0)
+    else if (strcmp(element, "p") == 0)
     {
-      if (strlen(m_data) + 5 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
+        if (strlen(m_data) + 5 > (size_t)m_datasize)
         {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
+            if (!growDataSize(100))
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
+        }
+        strcat(m_data, "</p>");
+    }
+    else if (strcmp(element, "s") == 0)
+    {
+        if (strlen(m_data) + 5 > (size_t)m_datasize)
+        {
+            if (!growDataSize(100))
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
+        }
+        strcat(m_data, "</s>");
+    }
+    else if (strcmp(element, "phoneme") == 0)
+    {
+        m_isInBreak = 0; /* indicate we are no longer in phoneme tag */
+    }
+    else if (strcmp(element, "break") == 0)
+    {
+        m_isInBreak = 0; /* indicate we are no longer in break tag */
+    }
+    else if (strcmp(element, "prosody") == 0)
+    {
+        if (m_appendix)
+        {
+            if (strlen(m_data) + strlen(m_appendix) + 1 > (size_t)m_datasize)
+            {
+                if (!growDataSize(100))
+                {
+                    LOGE("Error: failed to allocate memory for string!\n");
+                    return;
+                }
+            }
+            strcat(m_data, m_appendix);
+            delete [] m_appendix;
+            m_appendix = NULL;
         }
     }
-      strcat(m_data, "</p>");
-    }
-  else if (strcmp(element, "s") == 0)
+    else if (strcmp(element, "audio") == 0)
     {
-      if (strlen(m_data) + 5 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
+        if (strlen(m_data) + 10 > (size_t)m_datasize)
         {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
+            if (!growDataSize(100))
+            {
+                LOGE("Error: failed to allocate memory for string!\n");
+                return;
+            }
         }
-    }
-      strcat(m_data, "</s>");
-    }
-  else if (strcmp(element, "phoneme") == 0)
-    {
-      if (strlen(m_data) + 11 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-    }
-      strcat(m_data, "</phoneme>");
-    }
-  else if (strcmp(element, "break") == 0)
-    {
-      m_isInBreak = 0; /* indicate we are no longer in break tag */
-    }
-  else if (strcmp(element, "prosody") == 0)
-    {
-      if (m_appendix)
-    {
-      if (strlen(m_data) + strlen(m_appendix) + 1 > (size_t)m_datasize)
-        {
-          if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-        }
-      strcat(m_data, m_appendix);
-      delete [] m_appendix;
-      m_appendix = NULL;
-    }
-    }
-  else if (strcmp(element, "audio") == 0)
-    {
-      if (strlen(m_data) + 10 > (size_t)m_datasize)
-    {
-      if (!growDataSize(100))
-        {
-          LOGE("Error: failed to allocate memory for string!\n");
-          return;
-        }
-    }
-      strcat(m_data, "</usesig>");
+        strcat(m_data, "</usesig>");
     }
 }
 
 void SvoxSsmlParser::textHandler(void* data, const XML_Char* text, int length)
 {
-   ((SvoxSsmlParser*)data)->textElement(text, length);
+    ((SvoxSsmlParser*)data)->textElement(text, length);
 }
 
 void SvoxSsmlParser::textElement(const XML_Char* text, int length)
 {
-  if (m_isInBreak)
+    if (m_isInBreak)
     {
-      return; /* handles the case when someone has added text inside the break tag - this text is thrown away */
+        return; /* handles the case when someone has added text inside the break or phoneme tag - this text is thrown away */
     }
 
-  char* content = new char[length + 1];
-  if (!content)
+    char* content = new char[length + 1];
+    if (!content)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return;
+        LOGE("Error: failed to allocate memory for string!\n");
+        return;
     }
-  strncpy(content, text, length);
-  content[length] = '\0';
+    strncpy(content, text, length);
+    content[length] = '\0';
 
-  if (strlen(m_data) + strlen(content) + 1 > (size_t)m_datasize)
+    if (strlen(m_data) + strlen(content) + 1 > (size_t)m_datasize)
     {
-      if (!growDataSize(100))
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return;
+        if (!growDataSize(100))
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return;
+        }
     }
-    }
-  strcat(m_data, content);
-  delete [] content;
+    strcat(m_data, content);
+    delete [] content;
 }
 
 /**
-   convertToSvoxPitch
-   Converts SSML pitch labels to SVOX pitch levels
+convertToSvoxPitch
+Converts SSML pitch labels to SVOX pitch levels
 */
 char* SvoxSsmlParser::convertToSvoxPitch(const char* value)
 {
-  char* converted = NULL;
-  if (strcmp(value, "x-low") == 0)
+    char* converted = NULL;
+    if (strcmp(value, "x-low") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_PITCH_XLOW);
+    }
+    else if (strcmp(value, "low") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_PITCH_LOW);
     }
-      strcpy(converted, SSML_PITCH_XLOW);
-    }
-  else if (strcmp(value, "low") == 0)
+    else if (strcmp(value, "medium") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_PITCH_MEDIUM);
+    }
+    else if (strcmp(value, "default") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_PITCH_MEDIUM);
     }
-      strcpy(converted, SSML_PITCH_LOW);
-    }
-  else if (strcmp(value, "medium") == 0)
+    else if (strcmp(value, "high") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_PITCH_HIGH);
+    }
+    else if (strcmp(value, "x-high") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_PITCH_XHIGH);
     }
-      strcpy(converted, SSML_PITCH_MEDIUM);
-    }
-  else if (strcmp(value, "default") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_PITCH_MEDIUM);
-    }
-  else if (strcmp(value, "high") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_PITCH_HIGH);
-    }
-  else if (strcmp(value, "x-high") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_PITCH_XHIGH);
-    }
-  return converted;
+    return converted;
 }
 
 /**
-   convertToSvoxRate
-   Converts SSML rate labels to SVOX speed levels
+    convertToSvoxRate
+    Converts SSML rate labels to SVOX speed levels
 */
 char* SvoxSsmlParser::convertToSvoxRate(const char* value)
 {
-  char* converted = NULL;
-  if (strcmp(value, "x-slow") == 0)
+    char* converted = NULL;
+    if (strcmp(value, "x-slow") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_RATE_XSLOW);
+    }
+    else if (strcmp(value, "slow") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_RATE_SLOW);
     }
-      strcpy(converted, SSML_RATE_XSLOW);
-    }
-  else if (strcmp(value, "slow") == 0)
+    else if (strcmp(value, "medium") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_RATE_MEDIUM);
+    }
+    else if (strcmp(value, "default") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_RATE_MEDIUM);
     }
-      strcpy(converted, SSML_RATE_SLOW);
-    }
-  else if (strcmp(value, "medium") == 0)
+    else if (strcmp(value, "fast") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_RATE_FAST);
+    }
+    else if (strcmp(value, "x-fast") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_RATE_XFAST);
     }
-      strcpy(converted, SSML_RATE_MEDIUM);
-    }
-  else if (strcmp(value, "default") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_RATE_MEDIUM);
-    }
-  else if (strcmp(value, "fast") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_RATE_FAST);
-    }
-  else if (strcmp(value, "x-fast") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_RATE_XFAST);
-    }
-  return converted;
+    return converted;
 }
 
 /**
-   convertToSvoxVolume
-   Converts SSML volume labels to SVOX volume levels
+convertToSvoxVolume
+Converts SSML volume labels to SVOX volume levels
 */
 char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
 {
-  char* converted = NULL;
-  if (strcmp(value, "silent") == 0)
+    char* converted = NULL;
+    if (strcmp(value, "silent") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_VOLUME_SILENT);
+    }
+    else if (strcmp(value, "x-low") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_VOLUME_XLOW);
     }
-      strcpy(converted, SSML_VOLUME_SILENT);
-    }
-  else if (strcmp(value, "x-low") == 0)
+    else if (strcmp(value, "low") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_VOLUME_LOW);
+    }
+    else if (strcmp(value, "medium") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_VOLUME_MEDIUM);
     }
-      strcpy(converted, SSML_VOLUME_XLOW);
-    }
-  else if (strcmp(value, "low") == 0)
+    else if (strcmp(value, "default") == 0)
     {
-      converted = new char[4];
-      if (!converted)
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_VOLUME_MEDIUM);
+    }
+    else if (strcmp(value, "loud") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_VOLUME_LOUD);
     }
-      strcpy(converted, SSML_VOLUME_LOW);
-    }
-  else if (strcmp(value, "medium") == 0)
+    else if (strcmp(value, "x-loud") == 0)
     {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[4];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_VOLUME_XLOUD);
     }
-      strcpy(converted, SSML_VOLUME_MEDIUM);
-    }
-  else if (strcmp(value, "default") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_VOLUME_MEDIUM);
-    }
-  else if (strcmp(value, "loud") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_VOLUME_LOUD);
-    }
-  else if (strcmp(value, "x-loud") == 0)
-    {
-      converted = new char[4];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_VOLUME_XLOUD);
-    }
-  return converted;
+    return converted;
 }
 
 /**
-   convertBreakStrengthToTime
-   Converts SSML break strength labels to SVOX break time
+convertBreakStrengthToTime
+Converts SSML break strength labels to SVOX break time
 */
 char* SvoxSsmlParser::convertBreakStrengthToTime(const char* value)
 {
-  char* converted = NULL;
-  if (strcmp(value, "none") == 0)
+    char* converted = NULL;
+    if (strcmp(value, "none") == 0)
     {
-      converted = new char[6];
-      if (!converted)
+        converted = new char[6];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_BREAK_NONE);
+    }
+    else if (strcmp(value, "x-weak") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[6];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_BREAK_XWEAK);
     }
-      strcpy(converted, SSML_BREAK_NONE);
-    }
-  else if (strcmp(value, "x-weak") == 0)
+    else if (strcmp(value, "weak") == 0)
     {
-      converted = new char[6];
-      if (!converted)
+        converted = new char[6];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_BREAK_WEAK);
+    }
+    else if (strcmp(value, "medium") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[6];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_BREAK_MEDIUM);
     }
-      strcpy(converted, SSML_BREAK_XWEAK);
-    }
-  else if (strcmp(value, "weak") == 0)
+    else if (strcmp(value, "strong") == 0)
     {
-      converted = new char[6];
-      if (!converted)
+        converted = new char[6];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_BREAK_STRONG);
+    }
+    else if (strcmp(value, "x-strong") == 0)
     {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
+        converted = new char[6];
+        if (!converted)
+        {
+            LOGE("Error: failed to allocate memory for string!\n");
+            return NULL;
+        }
+        strcpy(converted, SSML_BREAK_XSTRONG);
     }
-      strcpy(converted, SSML_BREAK_WEAK);
-    }
-  else if (strcmp(value, "medium") == 0)
-    {
-      converted = new char[6];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_BREAK_MEDIUM);
-    }
-  else if (strcmp(value, "strong") == 0)
-    {
-      converted = new char[6];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_BREAK_STRONG);
-    }
-  else if (strcmp(value, "x-strong") == 0)
-    {
-      converted = new char[6];
-      if (!converted)
-    {
-      LOGE("Error: failed to allocate memory for string!\n");
-      return NULL;
-    }
-      strcpy(converted, SSML_BREAK_XSTRONG);
-    }
-  return converted;
+    return converted;
 }
 
 /**
-   growDataSize
-   Increases the size of the internal text storage member
+growDataSize
+Increases the size of the internal text storage member
 */
 int SvoxSsmlParser::growDataSize(int sizeToGrow)
 {
-  char* tmp = new char[m_datasize];
-  if (!tmp)
-    return 0;
+    char* tmp = new char[m_datasize];
+    if (!tmp)
+        return 0;
 
-  strcpy(tmp, m_data);
-  delete [] m_data;
-  m_data = NULL;
-  m_data = new char[m_datasize + sizeToGrow];
-  if (!m_data)
+    strcpy(tmp, m_data);
+    delete [] m_data;
+    m_data = NULL;
+    m_data = new char[m_datasize + sizeToGrow];
+    if (!m_data)
     {
-      m_data = tmp;
-      return 0;
+        m_data = tmp;
+        return 0;
     }
-  m_datasize += sizeToGrow;
-  strcpy(m_data, tmp);
-  delete [] tmp;
-  tmp = NULL;
-  return 1;
+    m_datasize += sizeToGrow;
+    strcpy(m_data, tmp);
+    delete [] tmp;
+    tmp = NULL;
+    return 1;
 }

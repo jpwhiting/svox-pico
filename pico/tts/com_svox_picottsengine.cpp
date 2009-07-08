@@ -13,39 +13,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-
-    This is the Manager layer.  It sits on top of the native Pico engine
-    and provides the interface to the defined Google TTS engine API.
-    The Google engine API is the boundary to allow a TTS engine to be swapped.
-    The Manager layer also provide the SSML tag interpretation.
-    The supported SSML tags are mapped to corresponding tags natively supported by Pico.
-    Native Pico functions always begin with picoXXX.
-
-    In the Pico engine, the language cannot be changed indpendently of the voice.
-    If either the voice or locale/language are changed, a new resource is loaded.
-
-    Only a subset of SSML 1.0 tags are supported.
-    Some SSML tags involve significant complexity.
-    If the language is changed through an SSML tag, there is a latency for the load.
- 
-    History:
-    2009-07-01 -- clean up & documentation
-    2009-06-29 -- integrated SSML parser and IPA to XSAMPA conversion
-    2009-06-29 -- revised for C90 compliance
-    2009-06-04 -- updated for new TtsEngine interface
-    2009-05-18 -- initial version
- 
-
- ToDo:
- - duplicate 'phoneme ph='                              ***
- - normalize IPA strings                                **
- - change voice as well as language                     *
-   Changing of voice/language is complex due to potentially multiple swaps
-   under SSML and the latent effects.  This requires storing a history of tags/sets.
+ *
+ *   This is the Manager layer.  It sits on top of the native Pico engine
+ *   and provides the interface to the defined Google TTS engine API.
+ *   The Google engine API is the boundary to allow a TTS engine to be swapped.
+ *   The Manager layer also provide the SSML tag interpretation.
+ *   The supported SSML tags are mapped to corresponding tags natively supported by Pico.
+ *   Native Pico functions always begin with picoXXX.
+ *
+ *   In the Pico engine, the language cannot be changed indpendently of the voice.
+ *   If either the voice or locale/language are changed, a new resource is loaded.
+ *
+ *   Only a subset of SSML 1.0 tags are supported.
+ *   Some SSML tags involve significant complexity.
+ *   If the language is changed through an SSML tag, there is a latency for the load.
+ *
  */
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #define LOG_TAG "SVOX Pico Engine"
 
@@ -86,6 +73,7 @@ const char * PICO_PITCH_CLOSE_TAG           = "</pitch>";
 const char * PICO_VOLUME_OPEN_TAG           = "<volume level='%d'>";
 const char * PICO_VOLUME_CLOSE_TAG          = "</volume>";
 const char * PICO_PHONEME_OPEN_TAG          = "<phoneme ph='";
+const char * PICO_PHONEME_CLOSE_TAG         = "'/>";
 
 /* supported voices
    Pico does not seperately specify the voice and locale.   */
@@ -139,34 +127,28 @@ static int checkForLocale( const char * locale )
      int i;
      if (locale == NULL) {
         LOGE("checkForLanguage called with NULL language");
-        return found;  
+        return found;
      }
 
     /* Verify that the requested locale is a locale that we support.    */
-    for (i = 0; i < picoNumSupportedVocs; i ++)
-    {
-        if (strcmp(locale, picoSupportedLang[i]) == 0)  /* in array */
-        {
+    for (i = 0; i < picoNumSupportedVocs; i ++) {
+        if (strcmp(locale, picoSupportedLang[i]) == 0) { /* in array */
             found = i;
             break;
         }
     };
 
     /* The locale was not found.    */
-    if (found < 0)
-    {
+    if (found < 0) {
         /* We didn't find an exact match; it may have been specified with only the first 2 characters.
            This could overmatch ISO 639-3 language codes.%%                                   */
-        for (i = 0; i < picoNumSupportedVocs; i ++)
-        {
-            if (strncmp(locale, picoSupportedLang[i], 2) == 0)
-            {
+        for (i = 0; i < picoNumSupportedVocs; i ++) {
+            if (strncmp(locale, picoSupportedLang[i], 2) == 0) {
                 found = i;
                 break;
             }
         }
-        if (found < 0)
-        {
+        if (found < 0) {
             LOGE("TtsEngine::set language called with unsupported locale");
         }
     };
@@ -179,24 +161,20 @@ static int checkForLocale( const char * locale )
 */
 static void cleanResources( void )
 {
-    if (picoEngine)
-    {
+    if (picoEngine) {
         pico_disposeEngine( picoSystem, &picoEngine );
         pico_releaseVoiceDefinition( picoSystem, (pico_Char *) PICO_VOICE_NAME );
         picoEngine = NULL;
     }
-    if (picoUtppResource)
-    {
+    if (picoUtppResource) {
         pico_unloadResource( picoSystem, &picoUtppResource );
         picoUtppResource = NULL;
     }
-    if (picoTaResource)
-    {
+    if (picoTaResource) {
         pico_unloadResource( picoSystem, &picoTaResource );
         picoTaResource = NULL;
     }
-    if (picoSgResource)
-    {
+    if (picoSgResource) {
         pico_unloadResource( picoSystem, &picoSgResource );
         picoSgResource = NULL;
     }
@@ -209,44 +187,37 @@ static void cleanResources( void )
 */
 static void cleanFiles( void )
 {
-    if (picoProp_currLang)
-    {
+    if (picoProp_currLang) {
         free( picoProp_currLang );
         picoProp_currLang = NULL;
     }
 
-    if (picoTaFileName)
-    {
+    if (picoTaFileName) {
         free( picoTaFileName );
         picoTaFileName = NULL;
     }
 
-    if (picoSgFileName)
-    {
+    if (picoSgFileName) {
         free( picoSgFileName );
         picoSgFileName = NULL;
     }
 
-    if (picoUtppFileName)
-    {
+    if (picoUtppFileName) {
         free( picoUtppFileName );
         picoUtppFileName = NULL;
     }
 
-    if (picoTaResourceName)
-    {
+    if (picoTaResourceName) {
         free( picoTaResourceName );
         picoTaResourceName = NULL;
     }
 
-    if (picoSgResourceName)
-    {
+    if (picoSgResourceName) {
         free( picoSgResourceName );
         picoSgResourceName = NULL;
     }
 
-    if (picoUtppResourceName)
-    {
+    if (picoUtppResourceName) {
         free( picoUtppResourceName );
         picoUtppResourceName = NULL;
     }
@@ -261,11 +232,11 @@ static void cleanFiles( void )
 static bool hasResourcesForLanguage(int langIndex) {
     FILE * pFile;
     char* fileName = (char*)malloc(PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE);
-    
+
     strcpy((char*)fileName, PICO_LINGWARE_PATH);
     strcat((char*)fileName, (const char*)picoInternalTaLingware[langIndex]);
-    pFile = fopen(fileName,"r");
-    if (pFile == NULL){
+    pFile = fopen(fileName, "r");
+    if (pFile == NULL) {
         free(fileName);
         return false;
     } else {
@@ -298,8 +269,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     int ret;                                        /* function result code */
 
     /* If we already have a loaded locale, check whether it is the same one as requested.   */
-    if (picoProp_currLang && (strcmp(picoProp_currLang, picoSupportedLang[langIndex]) == 0))
-    {
+    if (picoProp_currLang && (strcmp(picoProp_currLang, picoSupportedLang[langIndex]) == 0)) {
         LOGI("Language already loaded (%s == %s)", picoProp_currLang, picoSupportedLang[langIndex]);
         return TTS_SUCCESS;
     }
@@ -327,8 +297,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Load the text analysis Lingware resource file.   */
     ret = pico_loadResource( picoSystem, picoTaFileName, &picoTaResource );
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to load textana resource for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -337,8 +306,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Load the signal generation Lingware resource file.   */
     ret = pico_loadResource( picoSystem, picoSgFileName, &picoSgResource );
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to load siggen resource for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -349,18 +317,16 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
        and is currently not used. Loading is only attempted for future compatibility.
        If this file is not present the loading will still succeed.                      */
     ret = pico_loadResource( picoSystem, picoUtppFileName, &picoUtppResource );
-    if ((PICO_OK != ret) && (ret != PICO_EXC_CANT_OPEN_FILE))
-        {
+    if ((PICO_OK != ret) && (ret != PICO_EXC_CANT_OPEN_FILE)) {
         LOGE("Failed to load utpp resource for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
-        }
+    }
 
     /* Get the text analysis resource name.     */
     ret = pico_getResourceName( picoSystem, picoTaResource, (char *) picoTaResourceName );
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to get textana resource name for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -369,20 +335,17 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Get the signal generation resource name. */
     ret = pico_getResourceName( picoSystem, picoSgResource, (char *) picoSgResourceName );
-    if (PICO_OK == ret && picoUtppResource != NULL)
-    {
+    if (PICO_OK == ret && picoUtppResource != NULL) {
         /* Get utpp resource name - optional: see note above.   */
         ret = pico_getResourceName( picoSystem, picoUtppResource, (char *) picoUtppResourceName );
-        if (PICO_OK != ret)
-        {
+        if (PICO_OK != ret)  {
             LOGE("Failed to get utpp resource name for %s [%d]", picoSupportedLang[langIndex], ret);
             cleanResources();
             cleanFiles();
             return TTS_FAILURE;
         }
     }
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to get siggen resource name for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -391,8 +354,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Create a voice definition.   */
     ret = pico_createVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME );
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to create voice for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -401,8 +363,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Add the text analysis resource to the voice. */
     ret = pico_addResourceToVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME, picoTaResourceName );
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to add textana resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -411,12 +372,10 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Add the signal generation resource to the voice. */
     ret = pico_addResourceToVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME, picoSgResourceName );
-    if (PICO_OK == ret && picoUtppResource != NULL)
-    {
+    if (PICO_OK == ret && picoUtppResource != NULL) {
         /* Add utpp resource to voice - optional: see note above.   */
         ret = pico_addResourceToVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME, picoUtppResourceName );
-        if (PICO_OK != ret)
-        {
+        if (PICO_OK != ret) {
             LOGE("Failed to add utpp resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
             cleanResources();
             cleanFiles();
@@ -424,8 +383,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
         }
     }
 
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to add siggen resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -433,8 +391,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     }
 
     ret = pico_newEngine( picoSystem, (const pico_Char *) PICO_VOICE_NAME, &picoEngine );
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to create engine for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
@@ -463,11 +420,10 @@ static tts_result doLanguageSwitch( const char * locale )
 
     /* Load the new locale. */
     loclIndex = checkForLocale( locale );
-    if (loclIndex < 0)
-        {
+    if (loclIndex < 0)  {
         LOGE("Tried to swith to non-supported locale %s", locale);
         return TTS_FAILURE;
-        }
+    }
     LOGI("Found supported locale %s", picoSupportedLang[loclIndex]);
     return doLanguageSwitchFromLangIndex( loclIndex );
 }
@@ -488,20 +444,17 @@ static char * doAddProperties( const char * str )
 
     haspitch = 0; hasspeed = 0; hasvol = 0;
     textlen = strlen(str) + 1;
-    if (picoProp_currPitch != PICO_DEF_PITCH)           /* non-default pitch    */
-    {
+    if (picoProp_currPitch != PICO_DEF_PITCH) {          /* non-default pitch    */
         textlen += strlen(PICO_PITCH_OPEN_TAG) + 5;
         textlen += strlen(PICO_PITCH_CLOSE_TAG);
         haspitch = 1;
     }
-    if (picoProp_currRate != PICO_DEF_RATE)             /* non-default rate     */
-    {
+    if (picoProp_currRate != PICO_DEF_RATE) {            /* non-default rate     */
         textlen += strlen(PICO_SPEED_OPEN_TAG) + 5;
         textlen += strlen(PICO_SPEED_CLOSE_TAG);
         hasspeed = 1;
     }
-    if (picoProp_currVolume != PICO_DEF_VOLUME)         /* non-default volume   */
-    {
+    if (picoProp_currVolume != PICO_DEF_VOLUME) {        /* non-default volume   */
         textlen += strlen(PICO_VOLUME_OPEN_TAG) + 5;
         textlen += strlen(PICO_VOLUME_CLOSE_TAG);
         hasvol = 1;
@@ -509,29 +462,25 @@ static char * doAddProperties( const char * str )
 
     /* Compose the property strings.    */
     data = (char *) malloc( textlen );                  /* allocate string      */
-    if (!data)
-    {
+    if (!data) {
         return NULL;
     }
     memset(data, 0, textlen);                           /* clear it             */
-    if (haspitch)
-    {
+    if (haspitch) {
         char* tmp = (char*)malloc(strlen(PICO_PITCH_OPEN_TAG) + strlen(PICO_PITCH_CLOSE_TAG) + 5);
         sprintf(tmp, PICO_PITCH_OPEN_TAG, picoProp_currPitch);
         strcat(data, tmp);
         free(tmp);
     }
 
-    if (hasspeed)
-    {
+    if (hasspeed) {
         char* tmp = (char*)malloc(strlen(PICO_SPEED_OPEN_TAG) + strlen(PICO_SPEED_CLOSE_TAG) + 5);
         sprintf(tmp, PICO_SPEED_OPEN_TAG, picoProp_currRate);
         strcat(data, tmp);
         free(tmp);
     }
 
-    if (hasvol)
-    {
+    if (hasvol) {
         char* tmp = (char*)malloc(strlen(PICO_VOLUME_OPEN_TAG) + strlen(PICO_VOLUME_CLOSE_TAG) + 5);
         sprintf(tmp, PICO_VOLUME_OPEN_TAG, picoProp_currVolume);
         strcat(data, tmp);
@@ -540,18 +489,15 @@ static char * doAddProperties( const char * str )
 
     strcat(data, str);
 
-    if (hasvol)
-    {
+    if (hasvol) {
         strcat(data, PICO_VOLUME_CLOSE_TAG);
     }
 
-    if (hasspeed)
-    {
+    if (hasspeed) {
         strcat(data, PICO_SPEED_CLOSE_TAG);
     }
 
-    if (haspitch)
-    {
+    if (haspitch) {
         strcat(data, PICO_PITCH_CLOSE_TAG);
     }
 
@@ -567,71 +513,64 @@ static char * doAddProperties( const char * str )
  *  @length - length of the input string
  *  return new string with tags applied
 */
-static char * createPhonemeString( const char * xsampa, int length )
+extern char * createPhonemeString( const char * xsampa, int length )
 {
     char *  convstring = NULL;
     int     origStrLen = strlen(xsampa);
     int     numWords   = 1;
     int     start, totalLength, i, j;
 
-  for (i = 0; i < origStrLen; i ++)
-      {
-      if (xsampa[i] == ' ')
-          numWords ++;
-      }
+  for (i = 0; i < origStrLen; i ++) {
+    if (xsampa[i] == ' ') numWords++;
+  }
 
-  if (numWords == 1)
-      {
+  if (numWords == 1) {
       convstring = new char[origStrLen + 17];
       convstring[0] = '\0';
-      strcat(convstring, "<phoneme ph='");
+      strcat(convstring, PICO_PHONEME_OPEN_TAG);
       strcat(convstring, xsampa);
-      strcat(convstring, "'/>");
-      }
-  else
-      {
+      strcat(convstring, PICO_PHONEME_CLOSE_TAG);
+  }
+  else {
       char * words[numWords];
       start = 0; totalLength = 0; i = 0; j = 0;
-      for (i=0, j=0; i < origStrLen; i ++)
-          {
-          if (xsampa[i] == ' ')
-              {
+      for (i=0, j=0; i < origStrLen; i++) {
+          if (xsampa[i] == ' ') {
               words[j]    = new char[i+1-start+17];
               words[j][0] = '\0';
-              strcat( words[j], "<phoneme ph='");
+              strcat( words[j], PICO_PHONEME_OPEN_TAG);
               strncat(words[j], xsampa+start, i-start);
-              strcat( words[j], "'/>");
+              strcat( words[j], PICO_PHONEME_CLOSE_TAG);
               start = i + 1;
-              j ++;
+              j++;
               totalLength += strlen(words[j-1]);
-              }
           }
+      }
       words[j]    = new char[i+1-start+17];
       words[j][0] = '\0';
-      strcat(words[j], "<phoneme ph='");
+      strcat(words[j], PICO_PHONEME_OPEN_TAG);
       strcat(words[j], xsampa+start);
-      strcat(words[j], "'/>");
+      strcat(words[j], PICO_PHONEME_CLOSE_TAG);
       totalLength += strlen(words[j]);
       convstring = new char[totalLength + 1];
       convstring[0] = '\0';
-      for (i=0; i < numWords; i ++)
-            {
-            strcat(convstring, words[i]);
-            delete [] words[i];
-            }
+      for (i=0; i < numWords; i++) {
+          strcat(convstring, words[i]);
+          delete [] words[i];
       }
+  }
+
   return convstring;
 }
 
-
-/* The XSAMPA uses as many as 4 characters to represent a single IPA code.  */
+/* The XSAMPA uses as many as 5 characters to represent a single IPA code.  */
 typedef struct tagPhnArr
-    {
+{
     char16_t    strIPA;             /* IPA Unicode symbol       */
-    char        strXSAMPA[5];       /* SAMPA sequence           */
-    } PArr;
+    char        strXSAMPA[6];       /* SAMPA sequence           */
+} PArr;
 
-#define phn_cnt (133)
+#define phn_cnt (134)
 
 PArr    PhnAry[phn_cnt] = {
 
@@ -658,51 +597,51 @@ PArr    PhnAry[phn_cnt] = {
     {0x0250,        "6"},
     {0x00E6,        "{"},
     {0x025C,        "3"},
-    {0x025A,        "@'"},
-    {0x025E,        "3\\"},
-    {0x0258,        "@\\"},
+    {0x025A,        "@`"},
+    {0x025E,        "3\\\\"},
+    {0x0258,        "@\\\\"},
 
     /* Consonants (60) complete */
-    {0x0288,        "t'"},
-    {0x0256,        "d'"},
-    {0x025F,        "J\\"},
+    {0x0288,        "t`"},
+    {0x0256,        "d`"},
+    {0x025F,        "J\\\\"},
     {0x0261,        "g"},
-    {0x0262,        "G\\"},
+    {0x0262,        "G\\\\"},
     {0x0294,        "?"},
     {0x0271,        "F"},
-    {0x0273,        "n'"},
+    {0x0273,        "n`"},
     {0x0272,        "J"},
     {0x014B,        "N"},
-    {0x0274,        "N\\"},
-    {0x0299,        "B\\"},
-    {0x0280,        "R\\"},
+    {0x0274,        "N\\\\"},
+    {0x0299,        "B\\\\"},
+    {0x0280,        "R\\\\"},
     {0x027E,        "4"},
-    {0x027D,        "r'"},
-    {0x0278,        "p\\"},
+    {0x027D,        "r`"},
+    {0x0278,        "p\\\\"},
     {0x03B2,        "B"},
     {0x03B8,        "T"},
     {0x00F0,        "D"},
     {0x0283,        "S"},
     {0x0292,        "Z"},
-    {0x0282,        "s'"},
-    {0x0290,        "z'"},
+    {0x0282,        "s`"},
+    {0x0290,        "z`"},
     {0x00E7,        "C"},
-    {0x029D,        "j\\"},
+    {0x029D,        "j\\\\"},
     {0x0263,        "G"},
     {0x03C7,        "X"},
     {0x0281,        "R"},
-    {0x0127,        "X\\"},
-    {0x0295,        "?\\"},
-    {0x0266,        "h\\"},
+    {0x0127,        "X\\\\"},
+    {0x0295,        "?\\\\"},
+    {0x0266,        "h\\\\"},
     {0x026C,        "K"},
-    {0x026E,        "K\\"},
+    {0x026E,        "K\\\\"},
     {0x028B,        "P"},
-    {0x0279,        "r\\"},
-    {0x027B,        "r\\'"},
-    {0x0270,        "M\\"},
-    {0x026D,        "l'"},
+    {0x0279,        "r\\\\"},
+    {0x027B,        "r\\\\'"},
+    {0x0270,        "M\\\\"},
+    {0x026D,        "l`"},
     {0x028E,        "L"},
-    {0x029F,        "L\\"},
+    {0x029F,        "L\\\\"},
     {0x0253,        "b_<"},
     {0x0257,        "d_<"},
     {0x0284,        "J\\_<"},
@@ -710,18 +649,18 @@ PArr    PhnAry[phn_cnt] = {
     {0x029B,        "G\\_<"},
     {0x028D,        "W"},
     {0x0265,        "H"},
-    {0x029C,        "H\\"},
-    {0x02A1,        ">\\"},
-    {0x02A2,        "<\\"},
-    {0x0298,        "O\\"},
-    {0x01C0,        "|\\"},
-    {0x01C3,        "!\\"},
+    {0x029C,        "H\\\\"},
+    {0x02A1,        ">\\\\"},
+    {0x02A2,        "<\\\\"},
+    {0x0298,        "O\\\\"},
+    {0x01C0,        "|\\\\"},
+    {0x01C3,        "!\\\\"},
     {0x01C2,        "=\\"},
     {0x01C1,        "|\\|\\"},
-    {0x027A,        "l\\"},
-    {0x0255,        "s\\"},
-    {0x0291,        "z\\"},
-    {0x0267,        "x\\"},
+    {0x027A,        "l\\\\"},
+    {0x0255,        "s\\\\"},
+    {0x0291,        "z\\\\"},
+    {0x0267,        "x\\\\"},
     {0x026B,        "l_G"},
 
     /* Diacritics (34)  */
@@ -740,15 +679,15 @@ PArr    PhnAry[phn_cnt] = {
     {0x031C,        "_c"},
     {0x031F,        "_+"},
     {0x0320,        "_-"},
-    {0x0308,        "_"},       /* centralized %%   */
+    {0x0308,        "_\""},     /* centralized  */
     {0x033D,        "_x"},
     {0x0318,        "_A"},
     {0x0319,        "_q"},
-    {0x02DE,        "'"},
+    {0x02DE,        "`"},
     {0x02B7,        "_w"},
     {0x02B2,        "_j"},
     {0x02E0,        "_G"},
-    {0x02E4,        "_?\\"},
+    {0x02E4,        "_?\\\\"},
     {0x0303,        "~"},
     {0x207F,        "_n"},
     {0x02E1,        "_l"},
@@ -760,25 +699,26 @@ PArr    PhnAry[phn_cnt] = {
     {0x032F,        "_^"},
     {0x02D0,        ":"},
 
-    /* Others (10) incomplete%% */
+    /* Others (11) complete */
     {0x0361,        "_"},
     {0x035C,        "_"},
-    {0x02C8,        ""},
+    {0x02C8,        "\""},
     {0x02CC,        "%"},
-    {0x02D1,        ":\\"},
+    {0x02D1,        ":\\\\"},
     {0x0306,        "_X"},
     {0x2016,        "||"},
-    {0x203F,        "-\\"},
+    {0x203F,        "-\\\\"},
     {0x2197,        "<R>"},
     {0x2198,        "<F>"},
+    {0x025D,                "3`"},
 
     /* Affricates (6) complete  */
     {0x02A3,        "d_z"},
     {0x02A4,        "d_Z"},
-    {0x02A5,        "d_z\\"},
+    {0x02A5,        "d_z\\\\"},
     {0x02A6,        "t_s"},
     {0x02A7,        "t_S"},
-    {0x02A8,        "t_s\\"}
+    {0x02A8,        "t_s\\\\"}
     };
 
 
@@ -786,7 +726,6 @@ void CnvIPAPnt( const char16_t IPnt, char * XPnt )
 {
     char16_t        ThisPnt = IPnt;                     /* local copy of single IPA codepoint   */
     int             idx;                                /* index into table         */
-
     /* Convert an individual IPA codepoint.
        A single IPA code could map to a string.
        Search the table.  If it is not found, use the same character.
@@ -795,12 +734,12 @@ void CnvIPAPnt( const char16_t IPnt, char * XPnt )
     XPnt[0] = 0;                                        /* clear the result string  */
 
     /* Search the table for the conversion. */
-    for (idx = 0; idx < phn_cnt; idx ++)                /* for each item in table   */
-      if (IPnt == PhnAry[idx].strIPA)                   /* matches IPA code         */
-        {
-        strcat( XPnt, (const char *)&(PhnAry[idx].strXSAMPA) ); /* copy the XSAMPA string   */
-        return;
+    for (idx = 0; idx < phn_cnt; idx ++) {               /* for each item in table   */
+        if (IPnt == PhnAry[idx].strIPA) {                  /* matches IPA code         */
+            strcat( XPnt, (const char *)&(PhnAry[idx].strXSAMPA) ); /* copy the XSAMPA string   */
+            return;
         }
+    }
     strcat(XPnt, (const char *)&ThisPnt);               /* just copy it             */
 }
 
@@ -811,34 +750,31 @@ void CnvIPAPnt( const char16_t IPnt, char * XPnt )
  *  @outXsampaString - converted XSAMPA string is passed back in this parameter
  *  return size of the new string
 */
-int cnvIpaToXsampa( const char16_t * ipaString, char ** outXsampaString )
+
+int cnvIpaToXsampa( const char16_t * ipaString, size_t ipaStringSize, char ** outXsampaString )
 {
-    size_t      xsize;                                  /* size of result               */
-    size_t      ilen;                                   /* input length                 */
-    int         ipidx;                                  /* index into IPA string        */
-    char *      XPnt;                                   /* short XSAMPA char sequence   */
+    size_t xsize;                                  /* size of result               */
+    int    ipidx;                                  /* index into IPA string        */
+    char * XPnt;                                   /* short XSAMPA char sequence   */
 
     /* Convert an IPA string to an XSAMPA string and store the xsampa string in *outXsampaString.
        It is the responsibility of the caller to free the allocated string.
        Increment through the string.  For each base & combination convert it to the XSAMP equivalent.
        Because of the XSAMPA limitations, not all IPA characters will be covered.       */
     XPnt = (char *) malloc(6);
-    xsize   = (4 * strlen16(ipaString)) + 8;            /* assume more than double size */
-    
+    xsize   = (4 * ipaStringSize) + 8;          /* assume more than double size */
     *outXsampaString = (char *) malloc( xsize );        /* allocate return string   */
     *outXsampaString[0] = 0;
-    xsize = 0;                                          /* clear final              */
-    ilen = strlen16(ipaString);                         /* length of input UTF-16   */
-    for (ipidx = 0; ipidx < ilen; ipidx ++)             /* for each IPA code        */
-        {
-        CnvIPAPnt( ipaString[ipidx], XPnt );            /* get converted string     */
-        strcat((char *)*outXsampaString, XPnt );        /* concatenate XSAMPA       */
-        };
+    xsize = 0;                      /* clear final              */
+
+    for (ipidx = 0; ipidx < ipaStringSize; ipidx ++) {               /* for each IPA code        */
+        CnvIPAPnt( ipaString[ipidx], XPnt );     /* get converted character  */
+        strcat((char *)*outXsampaString, XPnt ); /* concatenate XSAMPA       */
+    }
     free(XPnt);
-    xsize = strlen(*outXsampaString);                   /* get the final length     */
+    xsize = strlen(*outXsampaString);               /* get the final length     */
     return xsize;
 }
-
 
 
 /* Google Engine API function implementations */
@@ -850,22 +786,19 @@ int cnvIpaToXsampa( const char16_t * ipaString, char ** outXsampaString )
 */
 tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr )
 {
-    if (synthDoneCBPtr == NULL)
-    {
+    if (synthDoneCBPtr == NULL) {
         LOGE("Callback pointer is NULL");
         return TTS_FAILURE;
     }
 
     picoMemArea = malloc( PICO_MEM_SIZE );
-    if (!picoMemArea)
-    {
+    if (!picoMemArea) {
         LOGE("Failed to allocate memory for Pico system");
         return TTS_FAILURE;
     }
 
     pico_Status ret = pico_initialize( picoMemArea, PICO_MEM_SIZE, &picoSystem );
-    if (PICO_OK != ret)
-    {
+    if (PICO_OK != ret) {
         LOGE("Failed to initialize Pico system");
         free( picoMemArea );
         picoMemArea = NULL;
@@ -873,9 +806,9 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr )
     }
 
     picoSynthDoneCBPtr = synthDoneCBPtr;
-    
+
     picoCurrentLangIndex = -1;
-    
+
     return TTS_SUCCESS;
 }
 
@@ -888,13 +821,11 @@ tts_result TtsEngine::shutdown( void )
 {
     cleanResources();
 
-    if (picoSystem)
-    {
+    if (picoSystem) {
         pico_terminate(&picoSystem);
         picoSystem = NULL;
     }
-    if (picoMemArea)
-    {
+    if (picoMemArea) {
         free(picoMemArea);
         picoMemArea = NULL;
     }
@@ -1035,7 +966,7 @@ tts_support_result TtsEngine::isLanguageAvailable(const char *lang, const char *
         // check installation of matched language
         return (hasResourcesForLanguage(langIndex) ? TTS_LANG_AVAILABLE : TTS_LANG_MISSING_DATA);
     }
-    
+
     // find a match on the country
     for (int i = langIndex; i < picoNumSupportedVocs; i++) {
         if ((strcmp(lang, picoSupportedLangIso3[i]) == 0)
@@ -1054,7 +985,7 @@ tts_support_result TtsEngine::isLanguageAvailable(const char *lang, const char *
         // check installation of matched language + country
         return (hasResourcesForLanguage(langIndex) ? TTS_LANG_COUNTRY_AVAILABLE : TTS_LANG_MISSING_DATA);
     }
-   
+
     // no variants supported in this library, TTS_LANG_COUNTRY_VAR_AVAILABLE cannot be returned.
 }
 
@@ -1116,68 +1047,61 @@ tts_result TtsEngine::setProperty( const char * property, const char * value, co
     /* Set a specific property for the engine.
        Supported properties include: language (locale), rate, pitch, volume.    */
     /* Sanity check */
-    if (property == NULL)
-        {
+    if (property == NULL) {
         LOGE("setProperty called with property NULL");
         return TTS_PROPERTY_UNSUPPORTED;
-        }
+    }
 
-    if (value == NULL)
-        {
+    if (value == NULL) {
         LOGE("setProperty called with value NULL");
         return TTS_VALUE_INVALID;
-        }
+    }
 
-    if (strncmp(property, "language", 8) == 0)
-        {
+    if (strncmp(property, "language", 8) == 0) {
         /* Verify it's in correct format.   */
-        if (strlen(value) != 2 && strlen(value) != 6)
-            {
+        if (strlen(value) != 2 && strlen(value) != 6) {
             LOGE("change language called with incorrect format");
             return TTS_VALUE_INVALID;
-            }
+        }
 
         /* Try to switch to specified language. */
-        if (doLanguageSwitch(value) == TTS_FAILURE)
-            {
+        if (doLanguageSwitch(value) == TTS_FAILURE) {
             LOGE("failed to load language");
             return TTS_FAILURE;
-            }
-        else
-            {
+        } else {
             return TTS_SUCCESS;
-            }
         }
-    else if (strncmp(property, "rate", 4) == 0)
-        {
+    } else if (strncmp(property, "rate", 4) == 0) {
         rate = atoi(value);
-        if (rate < PICO_MIN_RATE)
+        if (rate < PICO_MIN_RATE) {
             rate = PICO_MIN_RATE;
-        if (rate > PICO_MAX_RATE)
+        }
+        if (rate > PICO_MAX_RATE) {
             rate = PICO_MAX_RATE;
+        }
         picoProp_currRate = rate;
         return TTS_SUCCESS;
-        }
-    else if (strncmp(property, "pitch", 5) == 0)
-        {
+    } else if (strncmp(property, "pitch", 5) == 0) {
         pitch = atoi(value);
-        if (pitch < PICO_MIN_PITCH)
+        if (pitch < PICO_MIN_PITCH) {
             pitch = PICO_MIN_PITCH;
-        if (pitch > PICO_MAX_PITCH)
+        }
+        if (pitch > PICO_MAX_PITCH) {
             pitch = PICO_MAX_PITCH;
+        }
         picoProp_currPitch = pitch;
         return TTS_SUCCESS;
-        }
-    else if (strncmp(property, "volume", 6) == 0)
-        {
+    } else if (strncmp(property, "volume", 6) == 0) {
         volume = atoi(value);
-        if (volume < PICO_MIN_VOLUME)
+        if (volume < PICO_MIN_VOLUME) {
             volume = PICO_MIN_VOLUME;
-        if (volume > PICO_MAX_VOLUME)
+        }
+        if (volume > PICO_MAX_VOLUME) {
             volume = PICO_MAX_VOLUME;
+        }
         picoProp_currVolume = volume;
         return TTS_SUCCESS;
-        }
+    }
 
     return TTS_PROPERTY_UNSUPPORTED;
 }
@@ -1195,71 +1119,55 @@ tts_result TtsEngine::getProperty( const char * property, char * value, size_t *
     /* Get the property for the engine.
        This property was previously set by setProperty or by default.       */
     /* sanity check */
-    if (property == NULL)
-        {
+    if (property == NULL) {
         LOGE("getProperty called with property NULL");
         return TTS_PROPERTY_UNSUPPORTED;
-        }
+    }
 
-    if (value == NULL)
-        {
+    if (value == NULL) {
         LOGE("getProperty called with value NULL");
         return TTS_VALUE_INVALID;
-        }
+    }
 
-    if (strncmp(property, "language", 8) == 0)
-        {
-        if (picoProp_currLang == NULL)
-            {
+    if (strncmp(property, "language", 8) == 0) {
+        if (picoProp_currLang == NULL) {
             strcpy(value, "");
-            }
-        else
-            {
-            if (*iosize < strlen(picoProp_currLang)+1)
-                {
+        } else {
+            if (*iosize < strlen(picoProp_currLang)+1)  {
                 *iosize = strlen(picoProp_currLang) + 1;
                 return TTS_PROPERTY_SIZE_TOO_SMALL;
-                }
-            strcpy(value, picoProp_currLang);
             }
-        return TTS_SUCCESS;
+            strcpy(value, picoProp_currLang);
         }
-    else if (strncmp(property, "rate", 4) == 0)
-        {
+        return TTS_SUCCESS;
+    } else if (strncmp(property, "rate", 4) == 0) {
         char tmprate[4];
         sprintf(tmprate, "%d", picoProp_currRate);
-        if (*iosize < strlen(tmprate)+1)
-        {
+        if (*iosize < strlen(tmprate)+1) {
             *iosize = strlen(tmprate) + 1;
             return TTS_PROPERTY_SIZE_TOO_SMALL;
         }
         strcpy(value, tmprate);
         return TTS_SUCCESS;
-        }
-    else if (strncmp(property, "pitch", 5) == 0)
-        {
+    } else if (strncmp(property, "pitch", 5) == 0) {
         char tmppitch[4];
         sprintf(tmppitch, "%d", picoProp_currPitch);
-        if (*iosize < strlen(tmppitch)+1)
-        {
+        if (*iosize < strlen(tmppitch)+1) {
             *iosize = strlen(tmppitch) + 1;
             return TTS_PROPERTY_SIZE_TOO_SMALL;
         }
         strcpy(value, tmppitch);
         return TTS_SUCCESS;
-        }
-    else if (strncmp(property, "volume", 6) == 0)
-        {
+    } else if (strncmp(property, "volume", 6) == 0) {
         char tmpvol[4];
         sprintf(tmpvol, "%d", picoProp_currVolume);
-        if (*iosize < strlen(tmpvol)+1)
-            {
+        if (*iosize < strlen(tmpvol)+1) {
             *iosize = strlen(tmpvol) + 1;
             return TTS_PROPERTY_SIZE_TOO_SMALL;
-            }
+        }
         strcpy(value, tmpvol);
         return TTS_SUCCESS;
-        }
+    }
 
     /* Unknown property */
     LOGE("Unsupported property");
@@ -1288,73 +1196,61 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     SvoxSsmlParser * parser = NULL;
 
     picoSynthAbort = 0;
-    if (text == NULL)
-        {
+    if (text == NULL) {
         LOGE("synthesizeText called with NULL string");
         return TTS_FAILURE;
-        }
+    }
 
-    if (buffer == NULL)
-        {
+    if (buffer == NULL) {
         LOGE("synthesizeText called with NULL buffer");
         return TTS_FAILURE;
-        }
+    }
 
-    if ((strncmp(text, "<speak", 6) == 0) ||
-        (strncmp(text, "<?xml",  5) == 0)   )
-    {
-      /* SSML input */
-      parser = new SvoxSsmlParser();
-      if (parser && parser->initSuccessful())
-      {
-    err = parser->parseDocument(text, 1);
-    if (err == XML_STATUS_ERROR)
-    {
-      LOGI("Warning: SSML document parsed with errors");
-    }
-    char * parsed_text = parser->getParsedDocument();
-    if (parsed_text)
-    {
-      /* Add property tags to the string - if any.    */
-      local_text = (pico_Char *) doAddProperties( parsed_text );
-      if (!local_text)
-      {
+    if ( (strncmp(text, "<speak", 6) == 0) || (strncmp(text, "<?xml", 5) == 0) ) {
+        /* SSML input */
+        parser = new SvoxSsmlParser();
+        if (parser && parser->initSuccessful()) {
+            err = parser->parseDocument(text, 1);
+            if (err == XML_STATUS_ERROR) {
+                /* Note: for some reason expat always thinks the input document has an error
+                   at the end, even when the XML document is perfectly formed */
+                LOGI("Warning: SSML document parsed with errors");
+            }
+            char * parsed_text = parser->getParsedDocument();
+            if (parsed_text) {
+                /* Add property tags to the string - if any.    */
+                local_text = (pico_Char *) doAddProperties( parsed_text );
+                if (!local_text) {
+                    LOGE("Failed to allocate memory for text string");
+                    delete parser;
+                    return TTS_FAILURE;
+                }
+                char * lang = parser->getParsedDocumentLanguage();
+                if (doLanguageSwitch(lang) == TTS_FAILURE) {
+                    LOGE("Failed to switch to language specified in SSML document.");
+                    delete parser;
+                    return TTS_FAILURE;
+                }
+                delete parser;
+            } else {
+                LOGE("Failed to parse SSML document");
+                delete parser;
+                return TTS_FAILURE;
+            }
+        } else {
+            LOGE("Failed to create SSML parser");
+            if (parser) {
+                delete parser;
+            }
+            return TTS_FAILURE;
+        }
+    } else {
+        /* Add property tags to the string - if any.    */
+        local_text = (pico_Char *) doAddProperties( text );
+        if (!local_text) {
         LOGE("Failed to allocate memory for text string");
-        delete parser;
-        return TTS_FAILURE;
-      }
-      char * lang = parser->getParsedDocumentLanguage();
-      if (doLanguageSwitch(lang) == TTS_FAILURE)
-      {
-        LOGE("Failed to switch to language specified in SSML document.");
-        delete parser;
-        return TTS_FAILURE;
-      }
-      delete parser;
-    }
-    else
-    {
-      LOGE("Failed to parse SSML document");
-      delete parser;
-      return TTS_FAILURE;
-    }
-      }
-      else
-      {
-    LOGE("Failed to create SSML parser");
-    if (parser) delete parser;
-    return TTS_FAILURE;
-      }
-    }
-    else
-    {
-      /* Add property tags to the string - if any.    */
-      local_text = (pico_Char *) doAddProperties( text );
-      if (!local_text)
-      {
-        LOGE("Failed to allocate memory for text string");
-        return TTS_FAILURE;
-      }
+            return TTS_FAILURE;
+        }
     }
 
     text_remaining = strlen((const char *) local_text) + 1;
@@ -1364,79 +1260,76 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     size_t bufused = 0;
 
     /* synthesis loop   */
-    while (text_remaining)
-    {
-        if (picoSynthAbort)
-            {
+    while (text_remaining) {
+        
+        if (picoSynthAbort) {
             ret = pico_resetEngine( picoEngine );
             break;
-            }
+        }
 
         /* Feed the text into the engine.   */
         ret = pico_putTextUtf8( picoEngine, inp, text_remaining, &bytes_sent );
-        if (ret != PICO_OK)
-            {
+        if (ret != PICO_OK) {
             LOGE("Error synthesizing string '%s': [%d]", text, ret);
-            if (local_text)
+            if (local_text) {
                 free( local_text );
-            return TTS_FAILURE;
             }
+            return TTS_FAILURE;
+        }
 
         text_remaining -= bytes_sent;
         inp += bytes_sent;
-        do
-        {
-            if (picoSynthAbort)
-            {
+        do {
+            if (picoSynthAbort) {
                 break;
             }
             /* Retrieve the samples and add them to the buffer. */
-            ret = pico_getData( picoEngine, (void *) outbuf, MAX_OUTBUF_SIZE, &bytes_recv, &out_data_type );
-            if (bytes_recv)
-                {
-                if ((bufused + bytes_recv) <= bufferSize)
-                    {
+            ret = pico_getData( picoEngine, (void *) outbuf, MAX_OUTBUF_SIZE, &bytes_recv, 
+                    &out_data_type );
+            if (bytes_recv) {
+                if ((bufused + bytes_recv) <= bufferSize) {
                     memcpy(buffer+bufused, (int8_t *) outbuf, bytes_recv);
                     bufused += bytes_recv;
-                    }
-                else
-                    {
+                } else {
                     /* The buffer filled; pass this on to the callback function.    */
-                    cbret = picoSynthDoneCBPtr(userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_PENDING);
-                    if (cbret == TTS_CALLBACK_HALT)
-                        {
+                    cbret = picoSynthDoneCBPtr(userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer,
+                            bufused, TTS_SYNTH_PENDING);
+                    if (cbret == TTS_CALLBACK_HALT) {
                         LOGI("Halt requested by caller. Halting.");
                         picoSynthAbort = 1;
                         break;
-                        }
+                    }
                     bufused = 0;
                     memcpy(buffer, (int8_t *) outbuf, bytes_recv);
                     bufused += bytes_recv;
-                    }
                 }
+            }
         } while (PICO_STEP_BUSY == ret);
 
         /* This chunk of synthesis is finished; pass the remaining samples.
            Use 16 KHz, 16-bit samples.                                              */
-        if (!picoSynthAbort)
-        {
-            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_PENDING);
+        if (!picoSynthAbort) {
+            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
+                    TTS_SYNTH_PENDING);
         }
         picoSynthAbort = 0;
 
-        if (ret != PICO_STEP_IDLE)
-        {
+        if (ret != PICO_STEP_IDLE) {
             LOGE("Error occurred during synthesis [%d]", ret);
-            if (local_text) free(local_text);
+            if (local_text) {
+                free(local_text);
+            }
             LOGV("Synth loop: sending TTS_SYNTH_DONE after error");
-            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_DONE);
+            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
+                    TTS_SYNTH_DONE);
             return TTS_FAILURE;
         }
     }
-    
+
     /* Synthesis is done; notify the caller */
     LOGV("Synth loop: sending TTS_SYNTH_DONE after all done, or was asked to stop");
-    picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused, TTS_SYNTH_DONE);
+    picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
+            TTS_SYNTH_DONE);
 
     if (local_text) {
         free( local_text );
