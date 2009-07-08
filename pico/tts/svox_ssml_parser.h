@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * History:
- * 2009-06-29 -- initial version
- *
  */
 
 #include <stdio.h>
@@ -51,7 +48,7 @@ class SvoxSsmlParser
      return 1 if successful, 0 otherwise
   */
   int initSuccessful();
-	
+
  public: /* public members */
 
   /**
@@ -76,7 +73,7 @@ class SvoxSsmlParser
      return language code of SSML document, NULL if not set
   */
   char* getParsedDocumentLanguage();
-	
+
  private: /* static callback functions */
 
   /**
