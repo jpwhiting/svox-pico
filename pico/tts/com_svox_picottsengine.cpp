@@ -335,7 +335,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Get the signal generation resource name. */
     ret = pico_getResourceName( picoSystem, picoSgResource, (char *) picoSgResourceName );
-    if (PICO_OK == ret && picoUtppResource != NULL) {
+    if ((PICO_OK == ret) && (picoUtppResource != NULL)) {
         /* Get utpp resource name - optional: see note above.   */
         ret = pico_getResourceName( picoSystem, picoUtppResource, (char *) picoUtppResourceName );
         if (PICO_OK != ret)  {
@@ -372,7 +372,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Add the signal generation resource to the voice. */
     ret = pico_addResourceToVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME, picoSgResourceName );
-    if (PICO_OK == ret && picoUtppResource != NULL) {
+    if ((PICO_OK == ret) && (picoUtppResource != NULL)) {
         /* Add utpp resource to voice - optional: see note above.   */
         ret = pico_addResourceToVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME, picoUtppResourceName );
         if (PICO_OK != ret) {
@@ -520,47 +520,48 @@ extern char * createPhonemeString( const char * xsampa, int length )
     int     numWords   = 1;
     int     start, totalLength, i, j;
 
-  for (i = 0; i < origStrLen; i ++) {
-    if (xsampa[i] == ' ') numWords++;
-  }
+    for (i = 0; i < origStrLen; i ++) {
+        if ((xsampa[i] == ' ') || (xsampa[i] == '#')) {
+            numWords ++;
+        }
+    }
 
-  if (numWords == 1) {
-      convstring = new char[origStrLen + 17];
-      convstring[0] = '\0';
-      strcat(convstring, PICO_PHONEME_OPEN_TAG);
-      strcat(convstring, xsampa);
-      strcat(convstring, PICO_PHONEME_CLOSE_TAG);
-  }
-  else {
-      char * words[numWords];
-      start = 0; totalLength = 0; i = 0; j = 0;
-      for (i=0, j=0; i < origStrLen; i++) {
-          if (xsampa[i] == ' ') {
-              words[j]    = new char[i+1-start+17];
-              words[j][0] = '\0';
-              strcat( words[j], PICO_PHONEME_OPEN_TAG);
-              strncat(words[j], xsampa+start, i-start);
-              strcat( words[j], PICO_PHONEME_CLOSE_TAG);
-              start = i + 1;
-              j++;
-              totalLength += strlen(words[j-1]);
-          }
-      }
-      words[j]    = new char[i+1-start+17];
-      words[j][0] = '\0';
-      strcat(words[j], PICO_PHONEME_OPEN_TAG);
-      strcat(words[j], xsampa+start);
-      strcat(words[j], PICO_PHONEME_CLOSE_TAG);
-      totalLength += strlen(words[j]);
-      convstring = new char[totalLength + 1];
-      convstring[0] = '\0';
-      for (i=0; i < numWords; i++) {
-          strcat(convstring, words[i]);
-          delete [] words[i];
-      }
-  }
+    if (numWords == 1) {
+        convstring = new char[origStrLen + 17];
+        convstring[0] = '\0';
+        strcat(convstring, PICO_PHONEME_OPEN_TAG);
+        strcat(convstring, xsampa);
+        strcat(convstring, PICO_PHONEME_CLOSE_TAG);
+    } else {
+        char * words[numWords];
+        start = 0; totalLength = 0; i = 0; j = 0;
+        for (i=0, j=0; i < origStrLen; i++) {
+            if ((xsampa[i] == ' ') || (xsampa[i] == '#')) {
+                words[j]    = new char[i+1-start+17];
+                words[j][0] = '\0';
+                strcat( words[j], PICO_PHONEME_OPEN_TAG);
+                strncat(words[j], xsampa+start, i-start);
+                strcat( words[j], PICO_PHONEME_CLOSE_TAG);
+                start = i + 1;
+                j++;
+                totalLength += strlen(words[j-1]);
+            }
+        }
+        words[j]    = new char[i+1-start+17];
+        words[j][0] = '\0';
+        strcat(words[j], PICO_PHONEME_OPEN_TAG);
+        strcat(words[j], xsampa+start);
+        strcat(words[j], PICO_PHONEME_CLOSE_TAG);
+        totalLength += strlen(words[j]);
+        convstring = new char[totalLength + 1];
+        convstring[0] = '\0';
+        for (i=0 ; i < numWords ; i++) {
+            strcat(convstring, words[i]);
+            delete [] words[i];
+        }
+    }
 
-  return convstring;
+    return convstring;
 }
 
 /* The XSAMPA uses as many as 5 characters to represent a single IPA code.  */
@@ -576,7 +577,7 @@ PArr    PhnAry[phn_cnt] = {
 
     /* XSAMPA conversion table      */
 
-    /* Vowels (23) complete     */
+    /* Vowels (23) incomplete     */
     {0x025B,        "E"},
     {0x0251,        "A"},
     {0x0254,        "O"},
@@ -601,7 +602,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x025E,        "3\\\\"},
     {0x0258,        "@\\\\"},
 
-    /* Consonants (60) complete */
+    /* Consonants (60) incomplete */
     {0x0288,        "t`"},
     {0x0256,        "d`"},
     {0x025F,        "J\\\\"},
@@ -663,7 +664,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x0267,        "x\\\\"},
     {0x026B,        "l_G"},
 
-    /* Diacritics (34)  */
+    /* Diacritics (34) incomplete */
     {0x02BC,        "_>"},
     {0x0325,        "_0"},
     {0x030A,        "_0"},
@@ -726,6 +727,7 @@ void CnvIPAPnt( const char16_t IPnt, char * XPnt )
 {
     char16_t        ThisPnt = IPnt;                     /* local copy of single IPA codepoint   */
     int             idx;                                /* index into table         */
+
     /* Convert an individual IPA codepoint.
        A single IPA code could map to a string.
        Search the table.  If it is not found, use the same character.
@@ -735,7 +737,7 @@ void CnvIPAPnt( const char16_t IPnt, char * XPnt )
 
     /* Search the table for the conversion. */
     for (idx = 0; idx < phn_cnt; idx ++) {               /* for each item in table   */
-        if (IPnt == PhnAry[idx].strIPA) {                  /* matches IPA code         */
+        if (IPnt == PhnAry[idx].strIPA) {                /* matches IPA code         */
             strcat( XPnt, (const char *)&(PhnAry[idx].strXSAMPA) ); /* copy the XSAMPA string   */
             return;
         }
@@ -763,16 +765,16 @@ int cnvIpaToXsampa( const char16_t * ipaString, size_t ipaStringSize, char ** ou
        Because of the XSAMPA limitations, not all IPA characters will be covered.       */
     XPnt = (char *) malloc(6);
     xsize   = (4 * ipaStringSize) + 8;          /* assume more than double size */
-    *outXsampaString = (char *) malloc( xsize );        /* allocate return string   */
+    *outXsampaString = (char *) malloc( xsize );/* allocate return string   */
     *outXsampaString[0] = 0;
-    xsize = 0;                      /* clear final              */
+    xsize = 0;                                  /* clear final              */
 
-    for (ipidx = 0; ipidx < ipaStringSize; ipidx ++) {               /* for each IPA code        */
-        CnvIPAPnt( ipaString[ipidx], XPnt );     /* get converted character  */
-        strcat((char *)*outXsampaString, XPnt ); /* concatenate XSAMPA       */
+    for (ipidx = 0; ipidx < ipaStringSize; ipidx ++) { /* for each IPA code        */
+        CnvIPAPnt( ipaString[ipidx], XPnt );           /* get converted character  */
+        strcat((char *)*outXsampaString, XPnt );       /* concatenate XSAMPA       */
     }
     free(XPnt);
-    xsize = strlen(*outXsampaString);               /* get the final length     */
+    xsize = strlen(*outXsampaString);                  /* get the final length     */
     return xsize;
 }
 
