@@ -79,7 +79,7 @@ const char * PICO_PHONEME_CLOSE_TAG         = "'/>";
    Pico does not seperately specify the voice and locale.   */
 const char * picoSupportedLangIso3[]        = { "eng",              "eng",              "deu",              "spa",              "fra",              "ita" };
 const char * picoSupportedCountryIso3[]     = { "USA",              "GBR",              "DEU",              "ESP",              "FRA",              "ITA" };
-const char * picoSupportedLang[]            = { "en-rUS",           "en-rGB",           "de-rDE",           "es-rES",           "fr-rFR",           "it-rIT" };
+const char * picoSupportedLang[]            = { "en-US",            "en-GB",            "de-DE",            "es-ES",            "fr-FR",            "it-IT" };
 const char * picoInternalLang[]             = { "en-US",            "en-GB",            "de-DE",            "es-ES",            "fr-FR",            "it-IT" };
 const char * picoInternalTaLingware[]       = { "en-US_ta.bin",     "en-GB_ta.bin",     "de-DE_ta.bin",     "es-ES_ta.bin",     "fr-FR_ta.bin",     "it-IT_ta.bin" };
 const char * picoInternalSgLingware[]       = { "en-US_lh0_sg.bin", "en-GB_kh0_sg.bin", "de-DE_gl0_sg.bin", "es-ES_zl0_sg.bin", "fr-FR_nk0_sg.bin", "it-IT_cm0_sg.bin" };
@@ -118,7 +118,7 @@ int picoCurrentLangIndex = -1;
 
 /** checkForLocale
  *  Check whether the requested locale is among the supported locales.
- *  @locale -  the locale to check, either in xx or xx-rYY format
+ *  @locale -  the locale to check, either in xx or xx-YY format
  *  return index of the locale, or -1 if not supported.
 */
 static int checkForLocale( const char * locale )
@@ -412,7 +412,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
  *  If another locale is already loaded, this will first be unloaded
  *  and the new one then loaded.
  *  If no locale is loaded, the requested will be loaded.
- *  @locale -  the locale to check, either in xx or xx-rYY format (i.e "en" or "en-rUS")
+ *  @locale -  the locale to check, either in xx or xx-YY format (i.e "en" or "en-US")
  *  return TTS_SUCCESS or TTS_FAILURE
 */
 static tts_result doLanguageSwitch( const char * locale )
