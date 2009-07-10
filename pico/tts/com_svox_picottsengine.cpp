@@ -126,7 +126,7 @@ static int checkForLocale( const char * locale )
      int found = -1;                                         /* language not found   */
      int i;
      if (locale == NULL) {
-        LOGE("checkForLanguage called with NULL language");
+        LOGE("checkForLocale called with NULL language");
         return found;
      }
 
@@ -400,6 +400,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Set the current locale/voice.    */
     strcpy( picoProp_currLang, picoSupportedLang[langIndex] );
+    picoCurrentLangIndex = langIndex;
     LOGI("loaded %s successfully", picoProp_currLang);
     return TTS_SUCCESS;
 }
@@ -1228,10 +1229,23 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                     return TTS_FAILURE;
                 }
                 char * lang = parser->getParsedDocumentLanguage();
-                if (doLanguageSwitch(lang) == TTS_FAILURE) {
-                    LOGE("Failed to switch to language specified in SSML document.");
-                    delete parser;
-                    return TTS_FAILURE;
+                if (lang != NULL) {
+                    if (doLanguageSwitch(lang) == TTS_FAILURE) {
+                        LOGE("Failed to switch to language (%s) specified in SSML document.", lang);
+                        delete parser;
+                        return TTS_FAILURE;
+                    }
+                } else {
+                    // lang is NULL, pick a language so the synthesis can be performed
+                    if (picoCurrentLangIndex == -1) {
+                        // no current language loaded, pick the first one and load it
+                        if (doLanguageSwitchFromLangIndex(0) == TTS_FAILURE) {
+                            LOGE("Failed to switch to default language.");
+                            delete parser;
+                            return TTS_FAILURE;
+                        }
+                    }
+                    LOGE("No language in SSML, using current language (%s).", picoProp_currLang);
                 }
                 delete parser;
             } else {
