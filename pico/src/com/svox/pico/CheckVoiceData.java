@@ -49,7 +49,8 @@ public class CheckVoiceData extends Activity {
 
         // Make sure the SD card is accessible
         if (!new File("/sdcard/").canRead()) {
-            result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA_NO_SDCARD;
+            // FIXME temporary change to avoid breaking the build while renaming CHECK_VOICE_DATA_MISSING_DATA_NO_SDCARD
+            result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA; //TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA_NO_SDCARD;
         }
 
         // Check for files
