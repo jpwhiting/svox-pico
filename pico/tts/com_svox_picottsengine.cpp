@@ -1297,6 +1297,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         inp += bytes_sent;
         do {
             if (picoSynthAbort) {
+                ret = pico_resetEngine( picoEngine );
                 break;
             }
             /* Retrieve the samples and add them to the buffer. */
@@ -1313,6 +1314,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                     if (cbret == TTS_CALLBACK_HALT) {
                         LOGI("Halt requested by caller. Halting.");
                         picoSynthAbort = 1;
+                        ret = pico_resetEngine( picoEngine );
                         break;
                     }
                     bufused = 0;
