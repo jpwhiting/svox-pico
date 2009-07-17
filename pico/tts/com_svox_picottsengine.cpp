@@ -1333,13 +1333,16 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         picoSynthAbort = 0;
 
         if (ret != PICO_STEP_IDLE) {
-            LOGE("Error occurred during synthesis [%d]", ret);
+            if (ret != 0){
+                LOGE("Error occurred during synthesis [%d]", ret);
+            }
             if (local_text) {
                 free(local_text);
             }
             LOGV("Synth loop: sending TTS_SYNTH_DONE after error");
             picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
                     TTS_SYNTH_DONE);
+            pico_resetEngine( picoEngine );
             return TTS_FAILURE;
         }
     }
