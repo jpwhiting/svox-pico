@@ -13,20 +13,34 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class InstallerActivity extends Activity {
+    private static final int DATA_ROOT_DIRECTORY_REQUEST_CODE = 42;
+    private String rootDirectory = "";
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        runInstaller();
+        Intent getRootDirectoryIntent = new Intent();
+        getRootDirectoryIntent.setClassName("com.svox.pico", "com.svox.pico.CheckVoiceData");
+        startActivityForResult(getRootDirectoryIntent, DATA_ROOT_DIRECTORY_REQUEST_CODE);
     }
-    
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == DATA_ROOT_DIRECTORY_REQUEST_CODE) {
+            rootDirectory = data.getStringExtra(TextToSpeech.Engine.VOICE_DATA_ROOT_DIRECTORY);
+            runInstaller();
+        }
+    }
+
     private void runInstaller(){
         try {
             Resources res = getResources();
@@ -58,11 +72,11 @@ public class InstallerActivity extends Activity {
             ZipEntry entry = zis.getNextEntry();
             while (entry != null) {
                 if (entry.isDirectory()) {
-                    File newDir = new File("/sdcard/" + entry.getName());
+                    File newDir = new File(rootDirectory + entry.getName());
                     newDir.mkdir();
                 } else {
                     String name = entry.getName();
-                    File outputFile = new File("/sdcard/" + name);
+                    File outputFile = new File(rootDirectory + name);
                     String outputPath = outputFile.getCanonicalPath();
                     name = outputPath
                             .substring(outputPath.lastIndexOf("/") + 1);
