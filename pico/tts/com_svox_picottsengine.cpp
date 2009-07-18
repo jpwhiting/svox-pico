@@ -455,11 +455,16 @@ static char * doAddProperties( const char * str )
         textlen += strlen(PICO_SPEED_CLOSE_TAG);
         hasspeed = 1;
     }
-    if (picoProp_currVolume != PICO_DEF_VOLUME) {        /* non-default volume   */
+
+    // Always set the volume for now - this is to work around not being able
+    // to change the default volume.
+    // TODO: Fix the underlying problem so that default volume as defined by
+    // PICO_DEF_VOLUME is respected.
+    //if (picoProp_currVolume != PICO_DEF_VOLUME) {        /* non-default volume   */
         textlen += strlen(PICO_VOLUME_OPEN_TAG) + 5;
         textlen += strlen(PICO_VOLUME_CLOSE_TAG);
         hasvol = 1;
-    }
+    //}
 
     /* Compose the property strings.    */
     data = (char *) malloc( textlen );                  /* allocate string      */
