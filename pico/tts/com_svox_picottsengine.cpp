@@ -815,6 +815,13 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr )
 
     picoSynthDoneCBPtr = synthDoneCBPtr;
 
+    // TODO: Remove this workaround once a proper fix is made to the underlying
+    // Pico engine. This workaround is currently needed as there is a problem
+    // switching languages if the first language that the engine is set to is
+    // not English. As long as the first language is English, switching to other
+    // languages after that will work fine.
+    doLanguageSwitchFromLangIndex(0);
+
     picoCurrentLangIndex = -1;
 
     return TTS_SUCCESS;
