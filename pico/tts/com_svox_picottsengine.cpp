@@ -60,7 +60,7 @@ using namespace android;
 /* speaking volume  */
 #define PICO_MIN_VOLUME       0
 #define PICO_MAX_VOLUME     500
-#define PICO_DEF_VOLUME     250
+#define PICO_DEF_VOLUME     120
 
 /* string constants */
 #define MAX_OUTBUF_SIZE     128
