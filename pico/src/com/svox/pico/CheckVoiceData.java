@@ -62,9 +62,9 @@ public class CheckVoiceData extends Activity {
 
         // Put the root directory for the sd card data + the data filenames
         Intent returnData = new Intent();
-        returnData.putExtra(TextToSpeech.Engine.VOICE_DATA_ROOT_DIRECTORY, dataDir);
-        returnData.putExtra(TextToSpeech.Engine.VOICE_DATA_FILES, dataFiles);
-        returnData.putExtra(TextToSpeech.Engine.VOICE_DATA_FILES_INFO, dataFilesInfo);
+        returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_ROOT_DIRECTORY, dataDir);
+        returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES, dataFiles);
+        returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES_INFO, dataFilesInfo);
 
         setResult(result, returnData);
         finish();
