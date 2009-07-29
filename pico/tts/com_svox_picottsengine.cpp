@@ -178,6 +178,11 @@ static void cleanResources( void )
         pico_unloadResource( picoSystem, &picoSgResource );
         picoSgResource = NULL;
     }
+
+    if (picoSystem) {
+        pico_terminate(&picoSystem);
+        picoSystem = NULL;
+    }
     picoCurrentLangIndex = -1;
 }
 
@@ -268,17 +273,30 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 {
     int ret;                                        /* function result code */
 
-    /* If we already have a loaded locale, check whether it is the same one as requested.   */
-    if (picoProp_currLang && (strcmp(picoProp_currLang, picoSupportedLang[langIndex]) == 0)) {
-        LOGI("Language already loaded (%s == %s)", picoProp_currLang, picoSupportedLang[langIndex]);
-        return TTS_SUCCESS;
+    if (langIndex>=0) {
+        /* If we already have a loaded locale, check whether it is the same one as requested.   */
+        if (picoProp_currLang && (strcmp(picoProp_currLang, picoSupportedLang[langIndex]) == 0)) {
+            LOGI("Language already loaded (%s == %s)", picoProp_currLang,
+                    picoSupportedLang[langIndex]);
+            return TTS_SUCCESS;
+        }
     }
 
-    /* It is not the same locale; unload the current one first. */
+    /* It is not the same locale; unload the current one first. Also invalidates the system object*/
     cleanResources();
 
     /* Allocate memory for file and resource names.     */
     cleanFiles();
+
+    if (picoSystem==NULL) {
+        /*re-init system object*/
+        ret = pico_initialize( picoMemArea, PICO_MEM_SIZE, &picoSystem );
+        if (PICO_OK != ret) {
+            LOGE("Failed to initialize the pico system object\n");
+            return TTS_FAILURE;
+        }
+    }
+
     picoProp_currLang   = (char *)      malloc( 10 );
     picoTaFileName      = (pico_Char *) malloc( PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE );
     picoSgFileName      = (pico_Char *) malloc( PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE );
@@ -286,6 +304,16 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     picoTaResourceName  = (pico_Char *) malloc( PICO_MAX_RESOURCE_NAME_SIZE );
     picoSgResourceName  = (pico_Char *) malloc( PICO_MAX_RESOURCE_NAME_SIZE );
     picoUtppResourceName =(pico_Char *) malloc( PICO_MAX_RESOURCE_NAME_SIZE );
+
+    if (
+        (picoProp_currLang==NULL) || (picoTaFileName==NULL) || (picoSgFileName==NULL) ||
+        (picoUtppFileName==NULL) || (picoTaResourceName==NULL) || (picoSgResourceName==NULL) ||
+        (picoUtppResourceName==NULL)
+        ) {
+        LOGE("Failed to allocate memory for internal strings\n");
+        cleanResources();
+        return TTS_FAILURE;
+    }
 
     /* Set the path and file names for resource files.  */
     strcpy((char *) picoTaFileName,   PICO_LINGWARE_PATH);
@@ -814,13 +842,6 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr )
     }
 
     picoSynthDoneCBPtr = synthDoneCBPtr;
-
-    // TODO: Remove this workaround once a proper fix is made to the underlying
-    // Pico engine. This workaround is currently needed as there is a problem
-    // switching languages if the first language that the engine is set to is
-    // not English. As long as the first language is English, switching to other
-    // languages after that will work fine.
-    doLanguageSwitchFromLangIndex(0);
 
     picoCurrentLangIndex = -1;
 
