@@ -36,7 +36,7 @@ public class InstallerActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == DATA_ROOT_DIRECTORY_REQUEST_CODE) {
-            rootDirectory = data.getStringExtra(TextToSpeech.Engine.VOICE_DATA_ROOT_DIRECTORY);
+            rootDirectory = data.getStringExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_ROOT_DIRECTORY);
             runInstaller();
         }
     }
@@ -116,9 +116,7 @@ public class InstallerActivity extends Activity {
         }
 
         public void run() {
-            Log.e("lang pack installer", "Start");
             boolean succeeded = unzipLangPack(stream);
-            Log.e("lang pack installer", "Done!");
             if (succeeded) {
                 runOnUiThread(new uninstallDisplayer());
             } else {
