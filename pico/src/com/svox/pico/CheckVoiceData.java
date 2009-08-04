@@ -28,7 +28,11 @@ import android.speech.tts.TextToSpeech;
  * sd card.
  */
 public class CheckVoiceData extends Activity {
-    private final static String dataDir = "/sdcard/svox/";
+
+    // The following constants are the same path constants as the ones defined
+    // in external/svox/pico/tts/com_svox_picottsengine.cpp
+    private final static String PICO_LINGWARE_PATH = "/sdcard/svox/";
+    private final static String PICO_SYSTEM_LINGWARE_PATH = "/system/tts/lang_pico/";
 
     private final static String[] dataFiles = {
             "de-DE_gl0_sg.bin", "de-DE_ta.bin", "en-GB_kh0_sg.bin", "en-GB_ta.bin",
@@ -47,22 +51,18 @@ public class CheckVoiceData extends Activity {
 
         int result = TextToSpeech.Engine.CHECK_VOICE_DATA_PASS;
 
-        // Make sure the SD card is accessible
-        if (!new File("/sdcard/").canRead()) {
-            result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_VOLUME;
-        }
-
         // Check for files
         for (int i = 0; i < dataFiles.length; i++) {
-            File tempFile = new File(dataDir + dataFiles[i]);
-            if (!tempFile.exists()) {
+            File tempFile = new File(PICO_LINGWARE_PATH + dataFiles[i]);
+            File tempFileSys = new File(PICO_SYSTEM_LINGWARE_PATH + dataFiles[i]);
+            if ((!tempFile.exists()) && (!tempFileSys.exists())) {
                 result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA;
             }
         }
 
         // Put the root directory for the sd card data + the data filenames
         Intent returnData = new Intent();
-        returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_ROOT_DIRECTORY, dataDir);
+        returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_ROOT_DIRECTORY, PICO_LINGWARE_PATH);
         returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES, dataFiles);
         returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES_INFO, dataFilesInfo);
 

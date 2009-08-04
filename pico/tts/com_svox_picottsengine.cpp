@@ -64,6 +64,7 @@ using namespace android;
 
 /* string constants */
 #define MAX_OUTBUF_SIZE     128
+const char * PICO_SYSTEM_LINGWARE_PATH      = "/system/tts/lang_pico/";
 const char * PICO_LINGWARE_PATH             = "/sdcard/svox/";
 const char * PICO_VOICE_NAME                = "PicoVoice";
 const char * PICO_SPEED_OPEN_TAG            = "<speed level='%d'>";
@@ -238,6 +239,27 @@ static bool hasResourcesForLanguage(int langIndex) {
     FILE * pFile;
     char* fileName = (char*)malloc(PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE);
 
+    /* check resources on system (under PICO_SYSTEM_LINGWARE_PATH). */
+    strcpy((char*)fileName, PICO_SYSTEM_LINGWARE_PATH);
+    strcat((char*)fileName, (const char*)picoInternalTaLingware[langIndex]);
+    pFile = fopen(fileName, "r");
+    if (pFile != NULL) {
+        /* "ta" file found. */
+        fclose (pFile);
+        /* now look for "sg" file. */
+        strcpy((char*)fileName, PICO_SYSTEM_LINGWARE_PATH);
+        strcat((char*)fileName, (const char*)picoInternalSgLingware[langIndex]);
+        pFile = fopen(fileName, "r");
+        if (pFile != NULL) {
+            /* "sg" file found, no need to continue checking, return success. */
+            fclose(pFile);
+            free(fileName);
+            return true;
+        }
+    }
+
+    /* resources not found on system, check resources on alternative location */
+    /* (under PICO_LINGWARE_PATH).                                            */
     strcpy((char*)fileName, PICO_LINGWARE_PATH);
     strcat((char*)fileName, (const char*)picoInternalTaLingware[langIndex]);
     pFile = fopen(fileName, "r");
@@ -315,12 +337,34 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
         return TTS_FAILURE;
     }
 
+    /* Find where to load the resource files from: system or alternative location              */
+    /* based on availability of the Ta file. Try the alternative location first, this is where */
+    /* more recent language file updates would be installed (under PICO_LINGWARE_PATH).        */
+    bool bUseSystemPath = true;
+    FILE * pFile;
+    char* tmpFileName = (char*)malloc(PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE);
+    strcpy((char*)tmpFileName, PICO_LINGWARE_PATH);
+    strcat((char*)tmpFileName, (const char*)picoInternalTaLingware[langIndex]);
+    pFile = fopen(tmpFileName, "r");
+    if (pFile != NULL) {
+        /* "ta" file found under PICO_LINGWARE_PATH, don't use the system path. */
+        fclose (pFile);
+        bUseSystemPath = false;
+    }
+    free(tmpFileName);
+
     /* Set the path and file names for resource files.  */
-    strcpy((char *) picoTaFileName,   PICO_LINGWARE_PATH);
+    if (bUseSystemPath) {
+        strcpy((char *) picoTaFileName,   PICO_SYSTEM_LINGWARE_PATH);
+        strcpy((char *) picoSgFileName,   PICO_SYSTEM_LINGWARE_PATH);
+        strcpy((char *) picoUtppFileName, PICO_SYSTEM_LINGWARE_PATH);
+    } else {
+        strcpy((char *) picoTaFileName,   PICO_LINGWARE_PATH);
+        strcpy((char *) picoSgFileName,   PICO_LINGWARE_PATH);
+        strcpy((char *) picoUtppFileName, PICO_LINGWARE_PATH);
+    }
     strcat((char *) picoTaFileName,   (const char *) picoInternalTaLingware[langIndex]);
-    strcpy((char *) picoSgFileName,   PICO_LINGWARE_PATH);
     strcat((char *) picoSgFileName,   (const char *) picoInternalSgLingware[langIndex]);
-    strcpy((char *) picoUtppFileName, PICO_LINGWARE_PATH);
     strcat((char *) picoUtppFileName, (const char *) picoInternalUtppLingware[langIndex]);
 
     /* Load the text analysis Lingware resource file.   */
