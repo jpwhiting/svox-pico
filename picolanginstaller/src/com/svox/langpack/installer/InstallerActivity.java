@@ -22,11 +22,16 @@ import android.widget.Button;
 public class InstallerActivity extends Activity {
     private static final int DATA_ROOT_DIRECTORY_REQUEST_CODE = 42;
     private String rootDirectory = "";
+    private InstallerActivity self;
+    private static boolean sInstallationSuccess = false;
+    private static boolean sIsInstalling = false;
+    private final static Object sInstallerStateLock = new Object();
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        self = this;
         Intent getRootDirectoryIntent = new Intent();
         getRootDirectoryIntent.setClassName("com.svox.pico", "com.svox.pico.CheckVoiceData");
         startActivityForResult(getRootDirectoryIntent, DATA_ROOT_DIRECTORY_REQUEST_CODE);
@@ -37,7 +42,13 @@ public class InstallerActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == DATA_ROOT_DIRECTORY_REQUEST_CODE) {
             rootDirectory = data.getStringExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_ROOT_DIRECTORY);
-            runInstaller();
+            // only run the installer if there isn't another one running
+            synchronized (sInstallerStateLock) {
+                if (!sIsInstalling && !sInstallationSuccess) {
+                    sIsInstalling = true;
+                    runInstaller();
+                }
+            }
         }
     }
 
@@ -56,13 +67,6 @@ public class InstallerActivity extends Activity {
         setContentView(R.layout.installing);
     }
 
-    private void uninstall() {
-        Intent intent = new Intent(Intent.ACTION_DELETE);
-        String packageName = getPackageName();
-        Uri data = Uri.fromParts("package", packageName, null);
-        intent.setData(data);
-        startActivity(intent);
-    }
 
     private boolean unzipLangPack(InputStream stream) {
         FileOutputStream out;
@@ -108,7 +112,7 @@ public class InstallerActivity extends Activity {
         }
     }
 
-    public class unzipper implements Runnable {
+    private class unzipper implements Runnable {
         public InputStream stream;
 
         public unzipper(InputStream is) {
@@ -116,26 +120,35 @@ public class InstallerActivity extends Activity {
         }
 
         public void run() {
-            boolean succeeded = unzipLangPack(stream);
-            if (succeeded) {
-                runOnUiThread(new uninstallDisplayer());
+            boolean result = unzipLangPack(stream);
+            synchronized (sInstallerStateLock) {
+                sInstallationSuccess = result;
+                sIsInstalling = false;
+            }
+            if (sInstallationSuccess) {
+                // installation completed: signal success (extra set to SUCCESS)
+                Intent installCompleteIntent =
+                        new Intent(TextToSpeech.Engine.ACTION_TTS_DATA_INSTALLED);
+                installCompleteIntent.putExtra(TextToSpeech.Engine.EXTRA_TTS_DATA_INSTALLED,
+                        TextToSpeech.SUCCESS);
+                self.sendBroadcast(installCompleteIntent);
             } else {
-                runOnUiThread(new retryDisplayer());
+                // installation failed
+                // signal install error if the activity is finishing (can't ask the user to retry)
+                if (self.isFinishing()) {
+                    Intent installCompleteIntent =
+                        new Intent(TextToSpeech.Engine.ACTION_TTS_DATA_INSTALLED);
+                    installCompleteIntent.putExtra(TextToSpeech.Engine.EXTRA_TTS_DATA_INSTALLED,
+                            TextToSpeech.ERROR);
+                    self.sendBroadcast(installCompleteIntent);
+                } else {
+                    // the activity is still running, ask the user to retry.
+                    runOnUiThread(new retryDisplayer());
+                }
             }
         }
     }
 
-    public class uninstallDisplayer implements Runnable {
-        public void run() {
-            setContentView(R.layout.uninstall);
-            Button uninstallButton = (Button) findViewById(R.id.uninstallButton);
-            uninstallButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    uninstall();
-                }
-            });
-        }
-    }
 
     public class retryDisplayer implements Runnable {
         public void run() {
@@ -143,7 +156,14 @@ public class InstallerActivity extends Activity {
             Button retryButton = (Button) findViewById(R.id.retryButton);
             retryButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View arg0) {
-                    runInstaller();
+                    // only run the installer if there isn't another one running
+                    // (we only get here if the installer couldn't complete successfully before)
+                    synchronized (sInstallerStateLock) {
+                        if (!sIsInstalling) {
+                            sIsInstalling = true;
+                            runInstaller();
+                        }
+                    }
                 }
             });
         }

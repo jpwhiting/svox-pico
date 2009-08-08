@@ -15,6 +15,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.svox.pico" android:versionCode="1" android:versionName="1.0">
     <uses-sdk android:minSdkVersion="2" />
+    <uses-permission android:name="android.permission.DELETE_PACKAGES" />
     <application android:label="@string/app_name">
 
         <activity android:name=".DownloadVoiceData" android:label="@string/app_name"
@@ -29,6 +30,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".LangPackUninstaller">
+            <intent-filter>
+                <action android:name="android.speech.tts.engine.TTS_DATA_INSTALLED" />
             </intent-filter>
         </receiver>
 
