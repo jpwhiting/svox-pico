@@ -386,7 +386,7 @@ typedef struct pam_subobj
 /*------------------------------------------------------------------
  Service routines :
  ------------------------------------------------------------------*/
-static pico_status_t pam_initialize(register picodata_ProcessingUnit this);
+static pico_status_t pam_initialize(register picodata_ProcessingUnit this, picoos_int32 r_mode);
 static pico_status_t pam_terminate(register picodata_ProcessingUnit this);
 static pico_status_t pam_allocate(picoos_MemoryManager mm, pam_subobj_t *pam);
 static void pam_deallocate(picoos_MemoryManager mm, pam_subobj_t *pam);
@@ -556,7 +556,7 @@ static void pam_deallocate(picoos_MemoryManager mm, pam_subobj_t *pam)
  * @callgraph
  * @callergraph
  */
-static pico_status_t pam_initialize(register picodata_ProcessingUnit this)
+static pico_status_t pam_initialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
 {
     pico_status_t nI, nJ;
     pam_subobj_t *pam;
@@ -599,6 +599,11 @@ static pico_status_t pam_initialize(register picodata_ProcessingUnit this)
     pam->nLastAttachedItemId = pam->nCurrAttachedItem = 0;
     pam->nAttachedItemsSize = 0;
 
+    if (r_mode == PICO_RESET_SOFT) {
+        /*following initializations needed only at startup or after a full reset*/
+        return PICO_OK;
+    }
+
     /*pitch and duration modifiers*/
     pam->pMod = 1.0f;
     pam->dMod = 1.0f;
@@ -621,6 +626,8 @@ static pico_status_t pam_initialize(register picodata_ProcessingUnit this)
             }
         }
     }
+
+
 /*-----------------------------------------------------------------
      * MANAGE LINGWARE INITIALIZATION IF NEEDED
      ------------------------------------------------------------------*/
@@ -813,7 +820,7 @@ picodata_ProcessingUnit picopam_newPamUnit(picoos_MemoryManager mm,
     /*-----------------------------------------------------------------
      * Initialize memory for PAM (this may be re-used elsewhere, e.g.Reset)
      * ------------------------------------------------------------------*/
-    if (PICO_OK != pam_initialize(this)) {
+    if (PICO_OK != pam_initialize(this, PICO_RESET_FULL)) {
         PICODBG_ERROR(("problem initializing the pam sub-object"));
     }
     return this;

@@ -69,8 +69,8 @@ pico_status_t picoctrl_engFeedText(
         picoos_int16 * bytesPut);
 
 pico_status_t picoctrl_engReset(
-        picoctrl_Engine engine
-        );
+        picoctrl_Engine engine,
+        picoos_int32 r_mode);
 
 picoos_Common picoctrl_engGetCommon(picoctrl_Engine this);
 

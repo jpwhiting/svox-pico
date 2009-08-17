@@ -242,7 +242,7 @@ typedef struct sa_subobj {
 } sa_subobj_t;
 
 
-static pico_status_t saInitialize(register picodata_ProcessingUnit this) {
+static pico_status_t saInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode) {
     sa_subobj_t * sa;
     picoos_uint16 i;
     picokfst_FST fst;
@@ -293,6 +293,11 @@ static pico_status_t saInitialize(register picodata_ProcessingUnit this) {
     sa->phonReadPos = 0;
     sa->phonWritePos = 0;
     sa->nextReadPos = 0;
+
+    if (r_mode == PICO_RESET_SOFT) {
+        /*following initializations needed only at startup or after a full reset*/
+        return PICO_OK;
+    }
 
     /* kb fst[] */
     sa->numFsts = 0;
@@ -471,7 +476,7 @@ picodata_ProcessingUnit picosa_newSentAnaUnit(picoos_MemoryManager mm,
     }
 
 
-    saInitialize(this);
+    saInitialize(this, PICO_RESET_FULL);
     return this;
 }
 

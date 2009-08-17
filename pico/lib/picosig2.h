@@ -139,7 +139,7 @@ typedef struct sig_innerobj
 extern pico_status_t sigAllocate(picoos_MemoryManager mm,
         sig_innerobj_t *sig_inObj);
 extern void sigDeallocate(picoos_MemoryManager mm, sig_innerobj_t *sig_inObj);
-extern void sigDspInitialize(sig_innerobj_t *sig_inObj);
+extern void sigDspInitialize(sig_innerobj_t *sig_inObj, picoos_int32 r_mode);
 
 /*------------------------------------------------------------------
  Exported (to picosig.c) Processing routines :
