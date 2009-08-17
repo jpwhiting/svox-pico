@@ -3168,8 +3168,9 @@ extern void pr_treatItem (picodata_ProcessingUnit this, pr_subobj_t * pr, pr_ioI
 /* *****************************************************************************/
 
 
-pico_status_t prReset(register picodata_ProcessingUnit this)
+pico_status_t prReset(register picodata_ProcessingUnit this, picoos_int32 r_mode)
 {
+
     picoos_int32 i;
     pr_subobj_t * pr;
 
@@ -3226,6 +3227,10 @@ pico_status_t prReset(register picodata_ProcessingUnit this)
 
     pr->forceOutput = FALSE;
 
+    if (r_mode == PICO_RESET_SOFT) {
+        /*following initializations needed only at startup or after a full reset*/
+        return PICO_OK;
+    }
 
     pr->xsampa_parser = picokfst_getFST(this->voice->kbArray[PICOKNOW_KBID_FST_XSAMPA_PARSE]);
 
@@ -3239,14 +3244,14 @@ pico_status_t prReset(register picodata_ProcessingUnit this)
 }
 
 
-pico_status_t prInitialize(register picodata_ProcessingUnit this)
+pico_status_t prInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
 {
 /*
     if (NULL == this || NULL == this->subObj) {
         return PICO_ERR_OTHER;
     }
 */
-    return prReset(this);
+    return prReset(this, r_mode);
 }
 
 
@@ -3314,7 +3319,7 @@ picodata_ProcessingUnit picopr_newPreprocUnit(picoos_MemoryManager mm, picoos_Co
         picoos_deallocate(mm, (void *)&this);
         return NULL;
     }
-    prInitialize(this);
+    prInitialize(this, PICO_RESET_FULL);
     return this;
 }
 

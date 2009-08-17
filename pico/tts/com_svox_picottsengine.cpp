@@ -1356,7 +1356,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     while (text_remaining) {
         
         if (picoSynthAbort) {
-            ret = pico_resetEngine( picoEngine );
+            ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
             break;
         }
 
@@ -1374,7 +1374,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         inp += bytes_sent;
         do {
             if (picoSynthAbort) {
-                ret = pico_resetEngine( picoEngine );
+                ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
                 break;
             }
             /* Retrieve the samples and add them to the buffer. */
@@ -1391,7 +1391,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                     if (cbret == TTS_CALLBACK_HALT) {
                         LOGI("Halt requested by caller. Halting.");
                         picoSynthAbort = 1;
-                        ret = pico_resetEngine( picoEngine );
+                        ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
                         break;
                     }
                     bufused = 0;
@@ -1419,7 +1419,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
             LOGV("Synth loop: sending TTS_SYNTH_DONE after error");
             picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
                     TTS_SYNTH_DONE);
-            pico_resetEngine( picoEngine );
+            pico_resetEngine( picoEngine, PICO_RESET_SOFT );
             return TTS_FAILURE;
         }
     }

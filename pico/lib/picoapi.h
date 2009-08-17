@@ -422,8 +422,9 @@ PICO_FUNC pico_getData(
    particular text input and signal data output buffers.
 */
 PICO_FUNC pico_resetEngine(
-        pico_Engine engine
-        );
+        pico_Engine engine,
+        pico_Status r_mode
+);
 
 
 /* Engine status and error/warning message retrieval ******************/
