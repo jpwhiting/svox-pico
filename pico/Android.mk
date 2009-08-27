@@ -16,8 +16,6 @@ LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
 LOCAL_PACKAGE_NAME := PicoTts
 
-LOCAL_JNI_SHARED_LIBRARIES := libttspico
-
 include $(BUILD_PACKAGE)
 
 # Build Pico Shared Library
