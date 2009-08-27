@@ -583,6 +583,157 @@ static char * doAddProperties( const char * str )
 }
 
 
+/** get_tok
+ *  Searches for tokens in a string
+ *  @str - text to be processed
+ *  @pos - position of first character to be searched in str
+ *  @textlen - postion of last character to be searched
+ *  @tokstart - address of a variable to receive the start of the token found
+ *  @tokstart - address of a variable to receive the length of the token found
+ *  return : 1=token found, 0=token not found
+ *  notes : the token separator set could be enlarged adding characters in "seps"
+*/
+static int  get_tok(const char * str , int pos, int textlen, int *tokstart, int *toklen)
+{
+    const char * seps = " ";
+
+    /*look for start*/
+    while ((pos<textlen) && (strchr(seps,str[pos]) != NULL)) {
+        pos++;
+    }
+    if (pos == textlen) {
+        /*no characters != seps found whithin string*/
+        return 0;
+    }
+    *tokstart = pos;
+    /*look for end*/
+    while ((pos<textlen) && (strchr(seps,str[pos]) == NULL)) {
+        pos++;
+    }
+    *toklen = pos - *tokstart;
+    return 1;
+}/*get_tok*/
+
+
+/** get_sub_tok
+ *  Searches for subtokens in a token having a compound structure with camel case like "xxxYyyy"
+ *  @str - text to be processed
+ *  @pos - position of first character to be searched in str
+ *  @textlen - postion of last character to be searched in str
+ *  @tokstart - address of a variable to receive the start of the sub token found
+ *  @tokstart - address of a variable to receive the length of the sub token found
+ *  return : 1=sub token found, 0=sub token not found
+ *  notes : the sub token separator set could be enlarged adding characters in "seps"
+*/
+static int  get_sub_tok(const char * str , int pos, int textlen, int *tokstart, int *toklen) {
+
+    const char * seps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    if (pos == textlen) {
+        return 0;
+    }
+
+    /*first char != space*/
+    *tokstart = pos;
+    /*finding first non separator*/
+    while ((pos < textlen) && (strchr(seps, str[pos]) != NULL)) {
+        pos++;
+    }
+    if (pos == textlen) {
+        /*characters all in seps found whithin string : return full token*/
+        *toklen = pos - *tokstart;
+        return 1;
+    }
+    /*pos should be pointing to first non seps and more chars are there*/
+    /*finding first separator*/
+    while ((pos < textlen) && (strchr(seps, str[pos]) == NULL)) {
+        pos++;
+    }
+    if (pos == textlen) {
+        /*transition non seps->seps not found : return full token*/
+        *toklen = pos - *tokstart;
+        return 1;
+    }
+    *toklen = pos - *tokstart;
+    return 1;
+}/*get_sub_tok*/
+
+
+/** doCamelCase
+ *  Searches for tokens having a compound structure with camel case and transforms them as follows :
+ *        "XxxxYyyy" -->> "Xxxx Yyyy",
+ *        "xxxYyyy"  -->> "xxx Yyyy",
+ *        "XXXYyyy"  -->> "XXXYyyy"
+ *        etc....
+ *  The calling function is responsible for freeing the returned string.
+ *  @str - text to be processed
+ *  return new string with text processed
+*/
+static char * doCamelCase( const char * str )
+{
+    int     textlen;             /* input string length   */
+    int     totlen;              /* output string length   */
+    int     tlen_2, nsubtok;     /* nuber of subtokens   */
+    int     toklen, tokstart;    /*legnth and start of generic token*/
+    int     stoklen, stokstart;  /*legnth and start of generic sub-token*/
+    int     pos, tokpos, outpos; /*postion of current char in input string and token and output*/
+    char    *data;               /*pointer of the returned string*/
+
+    pos = 0;
+    tokpos = 0;
+    toklen = 0;
+    stoklen = 0;
+    tlen_2 = 0;
+    totlen = 0;
+
+    textlen = strlen(str) + 1;
+
+    /*counting characters after sub token splitting including spaces*/
+    //while ((pos<textlen) && (str[pos]!=0)) {
+    while (get_tok(str, pos, textlen, &tokstart, &toklen)) {
+        tokpos = tokstart;
+        tlen_2 = 0;
+        nsubtok = 0;
+        while (get_sub_tok(str, tokpos, tokstart+toklen, &stokstart, &stoklen)) {
+            totlen += stoklen;
+            tlen_2 += stoklen;
+            tokpos = stokstart + stoklen;
+            nsubtok += 1;
+        }
+        totlen += nsubtok;    /*add spaces between subtokens*/
+        pos = tokstart + tlen_2;
+    }
+    //}
+    /* Allocate the return string */
+    data = (char *) malloc( totlen );                  /* allocate string      */
+    if (!data) {
+        return NULL;
+    }
+    memset(data, 0, totlen);                           /* clear it             */
+    outpos = 0;
+    pos = 0;
+    /*copying characters*/
+    //while ((pos<textlen) && (str[pos]!=0)) {
+    while (get_tok  (str, pos, textlen, &tokstart, &toklen)) {
+        tokpos = tokstart;
+        tlen_2 = 0;
+        nsubtok = 0;
+        while (get_sub_tok(str, tokpos, tokstart+toklen, &stokstart, &stoklen)) {
+            strncpy(&(data[outpos]), &(str[stokstart]), stoklen);
+            outpos += stoklen;
+            strncpy(&(data[outpos]), " ", 1);
+            tlen_2 += stoklen;
+            outpos += 1;
+            tokpos = stokstart + stoklen;
+        }
+        pos=tokstart+tlen_2;
+    }
+    //}
+    data[outpos] = 0;
+    return data;
+}/*doCamelCase*/
+
+
 /** createPhonemeString
  *  Wrap all individual words in <phoneme> tags.
  *  The Pico <phoneme> tag only supports one word in each tag,
@@ -834,7 +985,7 @@ void CnvIPAPnt( const char16_t IPnt, char * XPnt )
 int cnvIpaToXsampa( const char16_t * ipaString, size_t ipaStringSize, char ** outXsampaString )
 {
     size_t xsize;                                  /* size of result               */
-    int    ipidx;                                  /* index into IPA string        */
+    size_t ipidx;                                  /* index into IPA string        */
     char * XPnt;                                   /* short XSAMPA char sequence   */
 
     /* Convert an IPA string to an XSAMPA string and store the xsampa string in *outXsampaString.
@@ -1269,6 +1420,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     int         err;
     int         cbret;
     pico_Char * inp = NULL;
+    char *      expanded_text = NULL;
     pico_Char * local_text = NULL;
     short       outbuf[MAX_OUTBUF_SIZE/2];
     pico_Int16  bytes_sent, bytes_recv, text_remaining, out_data_type;
@@ -1338,8 +1490,11 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
             return TTS_FAILURE;
         }
     } else {
+        /* camelCase pre-processing */
+        expanded_text = doCamelCase(text);
         /* Add property tags to the string - if any.    */
-        local_text = (pico_Char *) doAddProperties( text );
+        local_text = (pico_Char *) doAddProperties( expanded_text );
+        free( expanded_text );
         if (!local_text) {
         LOGE("Failed to allocate memory for text string");
             return TTS_FAILURE;
@@ -1354,7 +1509,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
 
     /* synthesis loop   */
     while (text_remaining) {
-        
+
         if (picoSynthAbort) {
             ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
             break;
@@ -1378,7 +1533,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                 break;
             }
             /* Retrieve the samples and add them to the buffer. */
-            ret = pico_getData( picoEngine, (void *) outbuf, MAX_OUTBUF_SIZE, &bytes_recv, 
+            ret = pico_getData( picoEngine, (void *) outbuf, MAX_OUTBUF_SIZE, &bytes_recv,
                     &out_data_type );
             if (bytes_recv) {
                 if ((bufused + bytes_recv) <= bufferSize) {
