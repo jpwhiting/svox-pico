@@ -29,6 +29,7 @@
  *   If the language is changed through an SSML tag, there is a latency for the load.
  *
  */
+//#define LOG_NDEBUG 0
 
 #include <stdio.h>
 #include <unistd.h>
@@ -1491,12 +1492,15 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         }
     } else {
         /* camelCase pre-processing */
-        expanded_text = doCamelCase(text);
+        //expanded_text = doCamelCase(text);
         /* Add property tags to the string - if any.    */
-        local_text = (pico_Char *) doAddProperties( expanded_text );
-        free( expanded_text );
+        local_text = (pico_Char *) doAddProperties( text );//expanded_text );
+        /*if (expanded_text) {
+            LOGV("freeing string for %s", expanded_text);
+            free( expanded_text );
+        }*/
         if (!local_text) {
-        LOGE("Failed to allocate memory for text string");
+            LOGE("Failed to allocate memory for text string");
             return TTS_FAILURE;
         }
     }
