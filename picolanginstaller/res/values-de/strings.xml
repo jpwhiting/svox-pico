@@ -20,5 +20,5 @@
     <string name="uninstall_message" msgid="174096141356529599">"Die Sprachdaten wurden erfolgreich installiert. Sie können dieses Installationsprogramm nun entfernen."</string>
     <string name="uninstall" msgid="6195983436684617741">"Deinstallieren"</string>
     <string name="retry_message" msgid="6519833625675608678">"Die Sprachdaten konnten nicht installiert werden. Stellen Sie sicher, dass sich die SD-Karte in Ihrem Gerät befindet und über mindestens 6 MB freien Speicherplatz verfügt. Wenn sich Ihre Karte bereits im Gerät befindet, entfernen Sie die Karte und setzen Sie sie dann wieder ein."</string>
-    <string name="retry" msgid="7470276488993209974">"Erneut versuchen"</string>
+    <string name="retry" msgid="7470276488993209974">"Wiederholen"</string>
 </resources>
