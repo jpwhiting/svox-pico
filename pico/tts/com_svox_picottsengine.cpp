@@ -801,13 +801,16 @@ typedef struct tagPhnArr
     char        strXSAMPA[6];       /* SAMPA sequence           */
 } PArr;
 
-#define phn_cnt (134)
+#define phn_cnt (134+7)
 
 PArr    PhnAry[phn_cnt] = {
 
-    /* XSAMPA conversion table      */
+    /* XSAMPA conversion table
+	   This maps a single IPA symbol to a sequence representing XSAMPA.
+       This relies upon a direct one-to-one correspondance
+       including diphthongs and affricates.						      */
 
-    /* Vowels (23) incomplete     */
+    /* Vowels (23) complete     */
     {0x025B,        "E"},
     {0x0251,        "A"},
     {0x0254,        "O"},
@@ -832,7 +835,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x025E,        "3\\\\"},
     {0x0258,        "@\\\\"},
 
-    /* Consonants (60) incomplete */
+    /* Consonants (60) complete */
     {0x0288,        "t`"},
     {0x0256,        "d`"},
     {0x025F,        "J\\\\"},
@@ -883,6 +886,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x029C,        "H\\\\"},
     {0x02A1,        ">\\\\"},
     {0x02A2,        "<\\\\"},
+    {0x0267,        "x\\\\"},		/* hooktop heng	*/
     {0x0298,        "O\\\\"},
     {0x01C0,        "|\\\\"},
     {0x01C3,        "!\\\\"},
@@ -891,10 +895,10 @@ PArr    PhnAry[phn_cnt] = {
     {0x027A,        "l\\\\"},
     {0x0255,        "s\\\\"},
     {0x0291,        "z\\\\"},
-    {0x0267,        "x\\\\"},
     {0x026B,        "l_G"},
 
-    /* Diacritics (34) incomplete */
+
+    /* Diacritics (37) complete */
     {0x02BC,        "_>"},
     {0x0325,        "_0"},
     {0x030A,        "_0"},
@@ -910,7 +914,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x031C,        "_c"},
     {0x031F,        "_+"},
     {0x0320,        "_-"},
-    {0x0308,        "_\""},     /* centralized  */
+    {0x0308,        "_\""},     /* centralized		*/
     {0x033D,        "_x"},
     {0x0318,        "_A"},
     {0x0319,        "_q"},
@@ -918,30 +922,39 @@ PArr    PhnAry[phn_cnt] = {
     {0x02B7,        "_w"},
     {0x02B2,        "_j"},
     {0x02E0,        "_G"},
-    {0x02E4,        "_?\\\\"},
-    {0x0303,        "~"},
+    {0x02E4,        "_?\\\\"},	/* pharyngealized	*/
+    {0x0303,        "~"},		/* nasalized		*/
     {0x207F,        "_n"},
     {0x02E1,        "_l"},
     {0x031A,        "_}"},
     {0x0334,        "_e"},
-    {0x031D,        "_r"},
-    {0x031E,        "_o"},
-    {0x0329,        "="},
-    {0x032F,        "_^"},
-    {0x02D0,        ":"},
-
-    /* Others (11) complete */
-    {0x0361,        "_"},
+    {0x031D,        "_r"},		/* raised  equivalent to 02D4 */
+    {0x02D4,        "_r"},		/* raised  equivalent to 031D */
+    {0x031E,        "_o"},		/* lowered equivalent to 02D5 */
+    {0x02D5,        "_o"},		/* lowered equivalent to 031E */
+    {0x0329,        "="},		/* sylabic			*/
+    {0x032F,        "_^"},		/* non-sylabic		*/
+    {0x0361,        "_"},		/* top tie bar		*/
     {0x035C,        "_"},
-    {0x02C8,        "\""},
-    {0x02CC,        "%"},
-    {0x02D1,        ":\\\\"},
-    {0x0306,        "_X"},
-    {0x2016,        "||"},
-    {0x203F,        "-\\\\"},
-    {0x2197,        "<R>"},
-    {0x2198,        "<F>"},
-    {0x025D,                "3`"},
+
+    /* Suprasegmental (15) incomplete */
+    {0x02C8,        "\""},		/* primary   stress	*/
+    {0x02CC,        "%"},		/* secondary stress	*/
+    {0x02D0,        ":"},		/* long				*/
+    {0x02D1,        ":\\\\"},	/* half-long		*/
+    {0x0306,        "_X"},		/* extra short		*/
+
+    {0x2016,        "||"},		/* major group		*/
+    {0x203F,        "-\\\\"},	/* bottom tie bar	*/
+    {0x2197,        "<R>"},		/* global rise		*/
+    {0x2198,        "<F>"},		/* global fall		*/
+    {0x2193,        "<D>"},		/* downstep			*/
+    {0x2191,        "<U>"},		/* upstep			*/
+    {0x02E5,        "<T>"},		/* extra high level	*/
+    {0x02E7,        "<M>"},		/* mid level		*/
+    {0x02E9,        "<B>"},		/* extra low level	*/
+
+    {0x025D,        "3`"},		/* non-IPA	%%		*/
 
     /* Affricates (6) complete  */
     {0x02A3,        "d_z"},
