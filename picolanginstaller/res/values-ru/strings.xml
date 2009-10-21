@@ -15,7 +15,7 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" msgid="3853942104135735825">"Установщик данных синтеза речи"</string>
+    <string name="app_name" msgid="3853942104135735825">"Установщик данных синтезатора речи"</string>
     <string name="installing_message" msgid="8792926973732354514">"Установка голосовых данных на SD-карте."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Голосовые данные установлены успешно. Можно удалить установщик."</string>
     <string name="uninstall" msgid="6195983436684617741">"Удалить"</string>
