@@ -29,4 +29,5 @@ libtool
 *.lo
 .libs
 libttspico.la
+pico2wave
 

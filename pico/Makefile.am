@@ -34,3 +34,10 @@ libttspico_la_SOURCES = \
 	lib/picotrns.c \
 	lib/picowa.c
 
+bin_PROGRAMS = pico2wave
+pico2wave_SOURCES = \
+	bin/pico2wave.c
+pico2wave_LDADD = \
+	libttspico.la -lm -lpopt
+pico2wave_CFLAGS = -Wall -I lib
+
