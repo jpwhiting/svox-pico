@@ -70,6 +70,15 @@ libttspico_la_HEADERS = \
     lib/picotrns.h \
     lib/picowa.h
 
+picolangdir = $(datadir)/pico/lang
+picolang_DATA = \
+    lang/de-DE*.bin \
+    lang/en-GB*.bin \
+    lang/en-US*.bin \
+    lang/es-ES*.bin \
+    lang/fr-FR*.bin \
+    lang/it-IT*.bin
+
 bin_PROGRAMS = pico2wave
 pico2wave_SOURCES = \
 	bin/pico2wave.c
