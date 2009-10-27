@@ -34,6 +34,42 @@ libttspico_la_SOURCES = \
 	lib/picotrns.c \
 	lib/picowa.c
 
+libttspico_ladir = $(includedir)
+libttspico_la_HEADERS = \
+    lib/picoacph.h \
+    lib/picoapid.h \
+    lib/picoapi.h \
+    lib/picobase.h \
+    lib/picocep.h \
+    lib/picoctrl.h \
+    lib/picodata.h \
+    lib/picodbg.h \
+    lib/picodefs.h \
+    lib/picodsp.h \
+    lib/picoextapi.h \
+    lib/picofftsg.h \
+    lib/picokdbg.h \
+    lib/picokdt.h \
+    lib/picokfst.h \
+    lib/picoklex.h \
+    lib/picoknow.h \
+    lib/picokpdf.h \
+    lib/picokpr.h \
+    lib/picoktab.h \
+    lib/picoos.h \
+    lib/picopal.h \
+    lib/picopam.h \
+    lib/picopltf.h \
+    lib/picopr.h \
+    lib/picorsrc.h \
+    lib/picosa.h \
+    lib/picosig2.h \
+    lib/picosig.h \
+    lib/picospho.h \
+    lib/picotok.h \
+    lib/picotrns.h \
+    lib/picowa.h
+
 bin_PROGRAMS = pico2wave
 pico2wave_SOURCES = \
 	bin/pico2wave.c
