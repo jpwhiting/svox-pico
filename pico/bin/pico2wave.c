@@ -36,7 +36,11 @@
 
 /* string constants */
 #define MAX_OUTBUF_SIZE     128
+#ifdef picolangdir
+const char * PICO_LINGWARE_PATH             = picolangdir "/";
+#else
 const char * PICO_LINGWARE_PATH             = "./lang/";
+#endif
 const char * PICO_VOICE_NAME                = "PicoVoice";
 
 /* supported voices
