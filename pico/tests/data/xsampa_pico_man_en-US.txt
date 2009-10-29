@@ -57,7 +57,7 @@
 # TEST T thin "TIn
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;TIn"/>.</speak>
 
-# BUG Z measure "mE.Z@` says garbage on the whole utterance
+# TEST Z measure "mE.Z@`
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@`"/>.</speak>
 
 # TEST f fit "fIt
@@ -72,8 +72,11 @@
 # TEST v vim "vIm
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;vIm"/>.</speak>
 
-# BUG W whale "We_Il  says [v hu hale]
+# TEST W whale "We_Il  ("east coast" pronounciation of W phoneme for "wh")
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;We_Il"/>.</speak>
+
+# TEST w whale "We_Il
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;we_Il"/>.</speak>
 
 # TEST z zing "zIN
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;zIN"/>.</speak>
@@ -109,10 +112,10 @@
 # Monophthongs
 # --------- Short
 
-# BUG @ allow @."la_U says [llow], drops the [a]
+# TEST @ allow @."la_U
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="@.&#34;la_U"/>.</speak>
 
-# BUG @` actor "{k.t@` says garbage on the whole utterance
+# TEST @` actor "{k.t@`
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;{k.t@`"/>.</speak>
 
 # TEST E pet  "pEt
@@ -133,11 +136,11 @@
 
 # --------- Long
 
-# BUG 3`: furs "f3`:z says [fuz z z]
+# TEST 3`: furs "f3`:z says [fuz z z]
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;f3`:z"/>.</speak>
 
-# BUG A: stars "stA:rz says [starch]
-<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:rz"/>.</speak>
+# TEST A: stars "stA:r\z says [starch]
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:r\\z"/>.</speak>
 
 # TEST i: ease "i:z
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;i:z"/>.</speak>
@@ -183,3 +186,4 @@
 # ---------
 
 # END_TEST
+
