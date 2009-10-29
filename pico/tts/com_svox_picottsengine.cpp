@@ -954,7 +954,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x02E7,        "<M>"},		/* mid level		*/
     {0x02E9,        "<B>"},		/* extra low level	*/
 
-    {0x025D,        "3`"},		/* non-IPA	%%		*/
+    {0x025D,        "3`:"},		/* non-IPA	%%		*/
 
     /* Affricates (6) complete  */
     {0x02A3,        "d_z"},
