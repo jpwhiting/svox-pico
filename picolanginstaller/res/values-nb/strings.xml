@@ -16,9 +16,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Installasjonsprogram for tale-syntesedata"</string>
-    <string name="installing_message" msgid="8792926973732354514">"Installer taledata på SD-kort."</string>
-    <string name="uninstall_message" msgid="174096141356529599">"Taledata er installert. Du kan fjerne dette installasjonsprogrammet nå."</string>
+    <string name="installing_message" msgid="8792926973732354514">"Installer stemmedata på SD-kort."</string>
+    <string name="uninstall_message" msgid="174096141356529599">"Stemmedata er installert. Du kan fjerne dette installasjonsprogrammet nå."</string>
     <string name="uninstall" msgid="6195983436684617741">"Avinstaller"</string>
-    <string name="retry_message" msgid="6519833625675608678">"Taledata kunne ikke installeres. Kontroller at SD-kortet er i enheten, og at det har ledig plass på minst 6 MB. Hvis kortet er i enheten,·tar·du·ut·kortet·og·setter det inn igjen."</string>
+    <string name="retry_message" msgid="6519833625675608678">"Stemmedata kunne ikke installere. Kontroller at SD-kortet er i enheten, og at det har ledig plass på minst 6 MB. Hvis kortet er i enheten, prøv å ta ut kortet og sette det inn igjen."</string>
     <string name="retry" msgid="7470276488993209974">"Prøv på nytt"</string>
 </resources>
