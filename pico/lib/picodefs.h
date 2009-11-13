@@ -156,6 +156,11 @@ typedef signed int pico_Status;
 
 #define PICO_STEP_ERROR                 (pico_Status)  -200
 
+/* Engine reset modes ***********************************************************/
+
+/* general */
+#define PICO_RESET_FULL                 (pico_Status)    0
+#define PICO_RESET_SOFT                 (pico_Status)    0x10
 
 
 /* ********************************************************************/

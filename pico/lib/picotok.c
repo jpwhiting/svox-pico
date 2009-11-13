@@ -1385,7 +1385,7 @@ static void tok_treatSimpleToken (picodata_ProcessingUnit this, tok_subobj_t * t
 
 /* *****************************************************************************/
 
-static pico_status_t tokReset(register picodata_ProcessingUnit this)
+static pico_status_t tokReset(register picodata_ProcessingUnit this, picoos_int32 r_mode)
 {
     tok_subobj_t * tok;
     MarkupId mId;
@@ -1449,7 +1449,7 @@ static pico_status_t tokReset(register picodata_ProcessingUnit this)
     return PICO_OK;
 }
 
-static pico_status_t tokInitialize(register picodata_ProcessingUnit this)
+static pico_status_t tokInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
 {
 /*
 
@@ -1460,7 +1460,7 @@ static pico_status_t tokInitialize(register picodata_ProcessingUnit this)
     }
     tok = (tok_subobj_t *) this->subObj;
 */
-    return tokReset(this);
+    return tokReset(this, r_mode);
 }
 
 
@@ -1508,7 +1508,7 @@ picodata_ProcessingUnit picotok_newTokenizeUnit(picoos_MemoryManager mm, picoos_
         picoos_deallocate(mm, (void *)&this);
         return NULL;
     }
-    tokInitialize(this);
+    tokInitialize(this, PICO_RESET_FULL);
     return this;
 }
 

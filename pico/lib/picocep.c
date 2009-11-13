@@ -285,7 +285,7 @@ static picodata_step_result_t cepStep(register picodata_ProcessingUnit this,
  * @callgraph
  * @callergraph
  */
-static pico_status_t cepInitialize(register picodata_ProcessingUnit this)
+static pico_status_t cepInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
 {
     /*pico_status_t nRes;*/
     cep_subobj_t * cep;
@@ -328,35 +328,37 @@ static pico_status_t cepInitialize(register picodata_ProcessingUnit this)
      ------------------------------------------------------------------*/
     cep->activeEndPos = PICOCEP_MAXWINLEN;
 
-    /* kb pdflfz */
-    cep->pdflfz = picokpdf_getPdfMUL(
-            this->voice->kbArray[PICOKNOW_KBID_PDF_LFZ]);
+    if (r_mode == PICO_RESET_FULL) {
+        /* kb pdflfz */
+        cep->pdflfz = picokpdf_getPdfMUL(
+                this->voice->kbArray[PICOKNOW_KBID_PDF_LFZ]);
 
-    /* kb pdfmgc */
-    cep->pdfmgc = picokpdf_getPdfMUL(
-            this->voice->kbArray[PICOKNOW_KBID_PDF_MGC]);
+        /* kb pdfmgc */
+        cep->pdfmgc = picokpdf_getPdfMUL(
+                this->voice->kbArray[PICOKNOW_KBID_PDF_MGC]);
 
-    /* kb tab phones */
-    /* cep->phones =
-     picoktab_getPhones(this->voice->kbArray[PICOKNOW_KBID_TAB_PHONES]); */
+        /* kb tab phones */
+        /* cep->phones =
+         picoktab_getPhones(this->voice->kbArray[PICOKNOW_KBID_TAB_PHONES]); */
 
-    /*---------------------- other working variables ---------------------------*/
-    /* define the (constant) FRAME_PAR item header */
-    cep->framehead.type = PICODATA_ITEM_FRAME_PAR;
-    cep->framehead.info1 = PICOCEP_OUT_DATA_FORMAT;
-    cep->framehead.info2 = cep->pdfmgc->ceporder;
-    cep->framehead.len = sizeof(picoos_uint16) + (cep->framehead.info2 + 4)
-            * sizeof(picoos_uint16);
+        /*---------------------- other working variables ---------------------------*/
+        /* define the (constant) FRAME_PAR item header */
+        cep->framehead.type = PICODATA_ITEM_FRAME_PAR;
+        cep->framehead.info1 = PICOCEP_OUT_DATA_FORMAT;
+        cep->framehead.info2 = cep->pdfmgc->ceporder;
+        cep->framehead.len = sizeof(picoos_uint16) + (cep->framehead.info2 + 4)
+                * sizeof(picoos_uint16);
+        cep->scmeanpowLFZ = cep->pdflfz->bigpow - cep->pdflfz->meanpow;
+        cep->scmeanpowMGC = cep->pdfmgc->bigpow - cep->pdfmgc->meanpow;
 
+        cep->scmeanLFZ = (1 << (picoos_uint32) cep->scmeanpowLFZ);
+
+        cep->scmeanMGC = (1 << (picoos_uint32) cep->scmeanpowMGC);
+
+    }
     /* constants used in makeWUWandWUm */
     initSmoothing(cep);
 
-    cep->scmeanpowLFZ = cep->pdflfz->bigpow - cep->pdflfz->meanpow;
-    cep->scmeanpowMGC = cep->pdfmgc->bigpow - cep->pdfmgc->meanpow;
-
-    cep->scmeanLFZ = (1 << (picoos_uint32) cep->scmeanpowLFZ);
-
-    cep->scmeanMGC = (1 << (picoos_uint32) cep->scmeanpowMGC);
 
     return PICO_OK;
 }/*cepInitialize*/
@@ -461,7 +463,7 @@ picodata_ProcessingUnit picocep_newCepUnit(picoos_MemoryManager mm,
         picoos_deallocate(mm, (void*) &this);
         return NULL;
     }
-    cepInitialize(this);
+    cepInitialize(this, PICO_RESET_FULL);
 
     return this;
 }/*picocep_newCepUnit*/

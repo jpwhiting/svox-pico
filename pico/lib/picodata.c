@@ -574,7 +574,7 @@ typedef struct simple_pu_data
     picorsrc_Voice voice;
 } simple_pu_data_t;
 
-static pico_status_t puSimpleInitialize (register picodata_ProcessingUnit this) {
+static pico_status_t puSimpleInitialize (register picodata_ProcessingUnit this, picoos_int32 r_mode) {
     return PICO_OK;
 }
 

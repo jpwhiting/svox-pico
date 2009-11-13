@@ -90,7 +90,7 @@ typedef struct ctrl_subobj {
  * @callgraph
  * @callergraph
  */
-static pico_status_t ctrlInitialize(register picodata_ProcessingUnit this) {
+static pico_status_t ctrlInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode) {
     register ctrl_subobj_t * ctrl;
     pico_status_t status= PICO_OK;
     picoos_int8 i;
@@ -104,7 +104,7 @@ static pico_status_t ctrlInitialize(register picodata_ProcessingUnit this) {
     status = PICO_OK;
     for (i = 0; i < ctrl->numProcUnits; i++) {
         if (PICO_OK == status) {
-            status = ctrl->procUnit[i]->initialize(ctrl->procUnit[i]);
+            status = ctrl->procUnit[i]->initialize(ctrl->procUnit[i], r_mode);
             PICODBG_DEBUG(("(re-)initializing procUnit[%i] returned status %i",i, status));
         }
         if (PICO_OK == status) {
@@ -521,7 +521,7 @@ typedef struct picoctrl_engine {
  * @callgraph
  * @callergraph
  */
-pico_status_t picoctrl_engReset(picoctrl_Engine this)
+pico_status_t picoctrl_engReset(picoctrl_Engine this, picoos_int32 r_mode)
 {
     pico_status_t status;
 
@@ -532,7 +532,7 @@ pico_status_t picoctrl_engReset(picoctrl_Engine this)
 
     status = this->control->terminate(this->control);
     if (PICO_OK == status) {
-        status = this->control->initialize(this->control);
+        status = this->control->initialize(this->control, r_mode);
     }
     if (PICO_OK == status) {
         status = picodata_cbReset(this->cbIn);

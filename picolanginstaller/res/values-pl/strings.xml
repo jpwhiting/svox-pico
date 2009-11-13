@@ -20,5 +20,5 @@
     <string name="uninstall_message" msgid="174096141356529599">"Dane głosowe zostały pomyślnie zainstalowane. Możesz teraz bezpiecznie usunąć ten program instalacyjny."</string>
     <string name="uninstall" msgid="6195983436684617741">"Odinstaluj"</string>
     <string name="retry_message" msgid="6519833625675608678">"Zainstalowanie danych głosowych nie powiodło się. Sprawdź, czy w urządzeniu znajduje się karta SD zawierająca co najmniej 6 MB wolnego miejsca. Jeśli karta znajduje się w urządzeniu, wyjmij ją i włóż ponownie."</string>
-    <string name="retry" msgid="7470276488993209974">"Ponów"</string>
+    <string name="retry" msgid="7470276488993209974">"Ponów próbę"</string>
 </resources>

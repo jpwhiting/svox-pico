@@ -29,6 +29,7 @@
  *   If the language is changed through an SSML tag, there is a latency for the load.
  *
  */
+//#define LOG_NDEBUG 0
 
 #include <stdio.h>
 #include <unistd.h>
@@ -583,6 +584,157 @@ static char * doAddProperties( const char * str )
 }
 
 
+/** get_tok
+ *  Searches for tokens in a string
+ *  @str - text to be processed
+ *  @pos - position of first character to be searched in str
+ *  @textlen - postion of last character to be searched
+ *  @tokstart - address of a variable to receive the start of the token found
+ *  @tokstart - address of a variable to receive the length of the token found
+ *  return : 1=token found, 0=token not found
+ *  notes : the token separator set could be enlarged adding characters in "seps"
+*/
+static int  get_tok(const char * str , int pos, int textlen, int *tokstart, int *toklen)
+{
+    const char * seps = " ";
+
+    /*look for start*/
+    while ((pos<textlen) && (strchr(seps,str[pos]) != NULL)) {
+        pos++;
+    }
+    if (pos == textlen) {
+        /*no characters != seps found whithin string*/
+        return 0;
+    }
+    *tokstart = pos;
+    /*look for end*/
+    while ((pos<textlen) && (strchr(seps,str[pos]) == NULL)) {
+        pos++;
+    }
+    *toklen = pos - *tokstart;
+    return 1;
+}/*get_tok*/
+
+
+/** get_sub_tok
+ *  Searches for subtokens in a token having a compound structure with camel case like "xxxYyyy"
+ *  @str - text to be processed
+ *  @pos - position of first character to be searched in str
+ *  @textlen - postion of last character to be searched in str
+ *  @tokstart - address of a variable to receive the start of the sub token found
+ *  @tokstart - address of a variable to receive the length of the sub token found
+ *  return : 1=sub token found, 0=sub token not found
+ *  notes : the sub token separator set could be enlarged adding characters in "seps"
+*/
+static int  get_sub_tok(const char * str , int pos, int textlen, int *tokstart, int *toklen) {
+
+    const char * seps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    if (pos == textlen) {
+        return 0;
+    }
+
+    /*first char != space*/
+    *tokstart = pos;
+    /*finding first non separator*/
+    while ((pos < textlen) && (strchr(seps, str[pos]) != NULL)) {
+        pos++;
+    }
+    if (pos == textlen) {
+        /*characters all in seps found whithin string : return full token*/
+        *toklen = pos - *tokstart;
+        return 1;
+    }
+    /*pos should be pointing to first non seps and more chars are there*/
+    /*finding first separator*/
+    while ((pos < textlen) && (strchr(seps, str[pos]) == NULL)) {
+        pos++;
+    }
+    if (pos == textlen) {
+        /*transition non seps->seps not found : return full token*/
+        *toklen = pos - *tokstart;
+        return 1;
+    }
+    *toklen = pos - *tokstart;
+    return 1;
+}/*get_sub_tok*/
+
+
+/** doCamelCase
+ *  Searches for tokens having a compound structure with camel case and transforms them as follows :
+ *        "XxxxYyyy" -->> "Xxxx Yyyy",
+ *        "xxxYyyy"  -->> "xxx Yyyy",
+ *        "XXXYyyy"  -->> "XXXYyyy"
+ *        etc....
+ *  The calling function is responsible for freeing the returned string.
+ *  @str - text to be processed
+ *  return new string with text processed
+*/
+static char * doCamelCase( const char * str )
+{
+    int     textlen;             /* input string length   */
+    int     totlen;              /* output string length   */
+    int     tlen_2, nsubtok;     /* nuber of subtokens   */
+    int     toklen, tokstart;    /*legnth and start of generic token*/
+    int     stoklen, stokstart;  /*legnth and start of generic sub-token*/
+    int     pos, tokpos, outpos; /*postion of current char in input string and token and output*/
+    char    *data;               /*pointer of the returned string*/
+
+    pos = 0;
+    tokpos = 0;
+    toklen = 0;
+    stoklen = 0;
+    tlen_2 = 0;
+    totlen = 0;
+
+    textlen = strlen(str) + 1;
+
+    /*counting characters after sub token splitting including spaces*/
+    //while ((pos<textlen) && (str[pos]!=0)) {
+    while (get_tok(str, pos, textlen, &tokstart, &toklen)) {
+        tokpos = tokstart;
+        tlen_2 = 0;
+        nsubtok = 0;
+        while (get_sub_tok(str, tokpos, tokstart+toklen, &stokstart, &stoklen)) {
+            totlen += stoklen;
+            tlen_2 += stoklen;
+            tokpos = stokstart + stoklen;
+            nsubtok += 1;
+        }
+        totlen += nsubtok;    /*add spaces between subtokens*/
+        pos = tokstart + tlen_2;
+    }
+    //}
+    /* Allocate the return string */
+    data = (char *) malloc( totlen );                  /* allocate string      */
+    if (!data) {
+        return NULL;
+    }
+    memset(data, 0, totlen);                           /* clear it             */
+    outpos = 0;
+    pos = 0;
+    /*copying characters*/
+    //while ((pos<textlen) && (str[pos]!=0)) {
+    while (get_tok  (str, pos, textlen, &tokstart, &toklen)) {
+        tokpos = tokstart;
+        tlen_2 = 0;
+        nsubtok = 0;
+        while (get_sub_tok(str, tokpos, tokstart+toklen, &stokstart, &stoklen)) {
+            strncpy(&(data[outpos]), &(str[stokstart]), stoklen);
+            outpos += stoklen;
+            strncpy(&(data[outpos]), " ", 1);
+            tlen_2 += stoklen;
+            outpos += 1;
+            tokpos = stokstart + stoklen;
+        }
+        pos=tokstart+tlen_2;
+    }
+    //}
+    data[outpos] = 0;
+    return data;
+}/*doCamelCase*/
+
+
 /** createPhonemeString
  *  Wrap all individual words in <phoneme> tags.
  *  The Pico <phoneme> tag only supports one word in each tag,
@@ -649,13 +801,16 @@ typedef struct tagPhnArr
     char        strXSAMPA[6];       /* SAMPA sequence           */
 } PArr;
 
-#define phn_cnt (134)
+#define phn_cnt (134+7)
 
 PArr    PhnAry[phn_cnt] = {
 
-    /* XSAMPA conversion table      */
+    /* XSAMPA conversion table
+	   This maps a single IPA symbol to a sequence representing XSAMPA.
+       This relies upon a direct one-to-one correspondance
+       including diphthongs and affricates.						      */
 
-    /* Vowels (23) incomplete     */
+    /* Vowels (23) complete     */
     {0x025B,        "E"},
     {0x0251,        "A"},
     {0x0254,        "O"},
@@ -680,7 +835,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x025E,        "3\\\\"},
     {0x0258,        "@\\\\"},
 
-    /* Consonants (60) incomplete */
+    /* Consonants (60) complete */
     {0x0288,        "t`"},
     {0x0256,        "d`"},
     {0x025F,        "J\\\\"},
@@ -731,6 +886,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x029C,        "H\\\\"},
     {0x02A1,        ">\\\\"},
     {0x02A2,        "<\\\\"},
+    {0x0267,        "x\\\\"},		/* hooktop heng	*/
     {0x0298,        "O\\\\"},
     {0x01C0,        "|\\\\"},
     {0x01C3,        "!\\\\"},
@@ -739,10 +895,10 @@ PArr    PhnAry[phn_cnt] = {
     {0x027A,        "l\\\\"},
     {0x0255,        "s\\\\"},
     {0x0291,        "z\\\\"},
-    {0x0267,        "x\\\\"},
     {0x026B,        "l_G"},
 
-    /* Diacritics (34) incomplete */
+
+    /* Diacritics (37) complete */
     {0x02BC,        "_>"},
     {0x0325,        "_0"},
     {0x030A,        "_0"},
@@ -758,7 +914,7 @@ PArr    PhnAry[phn_cnt] = {
     {0x031C,        "_c"},
     {0x031F,        "_+"},
     {0x0320,        "_-"},
-    {0x0308,        "_\""},     /* centralized  */
+    {0x0308,        "_\""},     /* centralized		*/
     {0x033D,        "_x"},
     {0x0318,        "_A"},
     {0x0319,        "_q"},
@@ -766,30 +922,39 @@ PArr    PhnAry[phn_cnt] = {
     {0x02B7,        "_w"},
     {0x02B2,        "_j"},
     {0x02E0,        "_G"},
-    {0x02E4,        "_?\\\\"},
-    {0x0303,        "~"},
+    {0x02E4,        "_?\\\\"},	/* pharyngealized	*/
+    {0x0303,        "~"},		/* nasalized		*/
     {0x207F,        "_n"},
     {0x02E1,        "_l"},
     {0x031A,        "_}"},
     {0x0334,        "_e"},
-    {0x031D,        "_r"},
-    {0x031E,        "_o"},
-    {0x0329,        "="},
-    {0x032F,        "_^"},
-    {0x02D0,        ":"},
-
-    /* Others (11) complete */
-    {0x0361,        "_"},
+    {0x031D,        "_r"},		/* raised  equivalent to 02D4 */
+    {0x02D4,        "_r"},		/* raised  equivalent to 031D */
+    {0x031E,        "_o"},		/* lowered equivalent to 02D5 */
+    {0x02D5,        "_o"},		/* lowered equivalent to 031E */
+    {0x0329,        "="},		/* sylabic			*/
+    {0x032F,        "_^"},		/* non-sylabic		*/
+    {0x0361,        "_"},		/* top tie bar		*/
     {0x035C,        "_"},
-    {0x02C8,        "\""},
-    {0x02CC,        "%"},
-    {0x02D1,        ":\\\\"},
-    {0x0306,        "_X"},
-    {0x2016,        "||"},
-    {0x203F,        "-\\\\"},
-    {0x2197,        "<R>"},
-    {0x2198,        "<F>"},
-    {0x025D,                "3`"},
+
+    /* Suprasegmental (15) incomplete */
+    {0x02C8,        "\""},		/* primary   stress	*/
+    {0x02CC,        "%"},		/* secondary stress	*/
+    {0x02D0,        ":"},		/* long				*/
+    {0x02D1,        ":\\\\"},	/* half-long		*/
+    {0x0306,        "_X"},		/* extra short		*/
+
+    {0x2016,        "||"},		/* major group		*/
+    {0x203F,        "-\\\\"},	/* bottom tie bar	*/
+    {0x2197,        "<R>"},		/* global rise		*/
+    {0x2198,        "<F>"},		/* global fall		*/
+    {0x2193,        "<D>"},		/* downstep			*/
+    {0x2191,        "<U>"},		/* upstep			*/
+    {0x02E5,        "<T>"},		/* extra high level	*/
+    {0x02E7,        "<M>"},		/* mid level		*/
+    {0x02E9,        "<B>"},		/* extra low level	*/
+
+    {0x025D,        "3`:"},		/* non-IPA	%%		*/
 
     /* Affricates (6) complete  */
     {0x02A3,        "d_z"},
@@ -834,7 +999,7 @@ void CnvIPAPnt( const char16_t IPnt, char * XPnt )
 int cnvIpaToXsampa( const char16_t * ipaString, size_t ipaStringSize, char ** outXsampaString )
 {
     size_t xsize;                                  /* size of result               */
-    int    ipidx;                                  /* index into IPA string        */
+    size_t ipidx;                                  /* index into IPA string        */
     char * XPnt;                                   /* short XSAMPA char sequence   */
 
     /* Convert an IPA string to an XSAMPA string and store the xsampa string in *outXsampaString.
@@ -1269,6 +1434,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     int         err;
     int         cbret;
     pico_Char * inp = NULL;
+    char *      expanded_text = NULL;
     pico_Char * local_text = NULL;
     short       outbuf[MAX_OUTBUF_SIZE/2];
     pico_Int16  bytes_sent, bytes_recv, text_remaining, out_data_type;
@@ -1338,10 +1504,16 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
             return TTS_FAILURE;
         }
     } else {
+        /* camelCase pre-processing */
+        //expanded_text = doCamelCase(text);
         /* Add property tags to the string - if any.    */
-        local_text = (pico_Char *) doAddProperties( text );
+        local_text = (pico_Char *) doAddProperties( text );//expanded_text );
+        /*if (expanded_text) {
+            LOGV("freeing string for %s", expanded_text);
+            free( expanded_text );
+        }*/
         if (!local_text) {
-        LOGE("Failed to allocate memory for text string");
+            LOGE("Failed to allocate memory for text string");
             return TTS_FAILURE;
         }
     }
@@ -1354,9 +1526,9 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
 
     /* synthesis loop   */
     while (text_remaining) {
-        
+
         if (picoSynthAbort) {
-            ret = pico_resetEngine( picoEngine );
+            ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
             break;
         }
 
@@ -1374,11 +1546,11 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         inp += bytes_sent;
         do {
             if (picoSynthAbort) {
-                ret = pico_resetEngine( picoEngine );
+                ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
                 break;
             }
             /* Retrieve the samples and add them to the buffer. */
-            ret = pico_getData( picoEngine, (void *) outbuf, MAX_OUTBUF_SIZE, &bytes_recv, 
+            ret = pico_getData( picoEngine, (void *) outbuf, MAX_OUTBUF_SIZE, &bytes_recv,
                     &out_data_type );
             if (bytes_recv) {
                 if ((bufused + bytes_recv) <= bufferSize) {
@@ -1391,7 +1563,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                     if (cbret == TTS_CALLBACK_HALT) {
                         LOGI("Halt requested by caller. Halting.");
                         picoSynthAbort = 1;
-                        ret = pico_resetEngine( picoEngine );
+                        ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
                         break;
                     }
                     bufused = 0;
@@ -1419,7 +1591,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
             LOGV("Synth loop: sending TTS_SYNTH_DONE after error");
             picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
                     TTS_SYNTH_DONE);
-            pico_resetEngine( picoEngine );
+            pico_resetEngine( picoEngine, PICO_RESET_SOFT );
             return TTS_FAILURE;
         }
     }

@@ -114,7 +114,7 @@ typedef struct sig_subobj
  * @callgraph
  * @callergraph
  */
-static pico_status_t sigInitialize(register picodata_ProcessingUnit this)
+static pico_status_t sigInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
 {
     sig_subobj_t *sig_subObj;
     if (NULL == this || NULL == this->subObj) {
@@ -147,33 +147,40 @@ static pico_status_t sigInitialize(register picodata_ProcessingUnit this)
     /*-----------------------------------------------------------------
      * MANAGE LINGWARE INITIALIZATION IF NEEDED
      ------------------------------------------------------------------*/
-    sig_subObj->pdfmgc = picokpdf_getPdfMUL(
-            this->voice->kbArray[PICOKNOW_KBID_PDF_MGC]);
-    sig_subObj->pdflfz = picokpdf_getPdfMUL(
-            this->voice->kbArray[PICOKNOW_KBID_PDF_LFZ]);
-    sig_subObj->pdfphs = picokpdf_getPdfPHS(
-            this->voice->kbArray[PICOKNOW_KBID_PDF_PHS]);
+    if (r_mode == PICO_RESET_FULL) {
+        /*not done when resetting SOFT*/
+        sig_subObj->pdfmgc = picokpdf_getPdfMUL(
+                this->voice->kbArray[PICOKNOW_KBID_PDF_MGC]);
+        sig_subObj->pdflfz = picokpdf_getPdfMUL(
+                this->voice->kbArray[PICOKNOW_KBID_PDF_LFZ]);
+        sig_subObj->pdfphs = picokpdf_getPdfPHS(
+                this->voice->kbArray[PICOKNOW_KBID_PDF_PHS]);
 
-    sig_subObj->scmeanpowLFZ = sig_subObj->pdflfz->bigpow
-            - sig_subObj->pdflfz->meanpow;
-    sig_subObj->scmeanpowMGC = sig_subObj->pdfmgc->bigpow
-            - sig_subObj->pdfmgc->meanpow;
-    sig_subObj->scmeanLFZ = (1 << (picoos_uint32) sig_subObj->scmeanpowLFZ);
-    sig_subObj->scmeanMGC = (1 << (picoos_uint32) sig_subObj->scmeanpowMGC);
-    sig_subObj->fSampNorm = PICOSIG_NORM1 * sig_subObj->pdfmgc->amplif;
+        sig_subObj->scmeanpowLFZ = sig_subObj->pdflfz->bigpow
+                - sig_subObj->pdflfz->meanpow;
+        sig_subObj->scmeanpowMGC = sig_subObj->pdfmgc->bigpow
+                - sig_subObj->pdfmgc->meanpow;
+        sig_subObj->scmeanLFZ = (1 << (picoos_uint32) sig_subObj->scmeanpowLFZ);
+        sig_subObj->scmeanMGC = (1 << (picoos_uint32) sig_subObj->scmeanpowMGC);
+        sig_subObj->fSampNorm = PICOSIG_NORM1 * sig_subObj->pdfmgc->amplif;
+        /*-----------------------------------------------------------------
+         * Initialize memory for DSP
+         * ------------------------------------------------------------------*/
+        sigDspInitialize(&(sig_subObj->sig_inner), r_mode);
+        /*-----------------------------------------------------------------
+         * Initialize modifiers
+         * ------------------------------------------------------------------*/
+        /*pitch , volume , speaker modifiers*/
+        sig_subObj->pMod = 1.0f;
+        sig_subObj->vMod = 1.0f;
+        sig_subObj->sMod = 1.0f;
+    } else {
+        /*-----------------------------------------------------------------
+         * Initialize memory for DSP
+         * ------------------------------------------------------------------*/
+        sigDspInitialize(&(sig_subObj->sig_inner), r_mode);
+    }
 
-    /*-----------------------------------------------------------------
-     * Initialize memory for DSP
-     * ------------------------------------------------------------------*/
-    sigDspInitialize(&(sig_subObj->sig_inner));
-
-    /*-----------------------------------------------------------------
-     * Initialize modifiers
-     * ------------------------------------------------------------------*/
-    /*pitch , volume , speaker modifiers*/
-    sig_subObj->pMod = 1.0f;
-    sig_subObj->vMod = 1.0f;
-    sig_subObj->sMod = 1.0f;
 
     return PICO_OK;
 }/*sigInitialize*/
@@ -287,7 +294,7 @@ picodata_ProcessingUnit picosig_newSigUnit(picoos_MemoryManager mm,
     /*-----------------------------------------------------------------
      * Initialize memory for DSP (this may be re-used elsewhere, e.g.Reset)
      * ------------------------------------------------------------------*/
-    if (PICO_OK != sigInitialize(this)) {
+    if (PICO_OK != sigInitialize(this, PICO_RESET_FULL)) {
         PICODBG_ERROR(("Error in iSig Sub Object initialization"));
         sigDeallocate(mm, &(sig_subObj->sig_inner));
         picoos_deallocate(mm, (void *) &this);
