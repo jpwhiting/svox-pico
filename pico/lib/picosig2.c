@@ -412,11 +412,30 @@ void sigDeallocate(picoos_MemoryManager mm, sig_innerobj_t *sig_inObj)
  * @callgraph
  * @callergraph
  */
-void sigDspInitialize(sig_innerobj_t *sig_inObj)
+void sigDspInitialize(sig_innerobj_t *sig_inObj, picoos_int32 r_mode)
 {
     picoos_int32 i, j;
     picoos_int32 *pnt;
 
+    if (r_mode == PICO_RESET_SOFT) {
+        /*minimal initialization when receiving a soft reset */
+        return;
+        /*
+        sig_inObj->voxbnd_p = (picoos_int32) ((picoos_single) sig_inObj->hfftsize_p
+                / ((picoos_single) sig_inObj->Fs_p / (picoos_single) 2)
+                * (picoos_single) sig_inObj->VCutoff_p);
+        sig_inObj->voxbnd2_p
+                = (picoos_int32) ((picoos_single) sig_inObj->hfftsize_p
+                        / ((picoos_single) sig_inObj->Fs_p / (picoos_single) 2)
+                        * (picoos_single) sig_inObj->UVCutoff_p);
+        sig_inObj->nextPeak_p = (((int) (PICODSP_FFTSIZE))
+                / ((int) PICODSP_DISPLACE) - 1) * sig_inObj->hop_p;
+        for (i = 0; i < 2 * PICODSP_FFTSIZE; i++) {
+             sig_inObj->int_vec26[i] = 0;
+        }
+        return;
+        */
+    }
     /*-----------------------------------------------------------------
      * Initialization
      * ------------------------------------------------------------------*/

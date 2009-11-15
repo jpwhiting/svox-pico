@@ -157,7 +157,7 @@ typedef struct acph_subobj {
 } acph_subobj_t;
 
 
-static pico_status_t acphInitialize(register picodata_ProcessingUnit this) {
+static pico_status_t acphInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode) {
     acph_subobj_t * acph;
     picoos_uint16 i;
 
@@ -191,6 +191,11 @@ static pico_status_t acphInitialize(register picodata_ProcessingUnit this) {
     }
     for (i = 0; i < PICOACPH_MAXSIZE_CBUF; i++) {
         acph->cbuf[i] = 0;
+    }
+
+    if (r_mode == PICO_RESET_SOFT) {
+        /*following initializations needed only at startup or after a full reset*/
+        return PICO_OK;
     }
 
     /* kb tabphones */
@@ -310,7 +315,7 @@ picodata_ProcessingUnit picoacph_newAccPhrUnit(picoos_MemoryManager mm,
         return NULL;
     }
 
-    acphInitialize(this);
+    acphInitialize(this, PICO_RESET_FULL);
     return this;
 }
 

@@ -498,7 +498,7 @@ pico_status_t picodata_setCbIn(picodata_ProcessingUnit this, picodata_CharBuffer
 pico_status_t picodata_setCbOut(picodata_ProcessingUnit this, picodata_CharBuffer cbOut);
 
 /* protected */
-typedef pico_status_t (* picodata_puInitializeMethod) (register picodata_ProcessingUnit this);
+typedef pico_status_t (* picodata_puInitializeMethod) (register picodata_ProcessingUnit this, picoos_int32 mode);
 typedef pico_status_t (* picodata_puTerminateMethod) (register picodata_ProcessingUnit this);
 typedef picodata_step_result_t (* picodata_puStepMethod) (register picodata_ProcessingUnit this, picoos_int16 mode, picoos_uint16 * numBytesOutput);
 typedef pico_status_t (* picodata_puSubDeallocateMethod) (register picodata_ProcessingUnit this, picoos_MemoryManager mm);
