@@ -183,6 +183,77 @@
 # BUG "  primary stress  BETTER TEST?      <<<<<<<<<<<<------------------------------------
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;no_Uz"/> and <phoneme alphabet="xsampa" ph="no_Uz"/> primary stress.</speak>
 
+
+#---------------------------------------------------------
+# en-US test content spoken using the en-US resources
+
+# Consonants
+# --------- Plosives
+
+# same as en-GB
+
+
+# --------- Nasals
+
+# TEST m mock "mQk
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;mQk"/>.</speak>
+
+# TEST n knock "nQk
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;nQk"/>.</speak>
+
+# --------- Fricatives
+
+# TEST Z measure "mE.Z@
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@"/>.</speak>
+
+
+# --------- Approximants
+
+# TEST j yacht "jQt
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;jQt"/>.</speak>
+
+# TEST l long "lQN
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;lQN"/>.</speak>
+
+# TEST w wasp "wQsp
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;wQsp"/>.</speak>
+
+
+# --------- Affricates
+
+# same as en-GB
+
+
+# Monophthongs
+# --------- Short
+
+# TEST Q pot "pQt
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;pQt"/>.</speak>
+
+
+# --------- Long
+
+# TEST 3: furs "f3:z
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;f3:z"/>.</speak>
+
+# TEST A: stars "stA:z
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:z"/>.</speak>
+
+
+# --------- Diphthongs
+
+# TEST o_U nose "n@_Uz
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;n@_Uz"/>.</speak>
+
+# IMPROVE I_@ fears "fI_@z
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;fI_@z"/>.</speak>
+
+# IMPROVE U_@ cures "kjU_@z
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;kjU_@z"/>.</speak>
+
+# IMPROVE e_@ stairs "ste_@z
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;ste_@z"/>.</speak>
+
 # ---------
 
 # END_TEST
