@@ -90,14 +90,14 @@
 
 # --------- Syllabic Consonants
 
-# BUG l= Nabel "na:.b=l says [natrel], error on [b]
-<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;na:.b=l"/>.</speak>
+# TEST l= Nabel "na:.bl=
+<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;na:.bl="/>.</speak>
 
-# TEST m= hartem "haR.t=m
-<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;haR.t=m"/>.</speak>
+# TEST m= hartem "haR.tm=
+<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;haR.tm="/>.</speak>
 
-# TEST n= Latten "la.t=n
-<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;la.t=n"/>.</speak>
+# TEST n= Latten "la.tn=
+<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;la.tn="/>.</speak>
 
 
 # --------- Affricates
