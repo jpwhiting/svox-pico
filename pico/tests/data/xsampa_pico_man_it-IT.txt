@@ -99,8 +99,8 @@
 # TEST d_z: mezzo "mE.d_z:o
 <speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;mE.d_z:o"/>.</speak>
 
-# BUG d_Z: oggi "O.d_Z:i [o] is missing, [g] is wrong
-<speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;O.d_Z:i"/>.</speak>
+# TEST d_Z: oggi "o.d_Z:i
+<speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;o.d_Z:i"/>.</speak>
 
 # TEST t_s: bozza "bo.t_s:a
 <speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;bo.t_s:a"/>.</speak>
@@ -124,8 +124,8 @@
 
 # --------- Nasals
 
-# BUG J gnocchi "JO.k:i [gn] is missing
-<speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;JO.k:i"/>.</speak>
+# TEST J gnocchi "Jo.k:i
+<speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;Jo.k:i"/>.</speak>
 
 # TEST N manca "maN.ka
 <speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;maN.ka"/>.</speak>
@@ -171,8 +171,8 @@
 # TEST o sabato "sa:.ba.to
 <speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="&#34;sa:.ba.to"/>.</speak>
 
-# BUG u occulta o."k_kul.ta [cc] is dropped, [t] is wrong, barely audible
-<speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="o.&#34;k_kul.ta"/>.</speak>
+# TEST u occulta o."k:ul.ta
+<speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="o.&#34;k:ul.ta"/>.</speak>
 
 # TEST a: abitare a.bi."ta:.4e
 <speak xml:lang="it-IT"> I test <phoneme alphabet="xsampa" ph="a.bi.&#34;ta:.4e"/>.</speak>
