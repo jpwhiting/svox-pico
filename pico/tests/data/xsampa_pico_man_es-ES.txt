@@ -69,8 +69,8 @@
 # TEST l lejos "le.xos
 <speak xml:lang="es-ES"> Puedo probar <phoneme alphabet="xsampa" ph="&#34;le.xos"/>.</speak>
 
-# BUG L caballo ca."Ba.Lo drops [c], says [aballo]
-<speak xml:lang="es-ES"> Puedo probar <phoneme alphabet="xsampa" ph="ca.&#34;Ba.Lo"/>.</speak>
+# TEST L caballo ka."Ba.Lo
+<speak xml:lang="es-ES"> Puedo probar <phoneme alphabet="xsampa" ph="ka.&#34;Ba.Lo"/>.</speak>
 
 # IMPROVE j rey "rej [r] is not a strong r, should be
 <speak xml:lang="es-ES"> Puedo probar <phoneme alphabet="xsampa" ph="&#34;rej"/>.</speak>
