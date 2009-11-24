@@ -39,11 +39,11 @@
 # TEST N thing "TIN
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;TIN"/>.</speak>
 
-# TEST m mock "mA:k
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mA:k"/>.</speak>
+# TEST m mock "mQk
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mQk"/>.</speak>
 
-# TEST n knock "nA:k
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;nA:k"/>.</speak>
+# TEST n knock "nQk
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;nQk"/>.</speak>
 
 # --------- Fricatives
 
@@ -56,8 +56,8 @@
 # TEST T thin "TIn
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;TIn"/>.</speak>
 
-# BUG Z measure "mE.Z@` says [measu'chu'res]
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@`"/>.</speak>
+# TEST Z measure "mE.Z@
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@"/>.</speak>
 
 # TEST f fit "fIt
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;fIt"/>.</speak>
@@ -77,11 +77,11 @@
 
 # --------- Approximants
 
-# TEST j yacht "jA:t
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;jA:t"/>.</speak>
+# TEST j yacht "jQt
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;jQt"/>.</speak>
 
-# BUG l long "lA:N  says garbage after the [l]
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;lQ:N"/>.</speak>
+# TEST l long "lQN
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;lQN"/>.</speak>
 
 # TEST l= little "lI.tl=
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;lI.tl= "/>.</speak>
@@ -89,8 +89,8 @@
 # TEST r\ right "r\a_It
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;r\\a_It"/>.</speak>
 
-# BUG w wasp "wA:sp says garbage after the [wa]
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;wQ:sp"/>.</speak>
+# TEST w wasp "wQsp
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;wQsp"/>.</speak>
 
 
 # --------- Affricates
@@ -129,11 +129,11 @@
 
 # --------- Long
 
-# TEST 3: furs "f3:z says [fuz z z]
+# TEST 3: furs "f3:z
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;f3:z"/>.</speak>
 
-# BUG A: stars "stA:z says [st'eyes]
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:rz"/>.</speak>
+# TEST A: stars "stA:z
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:z"/>.</speak>
 
 # TEST i: ease "i:z
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;i:z"/>.</speak>
@@ -144,17 +144,26 @@
 
 # --------- Diphthongs
 
-# BUG o_U nose "no_Uz says garbage
-<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;no_Uz"/>.</speak>
+# TEST o_U nose "n@_Uz
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;n@_Uz"/>.</speak>
+
+# TEST I_@ fears "fI_@z
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;fI_@z"/>.</speak>
 
 # TEST O_I noise  "nO_Iz
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;nO_Iz"/>.</speak>
+
+# TEST U_@ cures "kjU_@z
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;kjU_@z"/>.</speak>
 
 # TEST a_I rise "r\a_Iz
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;r\\a_Iz"/>.</speak>
 
 # TEST a_U rouse "r\a_Uz
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;r\\a_Uz"/>.</speak>
+
+# TEST e_@ stairs "ste_@z
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;ste_@z"/>.</speak>
 
 # TEST e_I raise "r\e_Iz
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;r\\e_Iz"/>.</speak>
@@ -174,19 +183,113 @@
 # TEST "  primary stress  BETTER TEST?      <<<<<<<<<<<<------------------------------------
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;nO_Iz"/> and <phoneme alphabet="xsampa" ph="nO_Iz"/> primary stress.</speak>
 
-# ---------
-# END_TEST
 
-#-----------------------
-# Tests from en-US
+#---------------------------------------------------------
+# en-GB / en-GB compatibility
 
-# BUG? W whale "We_Il  says [kale]
+# TEST W whale "We_Il
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;We_Il"/>.</speak>
 
-# BUG? @` actor "{k.t@` says garbage after [a]
+# TEST @` actor "{k.t@`
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;{k.t@`"/>.</speak>
 
-# BUG? O: four "fO:r\ says garbage
+# TEST @` (US) @ (GB) measure "mE.Z@`
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@`"/>.</speak>
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@"/>.</speak>
+
+# BUG A: (US) long "lA:N says [lang]
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;lA:N"/>.</speak>
+
+# TEST A:r\ (US) A:(GB) stars "stA:r\z
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:r\\z"/>.</speak>
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:z"/>.</speak>
+
+# TEST o_U (US) @_U (GB) nose "no_Uz
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;no_Uz"/>.</speak>
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;n@_Uz"/>.</speak>
+
+# TEST O: (US) o: (GB)  four  fO:r\
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;fO:r\\"/>.</speak>
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;fo:"/>.</speak>
+
+
+#---------------------------------------------------------
+# en-GB test content spoken using the en-GB resources
+
+# Consonants
+# --------- Plosives
+
+# same as en-US
+
+
+# --------- Nasals
+
+# TEST m mock "mA:k
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mA:k"/>.</speak>
+
+# TEST n knock "nA:k
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;nA:k"/>.</speak>
+
+# --------- Fricatives
+
+# TEST Z measure "mE.Z@`
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@`"/>.</speak>
+
+# TEST W whale "We_Il  ("east coast" pronounciation of W phoneme for "wh")
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;We_Il"/>.</speak>
+
+# TEST w whale "We_Il
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;we_Il"/>.</speak>
+
+
+# --------- Approximants
+
+# TEST j yacht "jA:t
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;jA:t"/>.</speak>
+
+# BUG l long "lA:N
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;lA:N"/>.</speak>
+
+# TEST w wasp "wA:sp
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;wA:sp"/>.</speak>
+
+
+# --------- Affricates
+
+# same as en-US
+
+
+# Monophthongs
+# --------- Short
+
+# same as en-US
+
+
+# --------- Long
+
+# TEST 3`: furs "f3`:z
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;f3`:z"/>.</speak>
+
+# TEST A: stars "stA:r\z
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:r\\z"/>.</speak>
+
+# TEST O: four "fO:r\
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;fO:r\\"/>.</speak>
 
 
+# --------- Diphthongs
+
+# TEST o_U nose "no_Uz
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;no_Uz"/>.</speak>
+
+# TEST a_I rise "r\a_Iz
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;r\\a_Iz"/>.</speak>
+
+# TEST a_U rouse "r\a_Uz
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;r\\a_Uz"/>.</speak>
+
+# TEST e_I raise "r\e_Iz
+<speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;r\\e_Iz"/>.</speak>
+
+# ---------
+# END_TEST
