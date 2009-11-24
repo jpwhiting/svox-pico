@@ -136,10 +136,10 @@
 
 # --------- Long
 
-# TEST 3`: furs "f3`:z says [fuz z z]
+# TEST 3`: furs "f3`:z
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;f3`:z"/>.</speak>
 
-# TEST A: stars "stA:r\z says [starch]
+# TEST A: stars "stA:r\z
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;stA:r\\z"/>.</speak>
 
 # TEST i: ease "i:z
