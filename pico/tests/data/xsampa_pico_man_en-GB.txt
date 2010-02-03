@@ -197,7 +197,7 @@
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@`"/>.</speak>
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;mE.Z@"/>.</speak>
 
-# BUG A: (US) long "lA:N says [lang]
+# TEST A: (US) long "lA:N
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;lA:N"/>.</speak>
 
 # TEST A:r\ (US) A:(GB) stars "stA:r\z
@@ -247,7 +247,7 @@
 # TEST j yacht "jA:t
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;jA:t"/>.</speak>
 
-# BUG l long "lA:N
+# TEST l long "lA:N
 <speak xml:lang="en-GB"> Testing <phoneme alphabet="xsampa" ph="&#34;lA:N"/>.</speak>
 
 # TEST w wasp "wA:sp

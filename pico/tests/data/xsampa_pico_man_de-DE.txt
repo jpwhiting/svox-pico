@@ -71,8 +71,8 @@
 # TEST s Masse "ma.s@
 <speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;ma.s@"/>.</speak>
 
-# BUG v Wahl "va:l says [val], [a] should be long
-<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;va:l"/>.</speak>
+# TEST v Wahl "va:l says [val]
+<speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;va:l"/>. Ein Wahl.</speak>
 
 # TEST x Bach "bax
 <speak xml:lang="de-DE"> Ich teste <phoneme alphabet="xsampa" ph="&#34;bax"/>.</speak>

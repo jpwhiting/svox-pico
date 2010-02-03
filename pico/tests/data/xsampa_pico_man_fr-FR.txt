@@ -75,20 +75,20 @@
 
 # --------- Approximants
 
-# BUG H juin "ZHE~  says [j'lin]
-<speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;ZHE~"/>.</speak>
+# TEST H juin "ZHE~
+<speak xml:lang="fr-FR"> Le mois de <phoneme alphabet="xsampa" ph="&#34;ZHE~"/>, et de juin.</speak>
 
 # TEST j pierre "pjER
 <speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;pjER"/>.</speak>
 
-# BUG l long "lO~ says [ion]
-<speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;lO~"/>.</speak>
+# TEST l long "lO~
+<speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;lO~"/>, long, et longtemps.</speak>
 
-# TEST l long "lO~ works only in a sentence (here also used to say "longtemps")
+# TEST l long "lO~ used here in a sentence (to say "longtemps")
 <speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;lO~"/> et <phoneme alphabet="xsampa" ph="&#34;lO~tA~"/>.</speak>
 
-# BUG w coin "kwE~ says [keu'oin]
-<speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;kwE~"/>.</speak>
+# TEST w coin "kwE~
+<speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;kwE~"/>, et coin.</speak>
 
 
 # ---------  Vowels
@@ -103,7 +103,7 @@
 <speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;Zys.t@.mA~"/>.</speak>
 
 # BUG E seize "sEz says [seisse]
-<speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;sEz"/>.</speak>
+<speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;sEz"/>, et seize, et césar.</speak>
 
 # TEST O comme "kOm
 <speak xml:lang="fr-FR"> Je teste <phoneme alphabet="xsampa" ph="&#34;kOm"/>.</speak>

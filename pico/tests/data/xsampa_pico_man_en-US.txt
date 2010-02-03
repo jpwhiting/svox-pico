@@ -87,8 +87,8 @@
 # TEST j yacht "jA:t
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;jA:t"/>.</speak>
 
-# BUG l long "lA:N  says [lang]
-<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;lA:N"/>.</speak>
+# TEST l long "lA:N
+<speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;lA:N"/>. And long.</speak>
 
 # TEST l= little "lI.tl=
 <speak xml:lang="en-US"> Testing <phoneme alphabet="xsampa" ph="&#34;lI.tl= "/>.</speak>
