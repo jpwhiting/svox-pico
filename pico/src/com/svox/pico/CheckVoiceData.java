@@ -21,7 +21,11 @@ import java.io.File;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.tts.TextToSpeech;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /*
  * Checks if the voice data for the SVOX Pico Engine is present on the
@@ -31,7 +35,8 @@ public class CheckVoiceData extends Activity {
 
     // The following constants are the same path constants as the ones defined
     // in external/svox/pico/tts/com_svox_picottsengine.cpp
-    private final static String PICO_LINGWARE_PATH = "/sdcard/svox/";
+    private final static String PICO_LINGWARE_PATH =
+            Environment.getExternalStorageDirectory() + "/svox/";
     private final static String PICO_SYSTEM_LINGWARE_PATH = "/system/tts/lang_pico/";
 
     private final static String[] dataFiles = {
@@ -45,19 +50,53 @@ public class CheckVoiceData extends Activity {
         "spa-ESP", "spa-ESP", "fra-FRA", "fra-FRA", "ita-ITA", "ita-ITA"
     };
 
+    private final static String[] supportedLanguages = {
+        "deu-DEU", "eng-GBR", "eng-USA", "spa-ESP", "fra-FRA", "ita-ITA"
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         int result = TextToSpeech.Engine.CHECK_VOICE_DATA_PASS;
+        boolean foundMatch = false;
+
+        ArrayList<String> available = new ArrayList<String>();
+        ArrayList<String> unavailable = new ArrayList<String>();
+
+        HashMap<String, Boolean> languageCountry = new HashMap<String, Boolean>();
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            // TODO (clchen): Add this intent to TextToSpeech.Engine
+            ArrayList<String> langCountryVars = bundle.getStringArrayList(
+                    "TextToSpeech.Engine.EXTRA_CHECK_VOICE_DATA_FOR");
+            if (langCountryVars != null){
+                for (int i = 0; i < langCountryVars.size(); i++){
+                    if (langCountryVars.get(i).length() > 0){
+                        languageCountry.put(langCountryVars.get(i), true);
+                    }
+                }
+            }
+        }
 
         // Check for files
-        for (int i = 0; i < dataFiles.length; i++) {
-            File tempFile = new File(PICO_LINGWARE_PATH + dataFiles[i]);
-            File tempFileSys = new File(PICO_SYSTEM_LINGWARE_PATH + dataFiles[i]);
-            if ((!tempFile.exists()) && (!tempFileSys.exists())) {
-                result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA;
+        for (int i = 0; i < supportedLanguages.length; i++){
+            if ((languageCountry.size() < 1) ||
+                (languageCountry.containsKey(supportedLanguages[i]))){
+                if (!fileExists(dataFiles[2 * i]) ||
+                    !fileExists(dataFiles[(2 * i) + 1])){
+                    result = TextToSpeech.Engine.CHECK_VOICE_DATA_MISSING_DATA;
+                    unavailable.add(supportedLanguages[i]);
+                } else {
+                    available.add(supportedLanguages[i]);
+                    foundMatch = true;
+                }
             }
+        }
+
+        if ((languageCountry.size() > 0) && !foundMatch){
+            result = TextToSpeech.Engine.CHECK_VOICE_DATA_FAIL;
         }
 
         // Put the root directory for the sd card data + the data filenames
@@ -66,8 +105,20 @@ public class CheckVoiceData extends Activity {
         returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES, dataFiles);
         returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES_INFO, dataFilesInfo);
 
+        // TODO (clchen): Add these intents to TextToSpeech.Engine
+        returnData.putStringArrayListExtra("TextToSpeech.Engine.EXTRA_AVAILABLE_VOICES", available);
+        returnData.putStringArrayListExtra("TextToSpeech.Engine.EXTRA_UNAVAILABLE_VOICES", unavailable);
         setResult(result, returnData);
         finish();
+    }
+
+    private boolean fileExists(String filename){
+        File tempFile = new File(PICO_LINGWARE_PATH + filename);
+        File tempFileSys = new File(PICO_SYSTEM_LINGWARE_PATH + filename);
+        if ((!tempFile.exists()) && (!tempFileSys.exists())) {
+            return false;
+        }
+        return true;
     }
 
 }
