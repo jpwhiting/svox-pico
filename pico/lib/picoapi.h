@@ -420,10 +420,12 @@ PICO_FUNC pico_getData(
 /**
    Resets the engine and clears all engine-internal buffers, in
    particular text input and signal data output buffers.
+   'resetMode' is one of 'PICO_RESET_SOFT', to be used to flush the engine,
+   or 'PICO_RESET_FULL', to reset the engine after an engine error.
 */
 PICO_FUNC pico_resetEngine(
         pico_Engine engine,
-        pico_Status r_mode
+        pico_Int32 resetMode
 );
 
 

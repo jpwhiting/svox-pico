@@ -205,6 +205,7 @@ struct MarkupParam {
 
 typedef struct MarkupParam MarkupParams[MAX_NR_MARKUP_PARAMS];
 
+typedef picoos_uchar utf8char0c[5]; /* one more than needed so it is ended always with 0c*/
 
 /** subobject : TokenizeUnit
  *  shortcut  : tok
@@ -213,7 +214,7 @@ typedef struct tok_subobj
 {
     picoos_int32 ignLevel;
 
-    picoos_uchar utf[5];
+    utf8char0c   utf;
     picoos_int32 utfpos;
     picoos_int32 utflen;
 
@@ -638,7 +639,7 @@ static MarkupId tok_markupTagId (picoos_uchar tagId[])
 }
 
 
-extern void tok_checkLimits (picodata_ProcessingUnit this, picoos_uint32 * value, picoos_uint32 min, picoos_uint32 max, picoos_uchar valueType[])
+static void tok_checkLimits (picodata_ProcessingUnit this, picoos_uint32 * value, picoos_uint32 min, picoos_uint32 max, picoos_uchar valueType[])
 {
     if ((((*value) < min) || ((*value) > max))) {
         picoos_emRaiseWarning(this->common->em, PICO_ERR_MARKUP_VALUE_OUT_OF_RANGE, (picoos_char*)"", (picoos_char*)"attempt to set illegal value %i for %s", *value, valueType);
@@ -652,7 +653,9 @@ extern void tok_checkLimits (picodata_ProcessingUnit this, picoos_uint32 * value
 
 
 
-extern void tok_checkRealLimits (picodata_ProcessingUnit this, picoos_single * value, picoos_single min, picoos_single max, picoos_uchar valueType[])
+/*
+
+static void tok_checkRealLimits (picodata_ProcessingUnit this, picoos_single * value, picoos_single min, picoos_single max, picoos_uchar valueType[])
 {
     if ((((*value) < min) || ((*value) > max))) {
           picoos_emRaiseWarning(this->common->em, PICO_ERR_MARKUP_VALUE_OUT_OF_RANGE, (picoos_char*)"", (picoos_char*)"attempt to set illegal value %f for %s", *value, valueType);
@@ -663,7 +666,7 @@ extern void tok_checkRealLimits (picodata_ProcessingUnit this, picoos_single * v
         }
     }
 }
-
+*/
 
 #define VAL_STR_LEN 21
 
@@ -1229,8 +1232,10 @@ static void tok_putToMarkup (picodata_ProcessingUnit this, tok_subobj_t * tok, p
                 break;
             }
         }
-        tok->markupStr[tok->markupPos] = str[i];
-        tok->markupPos++;
+        if (tok->markupTagErr == MENone) {
+            tok->markupStr[tok->markupPos] = str[i];
+            tok->markupPos++;
+        } /* else restart parsing at current char */
         tok->markupStr[tok->markupPos] = 0;
     }
     /*
@@ -1294,11 +1299,13 @@ static void tok_treatMarkup (picodata_ProcessingUnit this, tok_subobj_t * tok)
 
 static void tok_treatChar (picodata_ProcessingUnit this, tok_subobj_t * tok, picoos_uchar ch, picoos_bool markupHandling)
 {
-    picoos_int32 id;
+    picoos_int32 i, id;
     picoos_uint8 uval8;
     pico_tokenType type = PICODATA_ITEMINFO1_TOKTYPE_UNDEFINED;
     pico_tokenSubType subtype = -1;
     picoos_bool dummy;
+    utf8char0c utf2;
+    picoos_int32 utf2pos;
 
     if (ch == NULLC) {
       tok_treatSimpleToken(this, tok);
@@ -1323,31 +1330,38 @@ static void tok_treatChar (picodata_ProcessingUnit this, tok_subobj_t * tok, pic
                     }
                 }
                 dummy = picoktab_getIntPropTokenSubType(tok->graphTab, id, &subtype);
-            } else if (ch <= (picoos_uchar)' ') {
+            } else if (tok->utf[tok->utfpos-1] <= (picoos_uchar)' ') {
                 type = PICODATA_ITEMINFO1_TOKTYPE_SPACE;
                 subtype =  -1;
             } else {
                 type = PICODATA_ITEMINFO1_TOKTYPE_UNDEFINED;
                 subtype =  -1;
             }
-            if ((ch > (picoos_uchar)' ')) {
+            if ((tok->utf[tok->utfpos-1] > (picoos_uchar)' ')) {
                 tok->nrEOL = 0;
-            } else if ((ch == EOL)) {
+            } else if ((tok->utf[tok->utfpos-1] == EOL)) {
                 tok->nrEOL++;
             }
             if (markupHandling && (tok->markupState != MSNotInMarkup)) {
                 tok_putToMarkup(this, tok, tok->utf);
                 if (tok->markupState >= MSError) {
+                    picoos_strlcpy(utf2, tok->utf, 5);
+                    utf2pos = tok->utfpos;
+                    /* treat string up to (but not including) current char as simple
+                       token and restart markup tag parsing with current char */
                     tok_treatMarkupAsSimpleToken(this, tok);
+                    for (i = 0; i < utf2pos; i++) {
+                        tok_treatChar(this, tok, utf2[i], markupHandling);
+                    }
                 } else if (tok->markupState == MSGotEnd) {
                     tok_treatMarkup(this, tok);
                 }
-            } else if ((markupHandling && (ch == (picoos_uchar)'<'))) {
+            } else if ((markupHandling && (tok->utf[tok->utfpos-1] == (picoos_uchar)'<'))) {
                 tok_putToMarkup(this, tok, tok->utf);
             } else if (type != PICODATA_ITEMINFO1_TOKTYPE_UNDEFINED) {
                 if ((type != tok->tokenType) || (type == PICODATA_ITEMINFO1_TOKTYPE_CHAR) || (subtype != tok->tokenSubType)) {
                     tok_treatSimpleToken(this, tok);
-                } else if ((ch == EOL) && (tok->nrEOL == 2)) {
+                } else if ((tok->utf[tok->utfpos-1] == EOL) && (tok->nrEOL == 2)) {
                     tok_treatSimpleToken(this, tok);
                     tok_putToSimpleToken(this, tok, (picoos_uchar*)".", PICODATA_ITEMINFO1_TOKTYPE_CHAR, -1);
                     tok_treatSimpleToken(this, tok);
@@ -1385,7 +1399,7 @@ static void tok_treatSimpleToken (picodata_ProcessingUnit this, tok_subobj_t * t
 
 /* *****************************************************************************/
 
-static pico_status_t tokReset(register picodata_ProcessingUnit this, picoos_int32 r_mode)
+static pico_status_t tokReset(register picodata_ProcessingUnit this, picoos_int32 resetMode)
 {
     tok_subobj_t * tok;
     MarkupId mId;
@@ -1449,7 +1463,7 @@ static pico_status_t tokReset(register picodata_ProcessingUnit this, picoos_int3
     return PICO_OK;
 }
 
-static pico_status_t tokInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
+static pico_status_t tokInitialize(register picodata_ProcessingUnit this, picoos_int32 resetMode)
 {
 /*
 
@@ -1460,7 +1474,7 @@ static pico_status_t tokInitialize(register picodata_ProcessingUnit this, picoos
     }
     tok = (tok_subobj_t *) this->subObj;
 */
-    return tokReset(this, r_mode);
+    return tokReset(this, resetMode);
 }
 
 

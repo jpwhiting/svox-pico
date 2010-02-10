@@ -286,7 +286,7 @@ static pico_status_t sphoReset(register picodata_ProcessingUnit this)
 }
 
 
-static pico_status_t sphoInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
+static pico_status_t sphoInitialize(register picodata_ProcessingUnit this, picoos_int32 resetMode)
 {
     picoos_uint8 i;
     spho_subobj_t * spho;

@@ -78,7 +78,7 @@ typedef struct wa_subobj {
 } wa_subobj_t;
 
 
-static pico_status_t waInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode) {
+static pico_status_t waInitialize(register picodata_ProcessingUnit this, picoos_int32 resetMode) {
     picoos_uint8 i;
     picoklex_Lex ulex;
     wa_subobj_t * wa;
@@ -98,7 +98,7 @@ static pico_status_t waInitialize(register picodata_ProcessingUnit this, picoos_
     wa->outBufSize = PICOWA_MAXITEMSIZE;
     wa->outLen = 0;
 
-    if (r_mode == PICO_RESET_SOFT) {
+    if (resetMode == PICO_RESET_SOFT) {
         /*following initializations needed only at startup or after a full reset*/
         return PICO_OK;
     }

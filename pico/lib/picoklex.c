@@ -389,7 +389,7 @@ static void klex_setLexResult(const picoos_uint8 *lexentry,
     picoos_uint8 i;
 
     /* check if :G2P */
-    if ((lexentry[lexentry[0] + 2]) == PICOKLEX_NEEDS_G2P) {
+    if ((2 < (lexentry[lexentry[0]])) && ((lexentry[lexentry[0] + 2]) == PICOKLEX_NEEDS_G2P)) {
         /* set pos */
         lexres->posind[0] = lexentry[lexentry[0] + 1];
         /* set rest */

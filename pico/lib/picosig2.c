@@ -412,29 +412,14 @@ void sigDeallocate(picoos_MemoryManager mm, sig_innerobj_t *sig_inObj)
  * @callgraph
  * @callergraph
  */
-void sigDspInitialize(sig_innerobj_t *sig_inObj, picoos_int32 r_mode)
+void sigDspInitialize(sig_innerobj_t *sig_inObj, picoos_int32 resetMode)
 {
     picoos_int32 i, j;
     picoos_int32 *pnt;
 
-    if (r_mode == PICO_RESET_SOFT) {
+    if (resetMode == PICO_RESET_SOFT) {
         /*minimal initialization when receiving a soft reset */
         return;
-        /*
-        sig_inObj->voxbnd_p = (picoos_int32) ((picoos_single) sig_inObj->hfftsize_p
-                / ((picoos_single) sig_inObj->Fs_p / (picoos_single) 2)
-                * (picoos_single) sig_inObj->VCutoff_p);
-        sig_inObj->voxbnd2_p
-                = (picoos_int32) ((picoos_single) sig_inObj->hfftsize_p
-                        / ((picoos_single) sig_inObj->Fs_p / (picoos_single) 2)
-                        * (picoos_single) sig_inObj->UVCutoff_p);
-        sig_inObj->nextPeak_p = (((int) (PICODSP_FFTSIZE))
-                / ((int) PICODSP_DISPLACE) - 1) * sig_inObj->hop_p;
-        for (i = 0; i < 2 * PICODSP_FFTSIZE; i++) {
-             sig_inObj->int_vec26[i] = 0;
-        }
-        return;
-        */
     }
     /*-----------------------------------------------------------------
      * Initialization
@@ -794,6 +779,8 @@ void impulse_response(sig_innerobj_t *sig_inObj)
     picoos_int32 *norm_window; /* - fixed point */
     picoos_int32 *fr, *Fr, *Fi, *t1, ff; /* - fixed point */
 
+    picoos_int32 mx,mn, rat;
+
     /*Link local variables with sig object*/
     m2 = sig_inObj->m2_p;
     m4 = m2 >> 1;
@@ -818,15 +805,55 @@ void impulse_response(sig_innerobj_t *sig_inObj)
     /*window, normalize and differentiate*/
     *E = norm_result(m2, fr, norm_window);
 
-    if (*E > 0)
+    if (*E > 0) {
         f = *E * PICODSP_FIXRESP_NORM;
-    else
+    } else {
         f = 20; /*PICODSP_FIXRESP_NORM*/
+    }
     ff = (picoos_int32) f;
     if (ff < 1)
         ff = 1;
     /*normalize impulse response*/
     t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,*(t1++) /= ff;); /* - fixed point */
+
+
+    mx = mn = 0;
+    t1 = fr;
+    FAST_DEVICE(PICODSP_FFTSIZE,if (*t1>mx) mx=*t1; if (*t1<mn) mn=*t1; t1++;);
+    mn = -mn;
+    if (mx>mn) {
+        rat = mx / (mn>>5);     /* ratio * 32*/
+        if (rat > 40) rat = 40; /* 1.25 * 32 */
+        /* now rat is between 32 and 40 */
+        switch (rat) {
+            case 32:  /* do nothing */
+                break;
+            case 33:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>5; t1++;);
+                break;
+            case 34:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>4; t1++;);
+                break;
+            case 35:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>5)+((-*t1)>>4)); t1++;);
+                break;
+            case 36:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>3; t1++;);
+                break;
+            case 37:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>5)+((-*t1)>>3)); t1++;);
+                break;
+            case 38:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>4)+((-*t1)>>3)); t1++;);
+                break;
+            case 39:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>5)+((-*t1)>>4) + ((-*t1)>>3)); t1++;);
+                break;
+            case 40:
+                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>2; t1++;);
+                break;
+        }
+    }
 
 } /* impulse_response */
 
@@ -4036,6 +4063,9 @@ static void get_simple_excitation(sig_innerobj_t *sig_inObj,
     E = sig_inObj->E_p;
     F0 = sig_inObj->F0_p;
     voiced = sig_inObj->voiced_p;
+
+    E = (E > 5) ? 9 : (E > 1) ? 2 * E - 1 : E;
+
 
     /* shift previous excitation window by hop samples*/
     for (nI = 0; nI < sig_inObj->nV; nI++) {
