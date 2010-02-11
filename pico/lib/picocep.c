@@ -285,7 +285,7 @@ static picodata_step_result_t cepStep(register picodata_ProcessingUnit this,
  * @callgraph
  * @callergraph
  */
-static pico_status_t cepInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
+static pico_status_t cepInitialize(register picodata_ProcessingUnit this, picoos_int32 resetMode)
 {
     /*pico_status_t nRes;*/
     cep_subobj_t * cep;
@@ -328,7 +328,7 @@ static pico_status_t cepInitialize(register picodata_ProcessingUnit this, picoos
      ------------------------------------------------------------------*/
     cep->activeEndPos = PICOCEP_MAXWINLEN;
 
-    if (r_mode == PICO_RESET_FULL) {
+    if (resetMode == PICO_RESET_FULL) {
         /* kb pdflfz */
         cep->pdflfz = picokpdf_getPdfMUL(
                 this->voice->kbArray[PICOKNOW_KBID_PDF_LFZ]);

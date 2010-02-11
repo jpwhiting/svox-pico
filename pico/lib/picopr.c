@@ -3168,7 +3168,7 @@ extern void pr_treatItem (picodata_ProcessingUnit this, pr_subobj_t * pr, pr_ioI
 /* *****************************************************************************/
 
 
-pico_status_t prReset(register picodata_ProcessingUnit this, picoos_int32 r_mode)
+pico_status_t prReset(register picodata_ProcessingUnit this, picoos_int32 resetMode)
 {
 
     picoos_int32 i;
@@ -3227,7 +3227,7 @@ pico_status_t prReset(register picodata_ProcessingUnit this, picoos_int32 r_mode
 
     pr->forceOutput = FALSE;
 
-    if (r_mode == PICO_RESET_SOFT) {
+    if (resetMode == PICO_RESET_SOFT) {
         /*following initializations needed only at startup or after a full reset*/
         return PICO_OK;
     }
@@ -3244,14 +3244,14 @@ pico_status_t prReset(register picodata_ProcessingUnit this, picoos_int32 r_mode
 }
 
 
-pico_status_t prInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
+pico_status_t prInitialize(register picodata_ProcessingUnit this, picoos_int32 resetMode)
 {
 /*
     if (NULL == this || NULL == this->subObj) {
         return PICO_ERR_OTHER;
     }
 */
-    return prReset(this, r_mode);
+    return prReset(this, resetMode);
 }
 
 

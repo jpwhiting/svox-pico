@@ -114,7 +114,7 @@ typedef struct sig_subobj
  * @callgraph
  * @callergraph
  */
-static pico_status_t sigInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode)
+static pico_status_t sigInitialize(register picodata_ProcessingUnit this, picoos_int32 resetMode)
 {
     sig_subobj_t *sig_subObj;
     if (NULL == this || NULL == this->subObj) {
@@ -147,7 +147,7 @@ static pico_status_t sigInitialize(register picodata_ProcessingUnit this, picoos
     /*-----------------------------------------------------------------
      * MANAGE LINGWARE INITIALIZATION IF NEEDED
      ------------------------------------------------------------------*/
-    if (r_mode == PICO_RESET_FULL) {
+    if (resetMode == PICO_RESET_FULL) {
         /*not done when resetting SOFT*/
         sig_subObj->pdfmgc = picokpdf_getPdfMUL(
                 this->voice->kbArray[PICOKNOW_KBID_PDF_MGC]);
@@ -166,7 +166,7 @@ static pico_status_t sigInitialize(register picodata_ProcessingUnit this, picoos
         /*-----------------------------------------------------------------
          * Initialize memory for DSP
          * ------------------------------------------------------------------*/
-        sigDspInitialize(&(sig_subObj->sig_inner), r_mode);
+        sigDspInitialize(&(sig_subObj->sig_inner), resetMode);
         /*-----------------------------------------------------------------
          * Initialize modifiers
          * ------------------------------------------------------------------*/
@@ -178,7 +178,7 @@ static pico_status_t sigInitialize(register picodata_ProcessingUnit this, picoos
         /*-----------------------------------------------------------------
          * Initialize memory for DSP
          * ------------------------------------------------------------------*/
-        sigDspInitialize(&(sig_subObj->sig_inner), r_mode);
+        sigDspInitialize(&(sig_subObj->sig_inner), resetMode);
     }
 
 

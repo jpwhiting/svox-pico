@@ -660,7 +660,7 @@ PICO_FUNC pico_getData(
 /**
  * pico_resetEngine : Resets the engine
  * @param    engine : pointer to a Pico engine handle
- * @param    r_mode : reset mode
+ * @param resetMode : reset mode; one of PICO_RESET_FULL or PICO_RESET_SOFT
  * @return  PICO_OK : successful
  * @return     PICO_ERR_INVALID_HANDLE, PICO_ERR_NULLPTR_ACCESS : errors
  * @callgraph
@@ -668,7 +668,7 @@ PICO_FUNC pico_getData(
 */
 PICO_FUNC pico_resetEngine(
         pico_Engine engine,
-        pico_Status r_mode)
+        pico_Int32 resetMode)
 {
     pico_Status status = PICO_OK;
 
@@ -677,10 +677,9 @@ PICO_FUNC pico_resetEngine(
     } else {
         picoctrl_engResetExceptionManager((picoctrl_Engine) engine);
 
-        if (r_mode<PICO_RESET_FULL) r_mode = PICO_RESET_FULL;
-        if (r_mode>PICO_RESET_SOFT) r_mode = PICO_RESET_FULL;
+        resetMode = (PICO_RESET_SOFT == resetMode) ? PICO_RESET_SOFT : PICO_RESET_FULL;
 
-        status = picoctrl_engReset((picoctrl_Engine) engine, (picoos_int32)r_mode);
+        status = picoctrl_engReset((picoctrl_Engine) engine, (picoos_int32)resetMode);
     }
 
     return status;

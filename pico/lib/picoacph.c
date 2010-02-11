@@ -157,7 +157,7 @@ typedef struct acph_subobj {
 } acph_subobj_t;
 
 
-static pico_status_t acphInitialize(register picodata_ProcessingUnit this, picoos_int32 r_mode) {
+static pico_status_t acphInitialize(register picodata_ProcessingUnit this, picoos_int32 resetMode) {
     acph_subobj_t * acph;
     picoos_uint16 i;
 
@@ -193,7 +193,7 @@ static pico_status_t acphInitialize(register picodata_ProcessingUnit this, picoo
         acph->cbuf[i] = 0;
     }
 
-    if (r_mode == PICO_RESET_SOFT) {
+    if (resetMode == PICO_RESET_SOFT) {
         /*following initializations needed only at startup or after a full reset*/
         return PICO_OK;
     }
