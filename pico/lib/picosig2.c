@@ -779,8 +779,6 @@ void impulse_response(sig_innerobj_t *sig_inObj)
     picoos_int32 *norm_window; /* - fixed point */
     picoos_int32 *fr, *Fr, *Fi, *t1, ff; /* - fixed point */
 
-    picoos_int32 mx,mn, rat;
-
     /*Link local variables with sig object*/
     m2 = sig_inObj->m2_p;
     m4 = m2 >> 1;
@@ -815,45 +813,6 @@ void impulse_response(sig_innerobj_t *sig_inObj)
         ff = 1;
     /*normalize impulse response*/
     t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,*(t1++) /= ff;); /* - fixed point */
-
-
-    mx = mn = 0;
-    t1 = fr;
-    FAST_DEVICE(PICODSP_FFTSIZE,if (*t1>mx) mx=*t1; if (*t1<mn) mn=*t1; t1++;);
-    mn = -mn;
-    if (mx>mn) {
-        rat = mx / (mn>>5);     /* ratio * 32*/
-        if (rat > 40) rat = 40; /* 1.25 * 32 */
-        /* now rat is between 32 and 40 */
-        switch (rat) {
-            case 32:  /* do nothing */
-                break;
-            case 33:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>5; t1++;);
-                break;
-            case 34:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>4; t1++;);
-                break;
-            case 35:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>5)+((-*t1)>>4)); t1++;);
-                break;
-            case 36:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>3; t1++;);
-                break;
-            case 37:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>5)+((-*t1)>>3)); t1++;);
-                break;
-            case 38:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>4)+((-*t1)>>3)); t1++;);
-                break;
-            case 39:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(((-*t1)>>5)+((-*t1)>>4) + ((-*t1)>>3)); t1++;);
-                break;
-            case 40:
-                t1 = fr;FAST_DEVICE(PICODSP_FFTSIZE,if (*t1<0) *t1-=(-*t1)>>2; t1++;);
-                break;
-        }
-    }
 
 } /* impulse_response */
 
