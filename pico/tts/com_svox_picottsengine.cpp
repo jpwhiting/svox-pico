@@ -61,7 +61,7 @@ using namespace android;
 /* speaking volume  */
 #define PICO_MIN_VOLUME       0
 #define PICO_MAX_VOLUME     500
-#define PICO_DEF_VOLUME     120
+#define PICO_DEF_VOLUME     100
 
 /* string constants */
 #define MAX_OUTBUF_SIZE     128
@@ -515,7 +515,6 @@ static char * doAddProperties( const char * str )
     char *  data = NULL;
     int     haspitch, hasspeed, hasvol;                 /* parameters           */
     int     textlen;                                    /* property string length   */
-
     haspitch = 0; hasspeed = 0; hasvol = 0;
     textlen = strlen(str) + 1;
     if (picoProp_currPitch != PICO_DEF_PITCH) {          /* non-default pitch    */
@@ -529,15 +528,11 @@ static char * doAddProperties( const char * str )
         hasspeed = 1;
     }
 
-    // Always set the volume for now - this is to work around not being able
-    // to change the default volume.
-    // TODO: Fix the underlying problem so that default volume as defined by
-    // PICO_DEF_VOLUME is respected.
-    //if (picoProp_currVolume != PICO_DEF_VOLUME) {        /* non-default volume   */
+    if (picoProp_currVolume != PICO_DEF_VOLUME) {        /* non-default volume   */
         textlen += strlen(PICO_VOLUME_OPEN_TAG) + 5;
         textlen += strlen(PICO_VOLUME_CLOSE_TAG);
         hasvol = 1;
-    //}
+    }
 
     /* Compose the property strings.    */
     data = (char *) malloc( textlen );                  /* allocate string      */
@@ -567,7 +562,6 @@ static char * doAddProperties( const char * str )
     }
 
     strcat(data, str);
-
     if (hasvol) {
         strcat(data, PICO_VOLUME_CLOSE_TAG);
     }
@@ -579,7 +573,6 @@ static char * doAddProperties( const char * str )
     if (haspitch) {
         strcat(data, PICO_PITCH_CLOSE_TAG);
     }
-
     return data;
 }
 
@@ -706,6 +699,7 @@ static char * doCamelCase( const char * str )
     }
     //}
     /* Allocate the return string */
+
     data = (char *) malloc( totlen );                  /* allocate string      */
     if (!data) {
         return NULL;
@@ -730,7 +724,10 @@ static char * doCamelCase( const char * str )
         pos=tokstart+tlen_2;
     }
     //}
-    data[outpos -1] = 0;
+    if (outpos == 0) {
+        outpos = 1;
+    }
+    data[outpos-1] = 0;
     return data;
 }/*doCamelCase*/
 
@@ -1447,6 +1444,10 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         return TTS_FAILURE;
     }
 
+    if (strlen(text) == 0) {
+        return TTS_SUCCESS;
+    }
+
     if (buffer == NULL) {
         LOGE("synthesizeText called with NULL buffer");
         return TTS_FAILURE;
@@ -1509,7 +1510,6 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         /* Add property tags to the string - if any.    */
         local_text = (pico_Char *) doAddProperties( expanded_text );
         if (expanded_text) {
-            LOGV("freeing string for %s", expanded_text);
             free( expanded_text );
         }
         if (!local_text) {
@@ -1526,7 +1526,6 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
 
     /* synthesis loop   */
     while (text_remaining) {
-
         if (picoSynthAbort) {
             ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
             break;
