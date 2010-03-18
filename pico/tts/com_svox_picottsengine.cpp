@@ -115,6 +115,8 @@ int     picoProp_currVolume = PICO_DEF_VOLUME;      /* current volume   */
 
 int picoCurrentLangIndex = -1;
 
+char * pico_alt_lingware_path = NULL;
+
 
 /* internal helper functions */
 
@@ -260,8 +262,8 @@ static bool hasResourcesForLanguage(int langIndex) {
     }
 
     /* resources not found on system, check resources on alternative location */
-    /* (under PICO_LINGWARE_PATH).                                            */
-    strcpy((char*)fileName, PICO_LINGWARE_PATH);
+    /* (under pico_alt_lingware_path).                                            */
+    strcpy((char*)fileName, pico_alt_lingware_path);
     strcat((char*)fileName, (const char*)picoInternalTaLingware[langIndex]);
     pFile = fopen(fileName, "r");
     if (pFile == NULL) {
@@ -271,7 +273,7 @@ static bool hasResourcesForLanguage(int langIndex) {
         fclose (pFile);
     }
 
-    strcpy((char*)fileName, PICO_LINGWARE_PATH);
+    strcpy((char*)fileName, pico_alt_lingware_path);
     strcat((char*)fileName, (const char*)picoInternalSgLingware[langIndex]);
     pFile = fopen(fileName, "r");
     if (pFile == NULL) {
@@ -340,15 +342,15 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     /* Find where to load the resource files from: system or alternative location              */
     /* based on availability of the Ta file. Try the alternative location first, this is where */
-    /* more recent language file updates would be installed (under PICO_LINGWARE_PATH).        */
+    /* more recent language file updates would be installed (under pico_alt_lingware_path).        */
     bool bUseSystemPath = true;
     FILE * pFile;
     char* tmpFileName = (char*)malloc(PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE);
-    strcpy((char*)tmpFileName, PICO_LINGWARE_PATH);
+    strcpy((char*)tmpFileName, pico_alt_lingware_path);
     strcat((char*)tmpFileName, (const char*)picoInternalTaLingware[langIndex]);
     pFile = fopen(tmpFileName, "r");
     if (pFile != NULL) {
-        /* "ta" file found under PICO_LINGWARE_PATH, don't use the system path. */
+        /* "ta" file found under pico_alt_lingware_path, don't use the system path. */
         fclose (pFile);
         bUseSystemPath = false;
     }
@@ -360,9 +362,9 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
         strcpy((char *) picoSgFileName,   PICO_SYSTEM_LINGWARE_PATH);
         strcpy((char *) picoUtppFileName, PICO_SYSTEM_LINGWARE_PATH);
     } else {
-        strcpy((char *) picoTaFileName,   PICO_LINGWARE_PATH);
-        strcpy((char *) picoSgFileName,   PICO_LINGWARE_PATH);
-        strcpy((char *) picoUtppFileName, PICO_LINGWARE_PATH);
+        strcpy((char *) picoTaFileName,   pico_alt_lingware_path);
+        strcpy((char *) picoSgFileName,   pico_alt_lingware_path);
+        strcpy((char *) picoUtppFileName, pico_alt_lingware_path);
     }
     strcat((char *) picoTaFileName,   (const char *) picoInternalTaLingware[langIndex]);
     strcat((char *) picoSgFileName,   (const char *) picoInternalSgLingware[langIndex]);
@@ -1024,6 +1026,8 @@ int cnvIpaToXsampa( const char16_t * ipaString, size_t ipaStringSize, char ** ou
 /** init
  *  Allocates Pico memory block and initializes the Pico system.
  *  synthDoneCBPtr - Pointer to callback function which will receive generated samples
+ *  config - the engine configuration parameters, here only contains the non-system path
+ *      for the lingware location
  *  return tts_result
 */
 tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr, const char *config )
@@ -1050,6 +1054,17 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr, const char *config )
     picoSynthDoneCBPtr = synthDoneCBPtr;
 
     picoCurrentLangIndex = -1;
+
+    // was the initialization given an alternative path for the lingware location?
+    if ((config != NULL) && (strlen(config) > 0)) {
+        pico_alt_lingware_path = (char*)malloc(strlen(config));
+        strcpy((char*)pico_alt_lingware_path, config);
+        LOGV("Alternative lingware path %s", pico_alt_lingware_path);
+    } else {
+        pico_alt_lingware_path = (char*)malloc(strlen(PICO_LINGWARE_PATH));
+        strcpy((char*)pico_alt_lingware_path, PICO_LINGWARE_PATH);
+        LOGV("Using predefined lingware path %s", pico_alt_lingware_path);
+    }
 
     return TTS_SUCCESS;
 }
