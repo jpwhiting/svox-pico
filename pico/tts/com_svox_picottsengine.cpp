@@ -1026,7 +1026,7 @@ int cnvIpaToXsampa( const char16_t * ipaString, size_t ipaStringSize, char ** ou
  *  synthDoneCBPtr - Pointer to callback function which will receive generated samples
  *  return tts_result
 */
-tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr )
+tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr, const char *config )
 {
     if (synthDoneCBPtr == NULL) {
         LOGE("Callback pointer is NULL");
@@ -1606,24 +1606,6 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     return TTS_SUCCESS;
 }
 
-
-/** synthesizeIpa
- *  Synthesizes a phonetic string in IPA format.
-    The Pico engine understands only XSAMPA, so the IPA must be converted.
-    The string must also be parceled into words since it can only hanlde a word at a time.
-    Each phonemic word must be wrapped with a tag.
- *  @ipa - phonetic string to synthesize
- *  @buffer - buffer which will receive generated samples
- *  @bufferSize - size of buffer
- *  @userdata - pointer to user data which will be passed back to callback function
- *  return tts_result
-*/
-tts_result TtsEngine::synthesizeIpa( const char * ipa, int8_t * buffer, size_t bufferSize, void * userdata )
-{
-    // deprecated call
-    return TTS_FAILURE;
-
-}
 
 
 /** stop
