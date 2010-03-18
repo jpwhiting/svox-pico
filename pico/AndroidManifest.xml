@@ -70,5 +70,8 @@
                 <category android:name="android.intent.category.tts_lang.spa" />
             </intent-filter>
         </activity>
+
+        <provider android:name=".providers.SettingsProvider"
+            android:authorities="com.svox.pico.providers.SettingsProvider"  />
     </application>
 </manifest>
