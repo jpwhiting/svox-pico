@@ -26,4 +26,6 @@
     <string name="deu_deu_sample">Dies ist ein Beispiel für Sprachsynthese in Deutsch mit Pico.</string>
     <string name="ita_ita_sample">Questo è un esempio di sintesi vocale in italiano con Pico.</string>
     <string name="spa_esp_sample">Este es un ejemplo de síntesis de voz en español con Pico.</string>
+    <string name="installed">Installed</string>
+    <string name="not_installed">Not Installed</string>
 </resources>
