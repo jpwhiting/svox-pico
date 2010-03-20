@@ -17,7 +17,6 @@
 */
 -->
 
-<!-- TODO: "with Pico" needs to be translated -->
 <resources>
     <string name="app_name">Pico TTS</string>
     <string name="eng_usa_sample">This is an example of speech synthesis in English with Pico.</string>
