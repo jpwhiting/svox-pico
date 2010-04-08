@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class EngineSettings extends PreferenceActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == VOICE_DATA_CHECK_CODE){
-            ArrayList<String> available = data.getStringArrayListExtra("TextToSpeech.Engine.EXTRA_AVAILABLE_VOICES");
-            ArrayList<String> unavailable = data.getStringArrayListExtra("TextToSpeech.Engine.EXTRA_UNAVAILABLE_VOICES");
+            ArrayList<String> available = data.getStringArrayListExtra(TextToSpeech.Engine.EXTRA_AVAILABLE_VOICES);
+            ArrayList<String> unavailable = data.getStringArrayListExtra(TextToSpeech.Engine.EXTRA_UNAVAILABLE_VOICES);
 
             addPreferencesFromResource(R.xml.voices_list);
             

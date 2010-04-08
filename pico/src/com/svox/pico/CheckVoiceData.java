@@ -68,9 +68,8 @@ public class CheckVoiceData extends Activity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
-            // TODO (clchen): Add this intent to TextToSpeech.Engine
             ArrayList<String> langCountryVars = bundle.getStringArrayList(
-                    "TextToSpeech.Engine.EXTRA_CHECK_VOICE_DATA_FOR");
+                    TextToSpeech.Engine.EXTRA_CHECK_VOICE_DATA_FOR);
             if (langCountryVars != null){
                 for (int i = 0; i < langCountryVars.size(); i++){
                     if (langCountryVars.get(i).length() > 0){
@@ -105,9 +104,8 @@ public class CheckVoiceData extends Activity {
         returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES, dataFiles);
         returnData.putExtra(TextToSpeech.Engine.EXTRA_VOICE_DATA_FILES_INFO, dataFilesInfo);
 
-        // TODO (clchen): Add these intents to TextToSpeech.Engine
-        returnData.putStringArrayListExtra("TextToSpeech.Engine.EXTRA_AVAILABLE_VOICES", available);
-        returnData.putStringArrayListExtra("TextToSpeech.Engine.EXTRA_UNAVAILABLE_VOICES", unavailable);
+        returnData.putStringArrayListExtra(TextToSpeech.Engine.EXTRA_AVAILABLE_VOICES, available);
+        returnData.putStringArrayListExtra(TextToSpeech.Engine.EXTRA_UNAVAILABLE_VOICES, unavailable);
         setResult(result, returnData);
         finish();
     }
