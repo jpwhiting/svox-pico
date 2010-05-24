@@ -81,7 +81,6 @@ pico_status_t sigAllocate(picoos_MemoryManager mm, sig_innerobj_t *sig_inObj)
     sig_inObj->int_vec35 =
     sig_inObj->int_vec36 =
     sig_inObj->int_vec37 =
-    sig_inObj->int_vec38 =
     sig_inObj->int_vec39 =
     sig_inObj->int_vec40 = NULL;
 
