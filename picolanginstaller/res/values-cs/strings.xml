@@ -20,9 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Instalační program pro data syntézy řeči"</string>
-    <string name="installing_message" msgid="8792926973732354514">"Instalace hlasových dat na kartu SD."</string>
+    <!-- outdated translation 8792926973732354514 -->     <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Instalace hlasových dat na kartu SD."</string>
+    <string name="installing_message" product="default" msgid="8792926973732354514">"Instalace hlasových dat na kartu SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Hlasová data byla úspěšně nainstalována. Instalační program můžete bezpečně odebrat."</string>
     <string name="uninstall" msgid="6195983436684617741">"Odinstalovat"</string>
-    <string name="retry_message" msgid="6519833625675608678">"Instalace hlasových dat se nezdařila. Zkontrolujte, zda je karta SD v zařízení a obsahuje alespoň 6 MB volného místa. Je-li karta již v zařízení, odeberte ji a vložte znovu."</string>
+    <!-- outdated translation 6519833625675608678 -->     <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Instalace hlasových dat se nezdařila. Zkontrolujte, zda je karta SD v zařízení a obsahuje alespoň 6 MB volného místa. Je-li karta již v zařízení, odeberte ji a vložte znovu."</string>
+    <string name="retry_message" product="default" msgid="6519833625675608678">"Instalace hlasových dat se nezdařila. Zkontrolujte, zda je karta SD v zařízení a obsahuje alespoň 6 MB volného místa. Je-li karta již v zařízení, odeberte ji a vložte znovu."</string>
     <string name="retry" msgid="7470276488993209974">"Zkusit znovu"</string>
 </resources>
