@@ -21,8 +21,10 @@
     <!-- This is the name and title of the application that installs the required files for speech synthesis on the user's SD card  -->
     <string name="app_name">Speech Synthesis Data Installer</string>
 
+    <!-- After launching the application that installs the required files for speech synthesis on the user's SD card, this message is shown during the installation.  CHAR LIMIT=80  -->
+    <string name="installing_message" product="nosdcard">Installing voice data on shared storage.</string>
     <!-- After launching the application that installs the required files for speech synthesis on the user's SD card, this message is shown during the installation  -->
-    <string name="installing_message">Installing voice data on SD card.</string>
+    <string name="installing_message" product="default">Installing voice data on SD card.</string>
 
     <!-- After the successful installation of the required files for speech synthesis, the installer shows this message to the user  -->
     <string name="uninstall_message">The voice data has been installed successfully. You can now safely remove this installer.</string>
@@ -31,7 +33,9 @@
     <string name="uninstall">Uninstall</string>
 
     <!-- Text shown to the user when the application that tries to install voice data files on the user's SD card failed the installation  -->
-    <string name="retry_message">The voice data failed to install. Please make sure your SD card is in your device and has at least 6MB of free space. If your card is already in your device, please try removing the card and reinserting it.</string>
+    <string name="retry_message" product="nosdcard">The voice data failed to install. Please make sure your shared storage is mounted and has at least 6MB of free space.</string>
+    <!-- Text shown to the user when the application that tries to install voice data files on the user's SD card failed the installation  -->
+    <string name="retry_message" product="default">The voice data failed to install. Please make sure your SD card is in your device and has at least 6MB of free space. If your card is already in your device, please try removing the card and reinserting it.</string>
 
     <!-- Text on the button to let the user try one more time to install the installation of the voice data files   -->
     <string name="retry">Retry</string>
