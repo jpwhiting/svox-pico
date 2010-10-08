@@ -6,9 +6,7 @@
 # Note the destination path matches that used in external/svox/pico/tts/com_svox_picottsengine.cpp
 # 
 
-LOCAL_PATH:= external/svox/pico/lang
-
 PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/fr-FR_nk0_sg.bin:system/tts/lang_pico/fr-FR_nk0_sg.bin \
-	$(LOCAL_PATH)/fr-FR_ta.bin:system/tts/lang_pico/fr-FR_ta.bin
+	external/svox/pico/lang/fr-FR_nk0_sg.bin:system/tts/lang_pico/fr-FR_nk0_sg.bin \
+	external/svox/pico/lang/fr-FR_ta.bin:system/tts/lang_pico/fr-FR_ta.bin
 
