@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Programme d\'installation des données de la fonction de synthèse vocale"</string>
-    <!-- outdated translation 8792926973732354514 -->     <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Installation des données de la fonction de synthèse vocale sur la carte SD"</string>
+    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Installation des données de la synthèse vocale sur le stockage partagé."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Installation des données de la fonction de synthèse vocale sur la carte SD"</string>
     <string name="uninstall_message" msgid="174096141356529599">"Les données de la fonction de synthèse vocale ont été installées correctement. Vous pouvez maintenant supprimer ce programme d\'installation en toute sécurité."</string>
     <string name="uninstall" msgid="6195983436684617741">"Désinstaller"</string>
-    <!-- outdated translation 6519833625675608678 -->     <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"L\'installation des données de la fonction de synthèse vocale a échoué. Veuillez vérifier que vous avez bien inséré votre carte SD dans votre mobile et que celle-ci dispose d\'au moins 6 Mo d\'espace disponible. Si votre carte SD est déjà insérée dans l\'appareil, essayez de la retirer et de la réinsérer."</string>
+    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Échec de l\'installation des données de la synthèse vocale. Assurez-vous que le stockage partagé est monté et dispose de 6 Mo d\'espace libre."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"L\'installation des données de la fonction de synthèse vocale a échoué. Veuillez vérifier que vous avez bien inséré votre carte SD dans votre mobile et que celle-ci dispose d\'au moins 6 Mo d\'espace disponible. Si votre carte SD est déjà insérée dans l\'appareil, essayez de la retirer et de la réinsérer."</string>
     <string name="retry" msgid="7470276488993209974">"Réessayer"</string>
 </resources>

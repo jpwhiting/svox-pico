@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Installatieprogramma voor spraaksynthesegegevens"</string>
-    <!-- outdated translation 8792926973732354514 -->     <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Stemgegevens installeren op SD-kaart."</string>
+    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Spraakgegevens installeren in gedeelde opslag."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Stemgegevens installeren op SD-kaart."</string>
     <string name="uninstall_message" msgid="174096141356529599">"De stemgegevens zijn geïnstalleerd. U kunt dit installatieprogramma nu veilig verwijderen."</string>
     <string name="uninstall" msgid="6195983436684617741">"Verwijderen"</string>
-    <!-- outdated translation 6519833625675608678 -->     <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Het installeren van de stemgegevens is mislukt. Controleer of de SD-kaart in het apparaat is geplaatst en er ten minste 6 MB vrije ruimte beschikbaar is. Als de kaart al in het apparaat is geplaatst, verwijdert u de kaart en plaatst u deze opnieuw."</string>
+    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Het installeren van de spraakgegevens is mislukt. Controleer of de gedeelde opslag is gekoppeld en ten minste 6 MB vrije ruimte heeft."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Het installeren van de stemgegevens is mislukt. Controleer of de SD-kaart in het apparaat is geplaatst en er ten minste 6 MB vrije ruimte beschikbaar is. Als de kaart al in het apparaat is geplaatst, verwijdert u de kaart en plaatst u deze opnieuw."</string>
     <string name="retry" msgid="7470276488993209974">"Opnieuw proberen"</string>
 </resources>

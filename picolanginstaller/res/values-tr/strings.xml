@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Konuşma Sentezi Veri Yükleyicisi"</string>
-    <!-- outdated translation 8792926973732354514 -->     <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Ses verileri SD karta yükleniyor."</string>
+    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Ses verileri paylaşılan depolama birimine yükleniyor."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Ses verileri SD karta yükleniyor."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Ses verileri başarıyla yüklendi. Bu yükleyiciyi artık güvenle kaldırabilirsiniz."</string>
     <string name="uninstall" msgid="6195983436684617741">"Kaldır"</string>
-    <!-- outdated translation 6519833625675608678 -->     <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Ses verileri yüklenemedi. Lütfen SD kartınızın cihazınızda olduğundan ve en az 6 MB boş alan bulunduğundan emin olun. Kartınız zaten cihazınızdaysa kartı çıkarmayı ve yeniden takmayı deneyin."</string>
+    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Ses verileri yüklenemedi. Lütfen paylaşılan depolama biriminizin bağlı olduğundan ve birimde en az 6MB boş alan bulunduğundan emin olun."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Ses verileri yüklenemedi. Lütfen SD kartınızın cihazınızda olduğundan ve en az 6 MB boş alan bulunduğundan emin olun. Kartınız zaten cihazınızdaysa kartı çıkarmayı ve yeniden takmayı deneyin."</string>
     <string name="retry" msgid="7470276488993209974">"Tekrar Dene"</string>
 </resources>
