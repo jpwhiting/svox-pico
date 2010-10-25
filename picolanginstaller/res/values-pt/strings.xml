@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Instalador de dados de sintetização de voz"</string>
-    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Instalando dados de voz no armazenamento compartilhado."</string>
+    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Instalando dados de voz no armazenamento compartilhado."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Instalando os dados de voz no cartão SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Os dados de voz foram instalados com êxito. O instalador já pode ser removido com segurança."</string>
     <string name="uninstall" msgid="6195983436684617741">"Desinstalar"</string>
-    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Falha ao instalar dados de voz. Verifique se seu armazenamento compartilhado está conectado e possui, no mínimo, 6 MB de espaço livre."</string>
+    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Falha ao instalar dados de voz. Verifique se seu armazenamento compartilhado está conectado e possui, no mínimo, 6 MB de espaço livre."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Falha na instalação dos dados de voz. Verifique se o seu cartão SD está no aparelho e tem no mínimo 6 MB de espaço livre. Se o cartão já estiver no seu dispositivo, remova-o e o insira novamente."</string>
     <string name="retry" msgid="7470276488993209974">"Tentar novamente"</string>
 </resources>

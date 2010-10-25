@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Установщик данных синтезатора речи"</string>
-    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Идет установка приложения синтеза речи на общий накопитель."</string>
+    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Идет установка приложения синтеза речи на общий накопитель."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Установка голосовых данных на SD-карте."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Голосовые данные установлены успешно. Можно удалить установщик."</string>
     <string name="uninstall" msgid="6195983436684617741">"Удалить"</string>
-    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Не удалось установить приложение синтеза речи. Проверьте, подключен ли общий накопитель и есть ли на нем хотя бы 6 МБ свободного места."</string>
+    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Не удалось установить приложение синтеза речи. Проверьте, подключен ли общий накопитель и есть ли на нем хотя бы 6 МБ свободного места."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Произошел сбой при установке голосовых данных. Убедитесь, что на SD-карте вашего устройства имеется как минимум 6 МБ свободного пространства. Если карта уже находится в устройстве, попробуйте извлечь ее и снова вставить."</string>
     <string name="retry" msgid="7470276488993209974">"Повторить попытку"</string>
 </resources>

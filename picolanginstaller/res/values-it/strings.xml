@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Programma di installazione dati di sintesi vocale"</string>
-    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Installazione dei dati vocali nell\'archivio condiviso."</string>
+    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Installazione dei dati vocali nell\'archivio condiviso."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Installazione dati vocali su scheda SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"I dati vocali sono stati installati correttamente. Ora puoi rimuovere in tutta sicurezza questo programma di installazione."</string>
     <string name="uninstall" msgid="6195983436684617741">"Disinstalla"</string>
-    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Installazione dei dati vocali non riuscita. Assicurati che l\'archivio condiviso sia montato e abbia almeno 6 MB di spazio libero."</string>
+    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Installazione dei dati vocali non riuscita. Assicurati che l\'archivio condiviso sia montato e abbia almeno 6 MB di spazio libero."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Installazione dati vocali non riuscita. Assicurati che la tua scheda SD sia nel dispositivo e contenga almeno 6 MB di spazio libero. Se la scheda è già nel dispositivo, prova a rimuoverla e a reinserirla."</string>
     <string name="retry" msgid="7470276488993209974">"Riprova"</string>
 </resources>

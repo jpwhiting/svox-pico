@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Installationsprogramm für Sprachsynthesedaten"</string>
-    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Sprachdaten werden auf gemeinsamem Speicher installiert."</string>
+    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Sprachdaten werden auf freigegebenem Speicher installiert."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Sprachdaten werden auf der SD-Karte installiert."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Die Sprachdaten wurden erfolgreich installiert. Sie können dieses Installationsprogramm nun entfernen."</string>
     <string name="uninstall" msgid="6195983436684617741">"Deinstallieren"</string>
-    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Die Sprachdaten konnten nicht installiert werden. Vergewissern Sie sich, dass der gemeinsame Speicher bereitgestellt ist und über mindestens 6 MB freien Speicherplatz verfügt."</string>
+    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Die Sprachdaten konnten nicht installiert werden. Vergewissern Sie sich, dass der freigegebene Speicher bereitgestellt ist und über mindestens 6 MB freien Speicherplatz verfügt."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Die Sprachdaten konnten nicht installiert werden. Stellen Sie sicher, dass sich die SD-Karte in Ihrem Gerät befindet und über mindestens 6 MB freien Speicherplatz verfügt. Wenn sich Ihre Karte bereits im Gerät befindet, entfernen Sie die Karte und setzen Sie sie dann wieder ein."</string>
     <string name="retry" msgid="7470276488993209974">"Wiederholen"</string>
 </resources>

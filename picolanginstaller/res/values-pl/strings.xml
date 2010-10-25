@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Program instalacyjny danych syntezatora mowy"</string>
-    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Instalowanie danych głosowych w pamięci udostępnionej."</string>
+    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Instalowanie danych głosowych w pamięci współdzielonej."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Instalowanie danych głosowych na karcie SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Dane głosowe zostały pomyślnie zainstalowane. Możesz teraz bezpiecznie usunąć ten program instalacyjny."</string>
     <string name="uninstall" msgid="6195983436684617741">"Odinstaluj"</string>
-    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Nie można zainstalować danych głosowych. Upewnij się, że pamięć udostępniona jest podłączona i zawiera co najmniej 6 MB wolnego miejsca."</string>
+    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Nie można zainstalować danych głosowych. Upewnij się, że pamięć współdzielona jest podłączona i zawiera co najmniej 6 MB wolnego miejsca."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Zainstalowanie danych głosowych nie powiodło się. Sprawdź, czy w urządzeniu znajduje się karta SD zawierająca co najmniej 6 MB wolnego miejsca. Jeśli karta znajduje się w urządzeniu, wyjmij ją i włóż ponownie."</string>
     <string name="retry" msgid="7470276488993209974">"Ponów próbę"</string>
 </resources>

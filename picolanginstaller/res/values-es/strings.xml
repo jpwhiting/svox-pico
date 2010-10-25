@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Instalador de datos de síntesis de voz"</string>
-    <string name="installing_message" product="nosdcard" msgid="7493296463759062500">"Instalando archivos de datos de voz en almacenamiento compartido"</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Instalando archivos de datos de voz en almacenamiento USB..."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Instalando archivos de datos de voz en tarjeta SD..."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Los archivos de datos de voz se han instalado correctamente. Puedes eliminar este instalador de forma segura."</string>
     <string name="uninstall" msgid="6195983436684617741">"Desinstalar"</string>
-    <string name="retry_message" product="nosdcard" msgid="4897843044300559909">"Se ha producido un error al instalar los archivos de datos de voz. Asegúrate de que el almacenamiento compartido esté activado y de que disponga de 6 MB de espacio libre como mínimo."</string>
+    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"No se han podido instalar los archivos de datos de voz. Asegúrate de que el almacenamiento USB tenga un mínimo de 6 MB de espacio libre."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"No se han podido instalar los archivos de datos de voz. Asegúrate de que la tarjeta SD esté insertada en el dispositivo y tenga un mínimo de 6 MB de espacio libre. Si la tarjeta ya está insertada en el dispositivo, prueba a extraerla y volver a introducirla."</string>
     <string name="retry" msgid="7470276488993209974">"Reintentar"</string>
 </resources>
