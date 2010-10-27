@@ -20,9 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"語音合成資料安裝程式"</string>
-    <string name="installing_message" msgid="8792926973732354514">"正在 SD 卡上安裝語音資料。"</string>
+    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"在共用儲存裝置上安裝語音資料。"</string>
+    <string name="installing_message" product="default" msgid="8792926973732354514">"正在 SD 卡上安裝語音資料。"</string>
     <string name="uninstall_message" msgid="174096141356529599">"已安裝語音資料，您可以移除安裝程式了。"</string>
     <string name="uninstall" msgid="6195983436684617741">"解除安裝"</string>
-    <string name="retry_message" msgid="6519833625675608678">"無法安裝語音資料，請檢查手機是否已插入 SD 卡，以及是否有 6MB 的可用空間。如果您已插入 SD 卡，請取出再重新插入一次。"</string>
+    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"安裝語音資料失敗，請確認您已掛接共用儲存裝置，並且至少有 6MB 的可用空間。"</string>
+    <string name="retry_message" product="default" msgid="6519833625675608678">"無法安裝語音資料，請檢查手機是否已插入 SD 卡，以及是否有 6MB 的可用空間。如果您已插入 SD 卡，請取出再重新插入一次。"</string>
     <string name="retry" msgid="7470276488993209974">"重試"</string>
 </resources>
