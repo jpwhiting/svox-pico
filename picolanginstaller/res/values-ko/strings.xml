@@ -20,7 +20,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"음성 합성 데이터 설치 프로그램"</string>
-    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"공유 저장장치에 음성 데이터를 설치합니다."</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"USB 저장소에 음성 데이터를 설치합니다."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"SD 카드에 음성 데이터를 설치하는 중입니다."</string>
     <string name="uninstall_message" msgid="174096141356529599">"음성 데이터가 성공적으로 설치되었습니다. 이제 이 설치 프로그램을 안전하게 삭제할 수 있습니다."</string>
     <string name="uninstall" msgid="6195983436684617741">"제거"</string>

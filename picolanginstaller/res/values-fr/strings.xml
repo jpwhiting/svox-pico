@@ -20,7 +20,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Programme d\'installation des données de la fonction de synthèse vocale"</string>
-    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Installation des données de synthèse vocale sur le stockage USB"</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Installation des données de synthèse vocale sur la mémoire de stockage USB"</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Installation des données de la fonction de synthèse vocale sur la carte SD"</string>
     <string name="uninstall_message" msgid="174096141356529599">"Les données de la fonction de synthèse vocale ont été installées correctement. Vous pouvez maintenant supprimer ce programme d\'installation en toute sécurité."</string>
     <string name="uninstall" msgid="6195983436684617741">"Désinstaller"</string>

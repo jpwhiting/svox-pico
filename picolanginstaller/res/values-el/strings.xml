@@ -20,7 +20,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Πρόγραμμα εγκατάστασης δεδομένων σύνθεσης ομιλίας"</string>
-    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Εγκατάσταση δεδομένων φωνής στον κοινόχρηστο αποθηκευτικό χώρο"</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Εγκατάσταση δεδομένων φωνής στον χώρο αποθήκευσης USB."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Εγκατάσταση δεδομένων φωνής στην κάρτα SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Η εγκατάσταση των δεδομένων φωνής ολοκληρώθηκε με επιτυχία. Μπορείτε τώρα να καταργήσετε το πρόγραμμα εγκατάστασης."</string>
     <string name="uninstall" msgid="6195983436684617741">"Κατάργηση εγκατάστασης"</string>

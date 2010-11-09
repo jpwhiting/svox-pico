@@ -20,7 +20,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Установщик данных синтезатора речи"</string>
-    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Идет установка приложения синтеза речи на общий накопитель."</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Идет установка приложения синтеза речи на USB-накопитель."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Установка голосовых данных на SD-карте."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Голосовые данные установлены успешно. Можно удалить установщик."</string>
     <string name="uninstall" msgid="6195983436684617741">"Удалить"</string>

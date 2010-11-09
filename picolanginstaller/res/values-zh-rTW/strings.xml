@@ -20,7 +20,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"語音合成資料安裝程式"</string>
-    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"在共用儲存裝置上安裝語音資料。"</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"正在 USB 儲存裝置上安裝語音資料。"</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"正在 SD 卡上安裝語音資料。"</string>
     <string name="uninstall_message" msgid="174096141356529599">"已安裝語音資料，您可以移除安裝程式了。"</string>
     <string name="uninstall" msgid="6195983436684617741">"解除安裝"</string>

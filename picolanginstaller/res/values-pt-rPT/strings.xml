@@ -20,7 +20,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Instalador de dados de reprodução de voz"</string>
-    <!-- outdated translation 7493296463759062500 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"A instalar dados de voz no armazenamento partilhado."</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"A instalar dados de voz no armazenamento USB."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"A instalar dados de voz no cartão SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Os dados de voz foram instalados com êxito. Agora já pode remover este instalador com segurança."</string>
     <string name="uninstall" msgid="6195983436684617741">"Desinstalar"</string>
