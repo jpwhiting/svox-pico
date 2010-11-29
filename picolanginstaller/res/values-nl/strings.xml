@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Stemgegevens installeren op SD-kaart."</string>
     <string name="uninstall_message" msgid="174096141356529599">"De stemgegevens zijn geïnstalleerd. U kunt dit installatieprogramma nu veilig verwijderen."</string>
     <string name="uninstall" msgid="6195983436684617741">"Verwijderen"</string>
-    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Het installeren van de spraakgegevens is mislukt. Controleer of de gedeelde opslag is gekoppeld en ten minste 6 MB vrije ruimte heeft."</string>
+    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Het installeren van de spraakgegevens is mislukt. Controleer of de USB-opslag ten minste 6 MB vrije ruimte heeft."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Het installeren van de stemgegevens is mislukt. Controleer of de SD-kaart in het apparaat is geplaatst en er ten minste 6 MB vrije ruimte beschikbaar is. Als de kaart al in het apparaat is geplaatst, verwijdert u de kaart en plaatst u deze opnieuw."</string>
     <string name="retry" msgid="7470276488993209974">"Opnieuw proberen"</string>
 </resources>

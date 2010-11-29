@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Instalowanie danych głosowych na karcie SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Dane głosowe zostały pomyślnie zainstalowane. Możesz teraz bezpiecznie usunąć ten program instalacyjny."</string>
     <string name="uninstall" msgid="6195983436684617741">"Odinstaluj"</string>
-    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Nie można zainstalować danych głosowych. Upewnij się, że pamięć współdzielona jest podłączona i zawiera co najmniej 6 MB wolnego miejsca."</string>
+    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Nie można zainstalować danych głosowych. Upewnij się, że nośnik USB zawiera co najmniej 6 MB wolnego miejsca."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Zainstalowanie danych głosowych nie powiodło się. Sprawdź, czy w urządzeniu znajduje się karta SD zawierająca co najmniej 6 MB wolnego miejsca. Jeśli karta znajduje się w urządzeniu, wyjmij ją i włóż ponownie."</string>
     <string name="retry" msgid="7470276488993209974">"Ponów próbę"</string>
 </resources>

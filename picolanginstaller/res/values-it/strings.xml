@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Installazione dati vocali su scheda SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"I dati vocali sono stati installati correttamente. Ora puoi rimuovere in tutta sicurezza questo programma di installazione."</string>
     <string name="uninstall" msgid="6195983436684617741">"Disinstalla"</string>
-    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Installazione dei dati vocali non riuscita. Assicurati che l\'archivio condiviso sia montato e abbia almeno 6 MB di spazio libero."</string>
+    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Installazione dei dati vocali non riuscita. Assicurati che l\'archivio USB abbia almeno 6 MB di spazio libero."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Installazione dati vocali non riuscita. Assicurati che la tua scheda SD sia nel dispositivo e contenga almeno 6 MB di spazio libero. Se la scheda è già nel dispositivo, prova a rimuoverla e a reinserirla."</string>
     <string name="retry" msgid="7470276488993209974">"Riprova"</string>
 </resources>

@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Installera röstdata på SD-kort."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Röstdata har installerats. Du kan nu ta bort installationsprogrammet."</string>
     <string name="uninstall" msgid="6195983436684617741">"Avinstallera"</string>
-    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Röstdata kunde inte installeras. Kontrollera att den delade lagringsenheten har minst 6 MB ledigt utrymme."</string>
+    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Röstdata kunde inte installeras. Kontrollera att din delade lagringsenhet har minst 6 MB ledigt utrymme."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Röstdata kunde inte installeras. Kontrollera att SD-kortet i enheten har minst 6 MB ledigt utrymme. Om kortet redan sitter i enheten kan du pröva med att ta ut och sätta tillbaka det."</string>
     <string name="retry" msgid="7470276488993209974">"Försök igen"</string>
 </resources>
