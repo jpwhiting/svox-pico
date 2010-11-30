@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Ses verileri SD karta yükleniyor."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Ses verileri başarıyla yüklendi. Bu yükleyiciyi artık güvenle kaldırabilirsiniz."</string>
     <string name="uninstall" msgid="6195983436684617741">"Kaldır"</string>
-    <!-- outdated translation 4897843044300559909 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Ses verileri yüklenemedi. Lütfen paylaşılan depolama biriminizin bağlı olduğundan ve birimde en az 6MB boş alan bulunduğundan emin olun."</string>
+    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Ses verileri yüklenemedi. Lütfen USB depolama biriminizde en az 6MB boş alan olduğundan emin olun."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Ses verileri yüklenemedi. Lütfen SD kartınızın cihazınızda olduğundan ve en az 6 MB boş alan bulunduğundan emin olun. Kartınız zaten cihazınızdaysa kartı çıkarmayı ve yeniden takmayı deneyin."</string>
     <string name="retry" msgid="7470276488993209974">"Tekrar Dene"</string>
 </resources>
