@@ -20,11 +20,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Program de instalare pentru datele sintetizatorului de voce"</string>
-    <!-- outdated translation 8792926973732354514 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"În curs de instalare a datelor vocale pe un card SD."</string>
+    <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Se instalează datele vocale pe stocarea USB."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"În curs de instalare a datelor vocale pe un card SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Datele vocale au fost instalate. Acum puteţi elimina în siguranţă acest program de instalare."</string>
     <string name="uninstall" msgid="6195983436684617741">"Dezinstalaţi"</string>
-    <!-- outdated translation 6519833625675608678 -->     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Instalarea datelor vocale nu a reuşit. Asiguraţi-vă că aţi introdus cardul SD în dispozitiv şi că acesta conţine minimum 6 MO de spaţiu disponibil. În cazul în care cardul se află deja în dispozitiv, încercaţi să îl scoateţi şi să îl introduceţi din nou."</string>
+    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Instalarea datelor vocale a eşuat. Asiguraţi-vă că stocarea USB are cel puţin 6 MO spaţiu liber."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"Instalarea datelor vocale nu a reuşit. Asiguraţi-vă că aţi introdus cardul SD în dispozitiv şi că acesta conţine minimum 6 MO de spaţiu disponibil. În cazul în care cardul se află deja în dispozitiv, încercaţi să îl scoateţi şi să îl introduceţi din nou."</string>
     <string name="retry" msgid="7470276488993209974">"Încercaţi din nou"</string>
 </resources>
