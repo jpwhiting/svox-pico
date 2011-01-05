@@ -1515,7 +1515,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                             return TTS_FAILURE;
                         }
                     }
-                    LOGE("No language in SSML, using current language (%s).", picoProp_currLang);
+                    //LOGI("No language in SSML, using current language (%s).", picoProp_currLang);
                 }
                 delete parser;
             } else {
