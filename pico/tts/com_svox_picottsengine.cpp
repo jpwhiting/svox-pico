@@ -142,18 +142,28 @@ static int checkForLocale( const char * locale )
         }
     };
 
-    /* The locale was not found.    */
+    /* The exact locale was not found.    */
     if (found < 0) {
         /* We didn't find an exact match; it may have been specified with only the first 2 characters.
            This could overmatch ISO 639-3 language codes.%%                                   */
-        for (i = 0; i < picoNumSupportedVocs; i ++) {
-            if (strncmp(locale, picoSupportedLang[i], 2) == 0) {
-                found = i;
-                break;
+
+        /* check whether the current language matches the locale's language */
+        if ((picoCurrentLangIndex > -1) &&
+                (strncmp(locale, picoSupportedLang[picoCurrentLangIndex], 2) == 0)) {
+            /* the current language matches the requested language, let's use it */
+            found = picoCurrentLangIndex;
+        } else {
+            /* check whether we can find a match at least on the language */
+            for (i = 0; i < picoNumSupportedVocs; i ++) {
+                if (strncmp(locale, picoSupportedLang[i], 2) == 0) {
+                    found = i;
+                    break;
+                }
             }
         }
+
         if (found < 0) {
-            LOGE("TtsEngine::set language called with unsupported locale");
+            LOGE("TtsEngine::set language called with unsupported locale %s", locale);
         }
     };
     return found;
@@ -301,8 +311,8 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     if (langIndex>=0) {
         /* If we already have a loaded locale, check whether it is the same one as requested.   */
         if (picoProp_currLang && (strcmp(picoProp_currLang, picoSupportedLang[langIndex]) == 0)) {
-            LOGI("Language already loaded (%s == %s)", picoProp_currLang,
-                    picoSupportedLang[langIndex]);
+            //LOGI("Language already loaded (%s == %s)", picoProp_currLang,
+            //        picoSupportedLang[langIndex]);
             return TTS_SUCCESS;
         }
     }
@@ -500,7 +510,7 @@ static tts_result doLanguageSwitch( const char * locale )
         LOGE("Tried to swith to non-supported locale %s", locale);
         return TTS_FAILURE;
     }
-    LOGI("Found supported locale %s", picoSupportedLang[loclIndex]);
+    //LOGI("Found supported locale %s", picoSupportedLang[loclIndex]);
     return doLanguageSwitchFromLangIndex( loclIndex );
 }
 
@@ -1115,6 +1125,7 @@ tts_result TtsEngine::loadLanguage(const char *lang, const char *country, const 
  */
 tts_result TtsEngine::setLanguage( const char * lang, const char * country, const char * variant )
 {
+    //LOGI("TtsEngine::setLanguage %s %s %s", lang, country, variant);
     int langIndex;
     int countryIndex;
     int i;
