@@ -75,7 +75,7 @@ LOCAL_SRC_FILES:= \
 	picotrns.c \
 	picowa.c
 
-LOCAL_PRELINK_MODULE:= false
+
 
 LOCAL_MODULE:= libsvoxpico
 
