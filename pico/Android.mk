@@ -12,11 +12,16 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_SRC_FILES := $(call all-subdir-java-files)
+LOCAL_SRC_FILES := $(call all-java-files-under, src) \
+    $(call all-java-files-under, compat)
 
 LOCAL_PACKAGE_NAME := PicoTts
+LOCAL_REQUIRED_MODULES := libttscompat
+
+LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 include $(BUILD_PACKAGE)
+
 
 # Build Pico Shared Library
 
@@ -27,7 +32,7 @@ LOCAL_SRC_FILES:= com_svox_picottsengine.cpp svox_ssml_parser.cpp
 
 LOCAL_C_INCLUDES += \
 	external/svox/pico/lib \
-	frameworks
+	external/svox/pico/compat/include
 
 LOCAL_STATIC_LIBRARIES:= libsvoxpico
 
@@ -84,5 +89,27 @@ LOCAL_CFLAGS+= $(TOOL_CFLAGS)
 LOCAL_LDFLAGS+= $(TOOL_LDFLAGS)
 
 include $(BUILD_STATIC_LIBRARY)
+
+
+# Build compatibility library
+LOCAL_PATH:= $(TOP_LOCAL_PATH)/compat/jni
+include $(CLEAR_VARS)
+
+LOCAL_MODULE:= libttscompat
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_SRC_FILES:= \
+        com_android_tts_compat_SynthProxy.cpp
+
+LOCAL_SHARED_LIBRARIES := \
+        libandroid_runtime \
+        libnativehelper \
+        libmedia \
+        libutils \
+        libcutils \
+        libdl
+
+include $(BUILD_SHARED_LIBRARY)
+
 
 endif # TARGET_SIMULATOR

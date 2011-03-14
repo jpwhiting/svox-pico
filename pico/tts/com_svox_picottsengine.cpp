@@ -40,10 +40,12 @@
 #include <utils/Log.h>
 #include <utils/String16.h>                     /* for strlen16 */
 #include <android_runtime/AndroidRuntime.h>
-#include <tts/TtsEngine.h>
+#include <TtsEngine.h>
+
 #include <cutils/jstring.h>
 #include <picoapi.h>
 #include <picodefs.h>
+
 #include "svox_ssml_parser.h"
 
 using namespace android;
