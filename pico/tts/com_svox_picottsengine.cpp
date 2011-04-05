@@ -43,6 +43,7 @@
 #include <TtsEngine.h>
 
 #include <cutils/jstring.h>
+#include <hardware/audio.h>
 #include <picoapi.h>
 #include <picodefs.h>
 
@@ -1290,11 +1291,11 @@ tts_result TtsEngine::getLanguage(char *language, char *country, char *variant)
  * @channels - reference to number of channels
  * return tts_result
  * */
-tts_result TtsEngine::setAudioFormat(AudioSystem::audio_format& encoding, uint32_t& rate,
+tts_result TtsEngine::setAudioFormat(audio_format_t& encoding, uint32_t& rate,
             int& channels)
 {
     // ignore the input parameters, the enforced audio parameters are fixed here
-    encoding = AudioSystem::PCM_16_BIT;
+    encoding = AUDIO_FORMAT_PCM_16_BIT;
     rate = 16000;
     channels = 1;
     return TTS_SUCCESS;
@@ -1585,7 +1586,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                     bufused += bytes_recv;
                 } else {
                     /* The buffer filled; pass this on to the callback function.    */
-                    cbret = picoSynthDoneCBPtr(userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer,
+                    cbret = picoSynthDoneCBPtr(userdata, 16000, AUDIO_FORMAT_PCM_16_BIT, 1, buffer,
                             bufused, TTS_SYNTH_PENDING);
                     if (cbret == TTS_CALLBACK_HALT) {
                         LOGI("Halt requested by caller. Halting.");
@@ -1603,7 +1604,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         /* This chunk of synthesis is finished; pass the remaining samples.
            Use 16 KHz, 16-bit samples.                                              */
         if (!picoSynthAbort) {
-            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
+            picoSynthDoneCBPtr( userdata, 16000, AUDIO_FORMAT_PCM_16_BIT, 1, buffer, bufused,
                     TTS_SYNTH_PENDING);
         }
         picoSynthAbort = 0;
@@ -1616,7 +1617,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                 free(local_text);
             }
             LOGV("Synth loop: sending TTS_SYNTH_DONE after error");
-            picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
+            picoSynthDoneCBPtr( userdata, 16000, AUDIO_FORMAT_PCM_16_BIT, 1, buffer, bufused,
                     TTS_SYNTH_DONE);
             pico_resetEngine( picoEngine, PICO_RESET_SOFT );
             return TTS_FAILURE;
@@ -1625,7 +1626,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
 
     /* Synthesis is done; notify the caller */
     LOGV("Synth loop: sending TTS_SYNTH_DONE after all done, or was asked to stop");
-    picoSynthDoneCBPtr( userdata, 16000, AudioSystem::PCM_16_BIT, 1, buffer, bufused,
+    picoSynthDoneCBPtr( userdata, 16000, AUDIO_FORMAT_PCM_16_BIT, 1, buffer, bufused,
             TTS_SYNTH_DONE);
 
     if (local_text) {

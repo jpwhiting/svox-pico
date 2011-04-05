@@ -159,7 +159,7 @@ public:
     // @param[inout] channels in: the desired number of audio channels
     //                         out: the number of channels used by the TTS engine
     // @return TTS_SUCCESS, or TTS_FAILURE
-    virtual tts_result setAudioFormat(AudioSystem::audio_format& encoding, uint32_t& rate,
+    virtual tts_result setAudioFormat(audio_format_t& encoding, uint32_t& rate,
             int& channels);
 
     // Set a property for the the TTS engine
