@@ -105,8 +105,11 @@ public abstract class CompatTtsService extends TextToSpeechService {
     }
 
     @Override
-    protected int onSynthesizeText(SynthesisRequest request) {
-        if (mNativeSynth == null) return TextToSpeech.ERROR;
+    protected void onSynthesizeText(SynthesisRequest request) {
+        if (mNativeSynth == null) {
+            request.error();
+            return;
+        }
 
         // Set language
         String lang = request.getLanguage();
@@ -114,25 +117,31 @@ public abstract class CompatTtsService extends TextToSpeechService {
         String variant = request.getVariant();
         if (mNativeSynth.setLanguage(lang, country, variant) != TextToSpeech.SUCCESS) {
             Log.e(TAG, "setLanguage(" + lang + "," + country + "," + variant + ") failed");
-            return TextToSpeech.ERROR;
+            request.error();
+            return;
         }
 
         // Set speech rate
         int speechRate = request.getSpeechRate();
         if (mNativeSynth.setSpeechRate(speechRate) != TextToSpeech.SUCCESS) {
             Log.e(TAG, "setSpeechRate(" + speechRate + ") failed");
-            return TextToSpeech.ERROR;
+            request.error();
+            return;
         }
 
         // Set speech
         int pitch = request.getPitch();
         if (mNativeSynth.setPitch(pitch) != TextToSpeech.SUCCESS) {
             Log.e(TAG, "setPitch(" + pitch + ") failed");
-            return TextToSpeech.ERROR;
+            request.error();
+            return;
         }
 
         // Synthesize
-        return mNativeSynth.speak(request);
+        if (mNativeSynth.speak(request) != TextToSpeech.SUCCESS) {
+            request.error();
+            return;
+        }
     }
 
     @Override
