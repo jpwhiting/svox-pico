@@ -139,8 +139,9 @@ public class SynthProxy {
     /**
      * Shuts down the native synthesizer.
      */
-    public void shutdown()  {
+    public void shutdown() {
         native_shutdown(mJniData);
+        mJniData = 0;
     }
 
     @Override
