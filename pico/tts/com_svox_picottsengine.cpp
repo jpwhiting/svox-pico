@@ -43,7 +43,7 @@
 #include <TtsEngine.h>
 
 #include <cutils/jstring.h>
-#include <hardware/audio.h>
+#include <system/audio.h>
 #include <picoapi.h>
 #include <picodefs.h>
 
