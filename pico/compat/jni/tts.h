@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #ifndef ANDROID_TTS_H
-#define ANDROID_TTS_H 
+#define ANDROID_TTS_H
 
 // This header defines the interface used by the Android platform
 // to access Text-To-Speech functionality in shared libraries that implement
@@ -62,6 +62,9 @@ typedef enum {
 } android_tts_callback_status_t;
 
 // Supported audio formats
+//
+// NOTE: This is duplicated in compat/include/TtsEngine.h
+// Please make changes there as well.
 typedef enum {
     ANDROID_TTS_AUDIO_FORMAT_INVALID    = -1,
     ANDROID_TTS_AUDIO_FORMAT_DEFAULT    = 0,

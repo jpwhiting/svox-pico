@@ -40,6 +40,11 @@
 #define FILTER_GAIN 5.5f // linear gain
 
 // android.media.AudioFormat.ENCODING_ values
+//
+// Note that these constants are different from those
+// defined in the native code (system/audio.h and others).
+// We use them because we use a Java AudioTrack to play
+// back our data.
 #define AUDIO_FORMAT_ENCODING_DEFAULT 1
 #define AUDIO_FORMAT_ENCODING_PCM_16_BIT 2
 #define AUDIO_FORMAT_ENCODING_PCM_8_BIT 3

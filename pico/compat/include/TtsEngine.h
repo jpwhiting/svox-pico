@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <media/AudioSystem.h>
 
 // This header defines the interface used by the Android platform
 // to access Text-To-Speech functionality in shared libraries that implement
@@ -42,6 +41,15 @@ enum tts_callback_status {
     TTS_CALLBACK_CONTINUE       = 1
 };
 
+// NOTE: This is duplicated in compat/jni/tts.h. Please
+// make changes there as well.
+enum tts_audio_format {
+    TTS_AUDIO_FORMAT_INVALID    = -1,
+    TTS_AUDIO_FORMAT_DEFAULT    = 0,
+    TTS_AUDIO_FORMAT_PCM_16_BIT = 1,
+    TTS_AUDIO_FORMAT_PCM_8_BIT  = 2,
+};
+
 // The callback is used by the implementation of this interface to notify its
 // client, the Android TTS service, that the last requested synthesis has been
 // completed. // TODO reword
@@ -49,7 +57,7 @@ enum tts_callback_status {
 // @param [inout] void *&       - The userdata pointer set in the original
 //                                 synth call
 // @param [in]    uint32_t      - Track sampling rate in Hz
-// @param [in]    uint32_t      - The audio format
+// @param [in] tts_audio_format - The audio format
 // @param [in]    int           - The number of channels
 // @param [inout] int8_t *&     - A buffer of audio data only valid during the
 //                                execution of the callback
@@ -60,7 +68,7 @@ enum tts_callback_status {
 //         TTS_CALLBACK_CONTINUE to indicate the synthesis must continue if
 //            there is more data to produce.
 typedef tts_callback_status (synthDoneCB_t)(void *&, uint32_t,
-        uint32_t, int, int8_t *&, size_t&, tts_synth_status);
+        tts_audio_format, int, int8_t *&, size_t&, tts_synth_status);
 
 class TtsEngine;
 extern "C" TtsEngine* getTtsEngine();
@@ -82,6 +90,7 @@ enum tts_support_result {
     TTS_LANG_MISSING_DATA = -1,
     TTS_LANG_NOT_SUPPORTED = -2
 };
+
 
 class TtsEngine
 {
@@ -159,7 +168,7 @@ public:
     // @param[inout] channels in: the desired number of audio channels
     //                         out: the number of channels used by the TTS engine
     // @return TTS_SUCCESS, or TTS_FAILURE
-    virtual tts_result setAudioFormat(audio_format_t& encoding, uint32_t& rate,
+    virtual tts_result setAudioFormat(tts_audio_format& encoding, uint32_t& rate,
             int& channels);
 
     // Set a property for the the TTS engine
@@ -229,4 +238,3 @@ public:
 };
 
 } // namespace android
-
