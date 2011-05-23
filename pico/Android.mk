@@ -54,8 +54,6 @@ include $(BUILD_STATIC_LIBRARY)
 LOCAL_PATH:= $(TOP_LOCAL_PATH)/tts
 include $(CLEAR_VARS)
 
-LOCAL_MODULE_TAGS := optional
-
 LOCAL_SRC_FILES:= com_svox_picottsengine.cpp svox_ssml_parser.cpp
 LOCAL_C_INCLUDES += \
 	external/svox/pico/lib \
