@@ -626,7 +626,7 @@ static JNINativeMethod gMethods[] = {
         (void*)com_android_tts_compat_SynthProxy_stopSync
     },
     {   "native_speak",
-        "(ILjava/lang/String;Landroid/speech/tts/SynthesisRequest;)I",
+        "(ILjava/lang/String;Landroid/speech/tts/SynthesisCallback;)I",
         (void*)com_android_tts_compat_SynthProxy_speak
     },
     {   "native_isLanguageAvailable",
@@ -678,7 +678,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     assert(env != NULL);
 
     jclass classSynthesisRequest = env->FindClass(
-            "android/speech/tts/SynthesisRequest");
+            "android/speech/tts/SynthesisCallback");
     if (classSynthesisRequest == NULL) {
         return -1;
     }

@@ -15,6 +15,7 @@
  */
 package com.android.tts.compat;
 
+import android.speech.tts.SynthesisCallback;
 import android.speech.tts.SynthesisRequest;
 import android.util.Log;
 
@@ -82,8 +83,8 @@ public class SynthProxy {
         return native_stopSync(mJniData);
     }
 
-    public int speak(SynthesisRequest request) {
-        return native_speak(mJniData, request.getText(), request);
+    public int speak(SynthesisRequest request, SynthesisCallback callback) {
+        return native_speak(mJniData, request.getText(), callback);
     }
 
     /**
@@ -164,7 +165,7 @@ public class SynthProxy {
 
     private native final int native_stopSync(int jniData);
 
-    private native final int native_speak(int jniData, String text, SynthesisRequest request);
+    private native final int native_speak(int jniData, String text, SynthesisCallback request);
 
     private native final int  native_isLanguageAvailable(int jniData, String language,
             String country, String variant);

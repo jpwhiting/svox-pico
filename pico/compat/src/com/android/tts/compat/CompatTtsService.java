@@ -17,6 +17,7 @@ package com.android.tts.compat;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.speech.tts.SynthesisCallback;
 import android.speech.tts.SynthesisRequest;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeechService;
@@ -105,9 +106,9 @@ public abstract class CompatTtsService extends TextToSpeechService {
     }
 
     @Override
-    protected void onSynthesizeText(SynthesisRequest request) {
+    protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
         if (mNativeSynth == null) {
-            request.error();
+            callback.error();
             return;
         }
 
@@ -117,7 +118,7 @@ public abstract class CompatTtsService extends TextToSpeechService {
         String variant = request.getVariant();
         if (mNativeSynth.setLanguage(lang, country, variant) != TextToSpeech.SUCCESS) {
             Log.e(TAG, "setLanguage(" + lang + "," + country + "," + variant + ") failed");
-            request.error();
+            callback.error();
             return;
         }
 
@@ -125,7 +126,7 @@ public abstract class CompatTtsService extends TextToSpeechService {
         int speechRate = request.getSpeechRate();
         if (mNativeSynth.setSpeechRate(speechRate) != TextToSpeech.SUCCESS) {
             Log.e(TAG, "setSpeechRate(" + speechRate + ") failed");
-            request.error();
+            callback.error();
             return;
         }
 
@@ -133,13 +134,13 @@ public abstract class CompatTtsService extends TextToSpeechService {
         int pitch = request.getPitch();
         if (mNativeSynth.setPitch(pitch) != TextToSpeech.SUCCESS) {
             Log.e(TAG, "setPitch(" + pitch + ") failed");
-            request.error();
+            callback.error();
             return;
         }
 
         // Synthesize
-        if (mNativeSynth.speak(request) != TextToSpeech.SUCCESS) {
-            request.error();
+        if (mNativeSynth.speak(request, callback) != TextToSpeech.SUCCESS) {
+            callback.error();
             return;
         }
     }
