@@ -16,7 +16,7 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src) \
     $(call all-java-files-under, compat)
 
 LOCAL_PACKAGE_NAME := PicoTts
-LOCAL_REQUIRED_MODULES := libttscompat
+LOCAL_REQUIRED_MODULES := libttscompat libttspico
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
@@ -53,6 +53,8 @@ include $(BUILD_STATIC_LIBRARY)
 # above, except that it packages things a shared library.
 LOCAL_PATH:= $(TOP_LOCAL_PATH)/tts
 include $(CLEAR_VARS)
+
+LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES:= com_svox_picottsengine.cpp svox_ssml_parser.cpp
 LOCAL_C_INCLUDES += \
