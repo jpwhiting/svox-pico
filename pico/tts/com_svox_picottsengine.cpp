@@ -1073,7 +1073,7 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr, const char *config )
         strcpy((char*)pico_alt_lingware_path, config);
         LOGV("Alternative lingware path %s", pico_alt_lingware_path);
     } else {
-        pico_alt_lingware_path = (char*)malloc(strlen(PICO_LINGWARE_PATH));
+        pico_alt_lingware_path = (char*)malloc(strlen(PICO_LINGWARE_PATH) + 1);
         strcpy((char*)pico_alt_lingware_path, PICO_LINGWARE_PATH);
         LOGV("Using predefined lingware path %s", pico_alt_lingware_path);
     }
@@ -1659,4 +1659,3 @@ TtsEngine * getTtsEngine( void )
 #ifdef __cplusplus
 }
 #endif
-
