@@ -1,8 +1,6 @@
 # SVOX Pico TTS Engine
 # This makefile builds both an activity and a shared library.
 
-ifneq ($(TARGET_SIMULATOR),true) # not 64 bit clean
-
 TOP_LOCAL_PATH:= $(call my-dir)
 
 # Build Pico activity
@@ -132,6 +130,3 @@ LOCAL_SHARED_LIBRARIES := \
         libdl
 
 include $(BUILD_SHARED_LIBRARY)
-
-
-endif # TARGET_SIMULATOR
