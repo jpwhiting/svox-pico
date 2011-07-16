@@ -22,7 +22,7 @@
     <string name="app_name" msgid="3853942104135735825">"Instalador de datos de síntesis de voz"</string>
     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Instalando datos de voz en almacenamiento USB"</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"Instalando los datos de voz en la tarjeta SD"</string>
-    <string name="uninstall_message" msgid="174096141356529599">"Los datos de voz se han instalado de manera exitosa. Ahora puedes suprimir este instalador de manera segura."</string>
+    <string name="uninstall_message" msgid="174096141356529599">"Los datos de voz se han instalado de manera exitosa. Ahora puedes eliminar este instalador de manera segura."</string>
     <string name="uninstall" msgid="6195983436684617741">"Desinstalar..."</string>
     <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Falló la instalación de datos de voz. Asegúrate de que el almacenamiento USB tenga al menos 6 MB de espacio libre."</string>
     <string name="retry_message" product="default" msgid="6519833625675608678">"No se pudo instalar los datos de voz de manera correcta. Asegúrate de que tu tarjeta SD esté en tu dispositivo y que tenga al menos 6MB de espacio libre. Si tu tarjeta ya está en tu dispositivo, intenta sacarla y volverla a insertar."</string>
