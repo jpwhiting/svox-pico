@@ -33,9 +33,9 @@
     <string name="uninstall">Uninstall</string>
 
     <!-- Text shown to the user when the application that tries to install voice data files on the user's SD card failed the installation [CHAR LIMIT=NONE] -->
-    <string name="retry_message" product="nosdcard">The voice data failed to install. Please make sure your USB storage has at least 6MB of free space.</string>
+    <string name="retry_message" product="nosdcard">The voice data couldn\'t install. Make sure your USB storage has at least 6MB of free space.</string>
     <!-- Text shown to the user when the application that tries to install voice data files on the user's SD card failed the installation  -->
-    <string name="retry_message" product="default">The voice data failed to install. Please make sure your SD card is in your device and has at least 6MB of free space. If your card is already in your device, please try removing the card and reinserting it.</string>
+    <string name="retry_message" product="default">The voice data couldn\'t install. Make sure your SD card is in your device and has at least 6MB of free space. If your card is already in your device, try removing the card and reinserting it.</string>
 
     <!-- Text on the button to let the user try one more time to install the installation of the voice data files   -->
     <string name="retry">Retry</string>
