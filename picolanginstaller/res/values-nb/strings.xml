@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Installer stemmedata på minnekort."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Stemmedata er installert. Du kan fjerne dette installasjonsprogrammet nå."</string>
     <string name="uninstall" msgid="6195983436684617741">"Avinstaller"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Installasjon av taledata mislyktes. Kontroller at delt lagring er koblet til og har minimum 6 MB ledig diskplass."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"Kunne ikke installere stemmedata. Kontroller at minnekortet er satt inn, og at det er minst 6 MB ledig plass på det. Hvis kortet er satt inn, prøv å ta det ut og sette det inn igjen."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"Taledata kan ikke installeres. Sørg for at USB-lagring har minst 6 MB ledig plass."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"Kan ikke installere taledata. Kontroller at SD-kortet er satt inn i enheten, og at det er minst 6 MB ledig plass på det. Hvis kortet er satt inn, prøv å ta det ut og sette det inn igjen."</string>
     <string name="retry" msgid="7470276488993209974">"Prøv på nytt"</string>
 </resources>

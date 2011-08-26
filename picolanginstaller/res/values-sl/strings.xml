@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Namestitev glasovnih podatkov na kartico SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Namestitev glasovnih podatkov je bila uspešna. Zdaj lahko varno odstranite ta namestitveni program."</string>
     <string name="uninstall" msgid="6195983436684617741">"Odstrani"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Nameščanje glasovnih podatkov ni uspelo. Preverite, če je na pomnilniku USB vsaj 6 MB prostora."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"Namestitev glasovnih podatkov ni bila uspešna. Preverite, ali je kartica SD v napravi in ali je na voljo najmanj 6 MB prostega pomnilnika. Če je kartica v napravi že v uporabi, jo odstranite in znova vstavite."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"Namestitev glasovnih podatkov ni bila uspešna. Pomnilnik USB mora imeti najmanj 6 M prostega pomnilnika."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"Namestitev glasovnih podatkov ni bila uspešna. Preverite, ali je kartica SD v napravi in ali je na voljo najmanj 6 MB prostega pomnilnika. Če je kartica že v napravi, jo odstranite in znova vstavite."</string>
     <string name="retry" msgid="7470276488993209974">"Poskusi znova"</string>
 </resources>

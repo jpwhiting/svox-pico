@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Ifaka idatha yezwi ekhadini le-SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Idatha yezwi ifakwe ngokuphumelelayo. Manje usungakhipha ngokuphumelelayo lesi sifaki."</string>
     <string name="uninstall" msgid="6195983436684617741">"Khipha"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Idatha yezwi yehlulekile ukufakwa. Sicela uqiniseke ukuthi isitoreji sakho se-USB kunesikhala esikhululekile okungenani esingu-6MB."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"Idatha yezwi yehlulekile ukufaka. Sicela uqiniseke ukuthi ikhadi lakho le-SD likwidivaysi yakho futhi inesikhala esikhululekile okungenani esingu-6MB. Uma ikhadi lakho likwidivaysi yakho kakade, sicela uzama ukukhipha ikhadi bese ulifaka futhi."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"Idatha yezwi yehlulekile ukufakwa. Sicela uqiniseke ukuthi isitoreji sakho se-USB kunesikhala esikhululekile okungenani esingu-6MB."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"Idatha yezwi yehlulekile ukufaka. Sicela uqiniseke ukuthi ikhadi lakho le-SD likwidivaysi yakho futhi inesikhala esikhululekile okungenani esingu-6MB. Uma ikhadi lakho likwidivaysi yakho kakade, sicela uzama ukukhipha ikhadi bese ulifaka futhi."</string>
     <string name="retry" msgid="7470276488993209974">"Zama futhi"</string>
 </resources>

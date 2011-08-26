@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"SD kortelėje diegiami balso duomenys."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Balso duomenys sėkmingai įdiegti. Dabar galite saugiai pašalinti šią diegimo programą."</string>
     <string name="uninstall" msgid="6195983436684617741">"Pašalinti"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Nepavyko įdiegti balso duomenų. Įsitikinkite, kad USB atmintinėje yra bent 6 MB laisvos vietos."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"Nepavyko įdiegti balso duomenų. Įsitikinkite, kad SD kortelė yra įrenginyje, ir kad joje yra mažiausiai 6 MB laisvos vietos. Jei kortelė jau yra įrenginyje, pabandykite ją išimti ir iš naujo įdėti."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"Nepavyko įdiegti balso duomenų. Patikrinkite, ar USB atmintyje yra bent 6 MB laisvos vietos."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"Nepavyko įdiegti balso duomenų. Patikrinkite, ar įrenginyje yra SD kortelė ir ar joje yra mažiausiai 6 MB laisvos vietos. Jei kortelė jau yra įrenginyje, pabandykite ją išimti ir įdėti iš naujo."</string>
     <string name="retry" msgid="7470276488993209974">"Bandyti dar kartą"</string>
 </resources>

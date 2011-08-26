@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Instalando los datos de voz en la tarjeta SD"</string>
     <string name="uninstall_message" msgid="174096141356529599">"Los datos de voz se han instalado de manera exitosa. Ahora puedes eliminar este instalador de manera segura."</string>
     <string name="uninstall" msgid="6195983436684617741">"Desinstalar..."</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Falló la instalación de datos de voz. Asegúrate de que el almacenamiento USB tenga al menos 6 MB de espacio libre."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"No se pudo instalar los datos de voz de manera correcta. Asegúrate de que tu tarjeta SD esté en tu dispositivo y que tenga al menos 6MB de espacio libre. Si tu tarjeta ya está en tu dispositivo, intenta sacarla y volverla a insertar."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"No se pudieron instalar los datos de voz. Asegúrate de que tu almacenamiento USB disponga de al menos 6 MB de espacio libre."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"No se pudieron instalar los datos de voz. Asegúrate de que tu tarjeta SD se encuentre en tu dispositivo y de que disponga de al menos 6 MB de espacio libre. Si tu tarjeta se encuentra en tu dispositivo, quítala y vuelve a insertarla."</string>
     <string name="retry" msgid="7470276488993209974">"Intentar nuevamente"</string>
 </resources>

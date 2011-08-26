@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Inasakinisha data ya sauti kwenye kadi ya SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Data ya sauti imewekwa kwa mafanikio. Sasa unaweza kuondoa kiwekaji hiki kwa usalama."</string>
     <string name="uninstall" msgid="6195983436684617741">"Ondoa"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Data ya sauti imeshindwa kusakinisha. Tafadhali hakikisha hifadhi yako ya USB ina angalau MB 6 ya nafasi huru."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"Data ya sauti imeshindwa kusakinisha. Tafadhali hakikisha kadi yako ya SD ipo kwenye kifaa chako na ina angalau nafasi tupu ya 6MB. Kama kadi yako ipo tayari katika kifaa chako, tafadhali jaribu kuiondoa kadi hiyo na kuiingiza upya."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"Data ya sauti haikuweza kusakinishwa. Hakikisha hifadhi yako ya USB  kwa ina angalau nafasi wazi ya 6MB."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"Data ya sauti haikuweza kusakinisha. Hakikisha kadi yako ya SD ipo kwenye kifaa chako na ina angalau nafasi tupu ya 6MB. Ikiwa kadi yako ipo tayari katika kifaa chako, jaribu kuiondoa kadi hiyo na kuiingiza upya."</string>
     <string name="retry" msgid="7470276488993209974">"Jaribu tena"</string>
 </resources>

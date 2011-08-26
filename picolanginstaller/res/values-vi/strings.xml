@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Đang cài đặt dữ liệu thoại trên thẻ SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Dữ liệu thoại đã được cài đặt thành công. Giờ đây, bạn có thể gỡ trình cài đặt này một cách an toàn."</string>
     <string name="uninstall" msgid="6195983436684617741">"Gỡ cài đặt"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Không thể cài đặt dữ liệu thoại. Vui lòng đảm bảo rằng bộ nhớ USB của bạn có ít nhất 6 MB dung lượng trống."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"Không thể cài đặt dữ liệu thoại. Vui lòng đảm bảo rằng thẻ SD hiện được lắp vào thiết bị của bạn và có ít nhất 6 MB dung lượng trống. Nếu thẻ của bạn hiện đã được lắp vào thiết bị, vui lòng thử tháo và lắp lại thẻ."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"Không thể cài đặt dữ liệu thoại. Hãy đảm bảo bộ nhớ USB của bạn và có ít nhất 6 MB dung lượng trống."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"Không thể cài đặt dữ liệu thoại. Hãy đảm bảo rằng thẻ SD hiện được lắp vào thiết bị của bạn và có ít nhất 6 MB dung lượng trống. Nếu thẻ của bạn hiện đã được lắp vào thiết bị, hãy thử tháo và lắp lại thẻ."</string>
     <string name="retry" msgid="7470276488993209974">"Thử lại"</string>
 </resources>

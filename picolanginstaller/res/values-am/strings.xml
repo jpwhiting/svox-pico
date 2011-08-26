@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"በSD ካርድ ላይ የድምፅ ውሂብ መጫን"</string>
     <string name="uninstall_message" msgid="174096141356529599">"የድምፅ ውሂቡ በተሳካ ተጭኗል።አሁን ይህን ጫኝ በደህና መንቀል ይችላሉ።"</string>
     <string name="uninstall" msgid="6195983436684617741">"አትጫን"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"የድምጽ ውሂብ ለመጫን ተስኗል። እባክዎ የUSB ማከማቻዎ ቢያንስ6MB ባዶ ቦታ እንዳለው  ያረጋግጡ።"</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"የድምፁ ውሂብ ለመጫን አልተሳካም። እባክዎ የSD ካርድዎ በመሣሪያዎ ላይ መሆኑን እና ቢያንስ 6MB   ባዶ ቦታ እንዳለው ያረጋግጡ።ካርድዎ በመሣሪያዎ ውስጥካለእባክዎ ካርዱን ያውጡ እና መልሰው ይክተቱት።"</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"የድምፅ ውሂቡ መጫን አልቻለም። የUSB ማከማቻዎ ቢያንስ 6MB ነፃ ባዶ ቦታ እንዳለው ያረጋግጡ።"</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"የድምፁ ውሂብ ለመጫን አልተሳካም። እባክዎ የSD ካርድዎ በመሣሪያዎ ላይ መሆኑን እና ቢያንስ 6MB ባዶ ቦታ እንዳለው ያረጋግጡ።ካርድዎ በመሣሪያዎ ውስጥካለእባክዎ ካርዱን ያውጡ እና መልሰው ይክተቱት።"</string>
     <string name="retry" msgid="7470276488993209974">"እንደገና ሞክር"</string>
 </resources>

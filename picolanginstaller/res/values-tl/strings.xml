@@ -24,7 +24,7 @@
     <string name="installing_message" product="default" msgid="8792926973732354514">"Ini-install ang data ng boses sa SD card."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Matagumpay na na-install ang data ng voice. Ligtas mo nang maaalis ang installer na ito."</string>
     <string name="uninstall" msgid="6195983436684617741">"I-uninstall"</string>
-    <string name="retry_message" product="nosdcard" msgid="3151040525760201468">"Nabigong i-install ang voice data. Pakitiyak na mayroong hindi bababa sa 6MB na libreng puwang ang iyong imbakan na USB."</string>
-    <string name="retry_message" product="default" msgid="6519833625675608678">"Nabigong mag-install ang data ng voice. Pakitiyak na ang SD card mo ay nasa iyong device at mayroong hindi bababa sa 6MB na libreng espasyo. Kung nasa device na ang iyong card, pakisubukang alisin ang card at muling i-install ito."</string>
+    <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"Hindi mai-install ang data ng voice. Pakitiyak na ang iyong SD card ay mayroong hindi bababa sa 6MB na libreng espasyo."</string>
+    <string name="retry_message" product="default" msgid="4262829785604216441">"Hindi mai-install ang data ng voice. Pakitiyak na ang iyong SD card ay nasa iyong device at mayroong hindi bababa sa 6MB na libreng espasyo. Kung nasa iyong device na ang iyong card, subukang alisin ang card at ikabit itong muli."</string>
     <string name="retry" msgid="7470276488993209974">"Subukang muli"</string>
 </resources>
