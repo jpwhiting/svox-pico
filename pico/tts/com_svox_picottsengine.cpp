@@ -1071,11 +1071,11 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr, const char *config )
     if ((config != NULL) && (strlen(config) > 0)) {
         pico_alt_lingware_path = (char*)malloc(strlen(config));
         strcpy((char*)pico_alt_lingware_path, config);
-        LOGV("Alternative lingware path %s", pico_alt_lingware_path);
+        ALOGV("Alternative lingware path %s", pico_alt_lingware_path);
     } else {
         pico_alt_lingware_path = (char*)malloc(strlen(PICO_LINGWARE_PATH) + 1);
         strcpy((char*)pico_alt_lingware_path, PICO_LINGWARE_PATH);
-        LOGV("Using predefined lingware path %s", pico_alt_lingware_path);
+        ALOGV("Using predefined lingware path %s", pico_alt_lingware_path);
     }
 
     return TTS_SUCCESS;
@@ -1225,7 +1225,7 @@ tts_support_result TtsEngine::isLanguageAvailable(const char *lang, const char *
     }
     if (langIndex < 0) {
         // language isn't supported
-        LOGV("TtsEngine::isLanguageAvailable called with unsupported language");
+        ALOGV("TtsEngine::isLanguageAvailable called with unsupported language");
         return TTS_LANG_NOT_SUPPORTED;
     }
 
@@ -1615,7 +1615,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
             if (local_text) {
                 free(local_text);
             }
-            LOGV("Synth loop: sending TTS_SYNTH_DONE after error");
+            ALOGV("Synth loop: sending TTS_SYNTH_DONE after error");
             picoSynthDoneCBPtr( userdata, 16000, TTS_AUDIO_FORMAT_PCM_16_BIT, 1, buffer, bufused,
                     TTS_SYNTH_DONE);
             pico_resetEngine( picoEngine, PICO_RESET_SOFT );
@@ -1624,7 +1624,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     }
 
     /* Synthesis is done; notify the caller */
-    LOGV("Synth loop: sending TTS_SYNTH_DONE after all done, or was asked to stop");
+    ALOGV("Synth loop: sending TTS_SYNTH_DONE after all done, or was asked to stop");
     picoSynthDoneCBPtr( userdata, 16000, TTS_AUDIO_FORMAT_PCM_16_BIT, 1, buffer, bufused,
             TTS_SYNTH_DONE);
 
