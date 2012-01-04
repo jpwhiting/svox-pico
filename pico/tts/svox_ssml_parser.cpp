@@ -85,7 +85,7 @@ int SvoxSsmlParser::parseDocument(const char* ssmldoc, int isFinal)
     if (status == XML_STATUS_ERROR)
     {
         /* Note: for some reason Expat almost always complains about invalid tokens, even when document is well formed */
-        LOGI("Parser error at line %d: %s\n", (int)XML_GetCurrentLineNumber(mParser), XML_ErrorString(XML_GetErrorCode(mParser)));
+        ALOGI("Parser error at line %d: %s\n", (int)XML_GetCurrentLineNumber(mParser), XML_ErrorString(XML_GetErrorCode(mParser)));
     }
     return status;
 }

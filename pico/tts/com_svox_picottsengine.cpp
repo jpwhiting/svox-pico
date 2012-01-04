@@ -313,7 +313,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     if (langIndex>=0) {
         /* If we already have a loaded locale, check whether it is the same one as requested.   */
         if (picoProp_currLang && (strcmp(picoProp_currLang, picoSupportedLang[langIndex]) == 0)) {
-            //LOGI("Language already loaded (%s == %s)", picoProp_currLang,
+            //ALOGI("Language already loaded (%s == %s)", picoProp_currLang,
             //        picoSupportedLang[langIndex]);
             return TTS_SUCCESS;
         }
@@ -488,7 +488,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     /* Set the current locale/voice.    */
     strcpy( picoProp_currLang, picoSupportedLang[langIndex] );
     picoCurrentLangIndex = langIndex;
-    LOGI("loaded %s successfully", picoProp_currLang);
+    ALOGI("loaded %s successfully", picoProp_currLang);
     return TTS_SUCCESS;
 }
 
@@ -512,7 +512,7 @@ static tts_result doLanguageSwitch( const char * locale )
         LOGE("Tried to swith to non-supported locale %s", locale);
         return TTS_FAILURE;
     }
-    //LOGI("Found supported locale %s", picoSupportedLang[loclIndex]);
+    //ALOGI("Found supported locale %s", picoSupportedLang[loclIndex]);
     return doLanguageSwitchFromLangIndex( loclIndex );
 }
 
@@ -1127,7 +1127,7 @@ tts_result TtsEngine::loadLanguage(const char *lang, const char *country, const 
  */
 tts_result TtsEngine::setLanguage( const char * lang, const char * country, const char * variant )
 {
-    //LOGI("TtsEngine::setLanguage %s %s %s", lang, country, variant);
+    //ALOGI("TtsEngine::setLanguage %s %s %s", lang, country, variant);
     int langIndex;
     int countryIndex;
     int i;
@@ -1182,7 +1182,7 @@ tts_result TtsEngine::setLanguage( const char * lang, const char * country, cons
             {
             /* We didn't find a match on the country, but we had a match on the language.
                Use that language.                                                       */
-            LOGI("TtsEngine::setLanguage found matching language(%s) but not matching country(%s).",
+            ALOGI("TtsEngine::setLanguage found matching language(%s) but not matching country(%s).",
                     lang, country);
             }
         else
@@ -1489,7 +1489,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
             if (err == XML_STATUS_ERROR) {
                 /* Note: for some reason expat always thinks the input document has an error
                    at the end, even when the XML document is perfectly formed */
-                LOGI("Warning: SSML document parsed with errors");
+                ALOGI("Warning: SSML document parsed with errors");
             }
             char * parsed_text = parser->getParsedDocument();
             if (parsed_text) {
@@ -1517,7 +1517,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                             return TTS_FAILURE;
                         }
                     }
-                    //LOGI("No language in SSML, using current language (%s).", picoProp_currLang);
+                    //ALOGI("No language in SSML, using current language (%s).", picoProp_currLang);
                 }
                 delete parser;
             } else {
@@ -1588,7 +1588,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                     cbret = picoSynthDoneCBPtr(userdata, 16000, TTS_AUDIO_FORMAT_PCM_16_BIT, 1, buffer,
                             bufused, TTS_SYNTH_PENDING);
                     if (cbret == TTS_CALLBACK_HALT) {
-                        LOGI("Halt requested by caller. Halting.");
+                        ALOGI("Halt requested by caller. Halting.");
                         picoSynthAbort = 1;
                         ret = pico_resetEngine( picoEngine, PICO_RESET_SOFT );
                         break;
