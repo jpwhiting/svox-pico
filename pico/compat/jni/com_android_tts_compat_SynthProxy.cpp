@@ -158,7 +158,7 @@ class SynthProxyJniStorage {
         }
         if (mEngineLibHandle) {
             int res = dlclose(mEngineLibHandle);
-            LOGE_IF( res != 0, "~SynthProxyJniStorage(): dlclose returned %d", res);
+            ALOGE_IF( res != 0, "~SynthProxyJniStorage(): dlclose returned %d", res);
         }
         delete[] mBuffer;
     }
@@ -208,7 +208,7 @@ static int callRequestStart(JNIEnv *env, jobject request,
         encoding = AUDIO_FORMAT_ENCODING_PCM_16_BIT;
         break;
     default:
-        LOGE("Can't play, bad format");
+        ALOGE("Can't play, bad format");
         return ANDROID_TTS_FAILURE;
     }
 
@@ -225,7 +225,7 @@ static int callRequestAudioAvailable(JNIEnv *env, jobject request, int8_t *buffe
     // TODO: Not nice to have to copy the buffer. Use ByteBuffer?
     jbyteArray javaBuffer = env->NewByteArray(length);
     if (javaBuffer == NULL) {
-        LOGE("Failed to allocate byte array");
+        ALOGE("Failed to allocate byte array");
         return ANDROID_TTS_FAILURE;
     }
 
@@ -263,7 +263,7 @@ __ttsSynthDoneCB(void **pUserdata, uint32_t rate,
                android_tts_synth_status_t status)
 {
     if (*pUserdata == NULL){
-        LOGE("userdata == NULL");
+        ALOGE("userdata == NULL");
         return ANDROID_TTS_CALLBACK_HALT;
     }
 
@@ -322,7 +322,7 @@ com_android_tts_compat_SynthProxy_setLowShelf(JNIEnv *env, jobject thiz, jboolea
         if (fFilterShelfSlope != 0.0f) {
             initializeEQ();
         } else {
-            LOGE("Invalid slope, can't be null");
+            ALOGE("Invalid slope, can't be null");
             return ANDROID_TTS_FAILURE;
         }
     }
@@ -344,7 +344,7 @@ com_android_tts_compat_SynthProxy_native_setup(JNIEnv *env, jobject thiz,
     void *engine_lib_handle = dlopen(nativeSoLibNativeString,
             RTLD_NOW | RTLD_LOCAL);
     if (engine_lib_handle == NULL) {
-        LOGE("com_android_tts_compat_SynthProxy_native_setup(): engine_lib_handle == NULL");
+        ALOGE("com_android_tts_compat_SynthProxy_native_setup(): engine_lib_handle == NULL");
     } else {
         android_tts_entrypoint get_TtsEngine =
             reinterpret_cast<android_tts_entrypoint>(dlsym(engine_lib_handle, "android_getTtsEngine"));
@@ -376,7 +376,7 @@ com_android_tts_compat_SynthProxy_native_setup(JNIEnv *env, jobject thiz,
 static SynthProxyJniStorage *getSynthData(jint jniData)
 {
     if (jniData == 0) {
-        LOGE("Engine not initialized");
+        ALOGE("Engine not initialized");
         return NULL;
     }
     return reinterpret_cast<SynthProxyJniStorage *>(jniData);
@@ -672,7 +672,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
 
     if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-        LOGE("ERROR: GetEnv failed\n");
+        ALOGE("ERROR: GetEnv failed\n");
         return -1;
     }
     assert(env != NULL);

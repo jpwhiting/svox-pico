@@ -118,7 +118,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
             m_data = new char[m_datasize];
             if (!m_data)
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -143,7 +143,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -155,7 +155,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -188,7 +188,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
         if (!ph)
         {
             /* error, no phonetic string */
-            LOGE("Error: bad SSML syntax, ph attribute not supplied.");
+            ALOGE("Error: bad SSML syntax, ph attribute not supplied.");
             return;
         }
 
@@ -199,7 +199,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
       delete [] ph;
       if (!xsampastr)
             {
-                LOGE("Error: failed to allocate memory for IPA string conversion");
+                ALOGE("Error: failed to allocate memory for IPA string conversion");
                 return;
             }
         }
@@ -229,7 +229,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
             {
                 if (!growDataSize(100))
                 {
-                    LOGE("Error: failed to allocate memory for string!");
+                    ALOGE("Error: failed to allocate memory for string!");
                     free(xsampastr);
                     return;
                 }
@@ -241,7 +241,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
             {
                 if (!growDataSize(100))
                 {
-                    LOGE("Error: failed to allocate memory for string!");
+                    ALOGE("Error: failed to allocate memory for string!");
                     free(xsampastr);
                     return;
                 }
@@ -258,7 +258,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
           {
         if (!growDataSize(100))
           {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return;
           }
           }
@@ -273,7 +273,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -287,7 +287,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 time = new char[strlen(attributes[i+1]) + 1];
                 if (!time)
                 {
-                    LOGE("Error: failed to allocate memory for string!\n");
+                    ALOGE("Error: failed to allocate memory for string!\n");
                     return;
                 }
                 strcpy(time, attributes[i+1]);
@@ -302,7 +302,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
             time = new char[6];
             if (!time)
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
             strcpy(time, SSML_BREAK_WEAK); /* if no time or strength attributes are specified, default to weak break */
@@ -311,7 +311,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -328,7 +328,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 char* svoxpitch = convertToSvoxPitch(attributes[i+1]);
                 if (!svoxpitch)
                 {
-                    LOGE("Error: failed to allocate memory for string!\n");
+                    ALOGE("Error: failed to allocate memory for string!\n");
                     return;
                 }
                 if (!svoxpitch)
@@ -336,7 +336,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                     svoxpitch = new char[4];
                     if (!svoxpitch)
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                     strcpy(svoxpitch, "100");
@@ -344,7 +344,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 char* pitch = new char[17 + strlen(svoxpitch)];
                 if (!pitch)
                 {
-                    LOGE("Error: failed to allocate memory for string!\n");
+                    ALOGE("Error: failed to allocate memory for string!\n");
                     return;
                 }
                 sprintf(pitch, "<pitch level='%s'>", svoxpitch);
@@ -352,7 +352,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 {
                     if (!growDataSize(100))
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                 }
@@ -374,7 +374,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                     svoxrate = new char[4];
                     if (!svoxrate)
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                     strcpy(svoxrate, "100");
@@ -382,7 +382,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 char* rate = new char[17 + strlen(svoxrate)];
                 if (!rate)
                 {
-                    LOGE("Error: failed to allocate memory for string!\n");
+                    ALOGE("Error: failed to allocate memory for string!\n");
                     return;
                 }
                 sprintf(rate, "<speed level='%s'>", svoxrate);
@@ -390,7 +390,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 {
                     if (!growDataSize(100))
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                 }
@@ -400,7 +400,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                     m_appendix = new char[30];
                     if (!m_appendix)
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                     m_appendix[0] = '\0';
@@ -417,7 +417,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                     svoxvol = new char[4];
                     if (!svoxvol)
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                     strcpy(svoxvol, "100");
@@ -425,7 +425,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 char* volume = new char[18 + strlen(svoxvol)];
                 if (!volume)
                 {
-                    LOGE("Error: failed to allocate memory for string!\n");
+                    ALOGE("Error: failed to allocate memory for string!\n");
                     return;
                 }
                 sprintf(volume, "<volume level='%s'>", svoxvol);
@@ -433,7 +433,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 {
                     if (!growDataSize(100))
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                 }
@@ -455,7 +455,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -469,7 +469,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
                 {
                     if (!growDataSize(100))
                     {
-                        LOGE("Error: failed to allocate memory for string!\n");
+                        ALOGE("Error: failed to allocate memory for string!\n");
                         return;
                     }
                 }
@@ -497,7 +497,7 @@ void SvoxSsmlParser::endElement(const XML_Char* element)
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -509,7 +509,7 @@ void SvoxSsmlParser::endElement(const XML_Char* element)
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -531,7 +531,7 @@ void SvoxSsmlParser::endElement(const XML_Char* element)
             {
                 if (!growDataSize(100))
                 {
-                    LOGE("Error: failed to allocate memory for string!\n");
+                    ALOGE("Error: failed to allocate memory for string!\n");
                     return;
                 }
             }
@@ -546,7 +546,7 @@ void SvoxSsmlParser::endElement(const XML_Char* element)
         {
             if (!growDataSize(100))
             {
-                LOGE("Error: failed to allocate memory for string!\n");
+                ALOGE("Error: failed to allocate memory for string!\n");
                 return;
             }
         }
@@ -569,7 +569,7 @@ void SvoxSsmlParser::textElement(const XML_Char* text, int length)
     char* content = new char[length + 1];
     if (!content)
     {
-        LOGE("Error: failed to allocate memory for string!\n");
+        ALOGE("Error: failed to allocate memory for string!\n");
         return;
     }
     strncpy(content, text, length);
@@ -579,7 +579,7 @@ void SvoxSsmlParser::textElement(const XML_Char* text, int length)
     {
         if (!growDataSize(100))
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return;
         }
     }
@@ -599,7 +599,7 @@ char* SvoxSsmlParser::convertToSvoxPitch(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_PITCH_XLOW);
@@ -609,7 +609,7 @@ char* SvoxSsmlParser::convertToSvoxPitch(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_PITCH_LOW);
@@ -619,7 +619,7 @@ char* SvoxSsmlParser::convertToSvoxPitch(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_PITCH_MEDIUM);
@@ -629,7 +629,7 @@ char* SvoxSsmlParser::convertToSvoxPitch(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_PITCH_MEDIUM);
@@ -639,7 +639,7 @@ char* SvoxSsmlParser::convertToSvoxPitch(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_PITCH_HIGH);
@@ -649,7 +649,7 @@ char* SvoxSsmlParser::convertToSvoxPitch(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_PITCH_XHIGH);
@@ -669,7 +669,7 @@ char* SvoxSsmlParser::convertToSvoxRate(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_RATE_XSLOW);
@@ -679,7 +679,7 @@ char* SvoxSsmlParser::convertToSvoxRate(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_RATE_SLOW);
@@ -689,7 +689,7 @@ char* SvoxSsmlParser::convertToSvoxRate(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_RATE_MEDIUM);
@@ -699,7 +699,7 @@ char* SvoxSsmlParser::convertToSvoxRate(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_RATE_MEDIUM);
@@ -709,7 +709,7 @@ char* SvoxSsmlParser::convertToSvoxRate(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_RATE_FAST);
@@ -719,7 +719,7 @@ char* SvoxSsmlParser::convertToSvoxRate(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_RATE_XFAST);
@@ -739,7 +739,7 @@ char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_VOLUME_SILENT);
@@ -749,7 +749,7 @@ char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_VOLUME_XLOW);
@@ -759,7 +759,7 @@ char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_VOLUME_LOW);
@@ -769,7 +769,7 @@ char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_VOLUME_MEDIUM);
@@ -779,7 +779,7 @@ char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_VOLUME_MEDIUM);
@@ -789,7 +789,7 @@ char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_VOLUME_LOUD);
@@ -799,7 +799,7 @@ char* SvoxSsmlParser::convertToSvoxVolume(const char* value)
         converted = new char[4];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_VOLUME_XLOUD);
@@ -819,7 +819,7 @@ char* SvoxSsmlParser::convertBreakStrengthToTime(const char* value)
         converted = new char[6];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_BREAK_NONE);
@@ -829,7 +829,7 @@ char* SvoxSsmlParser::convertBreakStrengthToTime(const char* value)
         converted = new char[6];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_BREAK_XWEAK);
@@ -839,7 +839,7 @@ char* SvoxSsmlParser::convertBreakStrengthToTime(const char* value)
         converted = new char[6];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_BREAK_WEAK);
@@ -849,7 +849,7 @@ char* SvoxSsmlParser::convertBreakStrengthToTime(const char* value)
         converted = new char[6];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_BREAK_MEDIUM);
@@ -859,7 +859,7 @@ char* SvoxSsmlParser::convertBreakStrengthToTime(const char* value)
         converted = new char[6];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_BREAK_STRONG);
@@ -869,7 +869,7 @@ char* SvoxSsmlParser::convertBreakStrengthToTime(const char* value)
         converted = new char[6];
         if (!converted)
         {
-            LOGE("Error: failed to allocate memory for string!\n");
+            ALOGE("Error: failed to allocate memory for string!\n");
             return NULL;
         }
         strcpy(converted, SSML_BREAK_XSTRONG);
