@@ -132,7 +132,7 @@ static int checkForLocale( const char * locale )
      int found = -1;                                         /* language not found   */
      int i;
      if (locale == NULL) {
-        LOGE("checkForLocale called with NULL language");
+        ALOGE("checkForLocale called with NULL language");
         return found;
      }
 
@@ -165,7 +165,7 @@ static int checkForLocale( const char * locale )
         }
 
         if (found < 0) {
-            LOGE("TtsEngine::set language called with unsupported locale %s", locale);
+            ALOGE("TtsEngine::set language called with unsupported locale %s", locale);
         }
     };
     return found;
@@ -329,7 +329,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
         /*re-init system object*/
         ret = pico_initialize( picoMemArea, PICO_MEM_SIZE, &picoSystem );
         if (PICO_OK != ret) {
-            LOGE("Failed to initialize the pico system object\n");
+            ALOGE("Failed to initialize the pico system object\n");
             return TTS_FAILURE;
         }
     }
@@ -347,7 +347,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
         (picoUtppFileName==NULL) || (picoTaResourceName==NULL) || (picoSgResourceName==NULL) ||
         (picoUtppResourceName==NULL)
         ) {
-        LOGE("Failed to allocate memory for internal strings\n");
+        ALOGE("Failed to allocate memory for internal strings\n");
         cleanResources();
         return TTS_FAILURE;
     }
@@ -385,7 +385,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     /* Load the text analysis Lingware resource file.   */
     ret = pico_loadResource( picoSystem, picoTaFileName, &picoTaResource );
     if (PICO_OK != ret) {
-        LOGE("Failed to load textana resource for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to load textana resource for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -394,7 +394,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     /* Load the signal generation Lingware resource file.   */
     ret = pico_loadResource( picoSystem, picoSgFileName, &picoSgResource );
     if (PICO_OK != ret) {
-        LOGE("Failed to load siggen resource for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to load siggen resource for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -405,7 +405,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
        If this file is not present the loading will still succeed.                      */
     ret = pico_loadResource( picoSystem, picoUtppFileName, &picoUtppResource );
     if ((PICO_OK != ret) && (ret != PICO_EXC_CANT_OPEN_FILE)) {
-        LOGE("Failed to load utpp resource for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to load utpp resource for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -414,7 +414,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     /* Get the text analysis resource name.     */
     ret = pico_getResourceName( picoSystem, picoTaResource, (char *) picoTaResourceName );
     if (PICO_OK != ret) {
-        LOGE("Failed to get textana resource name for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to get textana resource name for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -426,14 +426,14 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
         /* Get utpp resource name - optional: see note above.   */
         ret = pico_getResourceName( picoSystem, picoUtppResource, (char *) picoUtppResourceName );
         if (PICO_OK != ret)  {
-            LOGE("Failed to get utpp resource name for %s [%d]", picoSupportedLang[langIndex], ret);
+            ALOGE("Failed to get utpp resource name for %s [%d]", picoSupportedLang[langIndex], ret);
             cleanResources();
             cleanFiles();
             return TTS_FAILURE;
         }
     }
     if (PICO_OK != ret) {
-        LOGE("Failed to get siggen resource name for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to get siggen resource name for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -442,7 +442,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     /* Create a voice definition.   */
     ret = pico_createVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME );
     if (PICO_OK != ret) {
-        LOGE("Failed to create voice for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to create voice for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -451,7 +451,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     /* Add the text analysis resource to the voice. */
     ret = pico_addResourceToVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME, picoTaResourceName );
     if (PICO_OK != ret) {
-        LOGE("Failed to add textana resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to add textana resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -463,7 +463,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
         /* Add utpp resource to voice - optional: see note above.   */
         ret = pico_addResourceToVoiceDefinition( picoSystem, (const pico_Char *) PICO_VOICE_NAME, picoUtppResourceName );
         if (PICO_OK != ret) {
-            LOGE("Failed to add utpp resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
+            ALOGE("Failed to add utpp resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
             cleanResources();
             cleanFiles();
             return TTS_FAILURE;
@@ -471,7 +471,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
     }
 
     if (PICO_OK != ret) {
-        LOGE("Failed to add siggen resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to add siggen resource to voice for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -479,7 +479,7 @@ static tts_result doLanguageSwitchFromLangIndex( int langIndex )
 
     ret = pico_newEngine( picoSystem, (const pico_Char *) PICO_VOICE_NAME, &picoEngine );
     if (PICO_OK != ret) {
-        LOGE("Failed to create engine for %s [%d]", picoSupportedLang[langIndex], ret);
+        ALOGE("Failed to create engine for %s [%d]", picoSupportedLang[langIndex], ret);
         cleanResources();
         cleanFiles();
         return TTS_FAILURE;
@@ -509,7 +509,7 @@ static tts_result doLanguageSwitch( const char * locale )
     /* Load the new locale. */
     loclIndex = checkForLocale( locale );
     if (loclIndex < 0)  {
-        LOGE("Tried to swith to non-supported locale %s", locale);
+        ALOGE("Tried to swith to non-supported locale %s", locale);
         return TTS_FAILURE;
     }
     //ALOGI("Found supported locale %s", picoSupportedLang[loclIndex]);
@@ -1045,19 +1045,19 @@ int cnvIpaToXsampa( const char16_t * ipaString, size_t ipaStringSize, char ** ou
 tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr, const char *config )
 {
     if (synthDoneCBPtr == NULL) {
-        LOGE("Callback pointer is NULL");
+        ALOGE("Callback pointer is NULL");
         return TTS_FAILURE;
     }
 
     picoMemArea = malloc( PICO_MEM_SIZE );
     if (!picoMemArea) {
-        LOGE("Failed to allocate memory for Pico system");
+        ALOGE("Failed to allocate memory for Pico system");
         return TTS_FAILURE;
     }
 
     pico_Status ret = pico_initialize( picoMemArea, PICO_MEM_SIZE, &picoSystem );
     if (PICO_OK != ret) {
-        LOGE("Failed to initialize Pico system");
+        ALOGE("Failed to initialize Pico system");
         free( picoMemArea );
         picoMemArea = NULL;
         return TTS_FAILURE;
@@ -1134,7 +1134,7 @@ tts_result TtsEngine::setLanguage( const char * lang, const char * country, cons
 
     if (lang == NULL)
         {
-        LOGE("TtsEngine::setLanguage called with NULL language");
+        ALOGE("TtsEngine::setLanguage called with NULL language");
         return TTS_FAILURE;
         }
 
@@ -1160,7 +1160,7 @@ tts_result TtsEngine::setLanguage( const char * lang, const char * country, cons
     if (langIndex < 0)
         {
         /* The language isn't supported.    */
-        LOGE("TtsEngine::setLanguage called with unsupported language");
+        ALOGE("TtsEngine::setLanguage called with unsupported language");
         return TTS_FAILURE;
         }
 
@@ -1211,7 +1211,7 @@ tts_support_result TtsEngine::isLanguageAvailable(const char *lang, const char *
     // language matching
     // if no language specified
     if (lang == NULL)  {
-        LOGE("TtsEngine::isLanguageAvailable called with no language");
+        ALOGE("TtsEngine::isLanguageAvailable called with no language");
         return TTS_LANG_NOT_SUPPORTED;
     }
 
@@ -1318,25 +1318,25 @@ tts_result TtsEngine::setProperty( const char * property, const char * value, co
        Supported properties include: language (locale), rate, pitch, volume.    */
     /* Sanity check */
     if (property == NULL) {
-        LOGE("setProperty called with property NULL");
+        ALOGE("setProperty called with property NULL");
         return TTS_PROPERTY_UNSUPPORTED;
     }
 
     if (value == NULL) {
-        LOGE("setProperty called with value NULL");
+        ALOGE("setProperty called with value NULL");
         return TTS_VALUE_INVALID;
     }
 
     if (strncmp(property, "language", 8) == 0) {
         /* Verify it's in correct format.   */
         if (strlen(value) != 2 && strlen(value) != 6) {
-            LOGE("change language called with incorrect format");
+            ALOGE("change language called with incorrect format");
             return TTS_VALUE_INVALID;
         }
 
         /* Try to switch to specified language. */
         if (doLanguageSwitch(value) == TTS_FAILURE) {
-            LOGE("failed to load language");
+            ALOGE("failed to load language");
             return TTS_FAILURE;
         } else {
             return TTS_SUCCESS;
@@ -1390,12 +1390,12 @@ tts_result TtsEngine::getProperty( const char * property, char * value, size_t *
        This property was previously set by setProperty or by default.       */
     /* sanity check */
     if (property == NULL) {
-        LOGE("getProperty called with property NULL");
+        ALOGE("getProperty called with property NULL");
         return TTS_PROPERTY_UNSUPPORTED;
     }
 
     if (value == NULL) {
-        LOGE("getProperty called with value NULL");
+        ALOGE("getProperty called with value NULL");
         return TTS_VALUE_INVALID;
     }
 
@@ -1440,7 +1440,7 @@ tts_result TtsEngine::getProperty( const char * property, char * value, size_t *
     }
 
     /* Unknown property */
-    LOGE("Unsupported property");
+    ALOGE("Unsupported property");
     return TTS_PROPERTY_UNSUPPORTED;
 }
 
@@ -1468,7 +1468,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
 
     picoSynthAbort = 0;
     if (text == NULL) {
-        LOGE("synthesizeText called with NULL string");
+        ALOGE("synthesizeText called with NULL string");
         return TTS_FAILURE;
     }
 
@@ -1477,7 +1477,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     }
 
     if (buffer == NULL) {
-        LOGE("synthesizeText called with NULL buffer");
+        ALOGE("synthesizeText called with NULL buffer");
         return TTS_FAILURE;
     }
 
@@ -1496,14 +1496,14 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                 /* Add property tags to the string - if any.    */
                 local_text = (pico_Char *) doAddProperties( parsed_text );
                 if (!local_text) {
-                    LOGE("Failed to allocate memory for text string");
+                    ALOGE("Failed to allocate memory for text string");
                     delete parser;
                     return TTS_FAILURE;
                 }
                 char * lang = parser->getParsedDocumentLanguage();
                 if (lang != NULL) {
                     if (doLanguageSwitch(lang) == TTS_FAILURE) {
-                        LOGE("Failed to switch to language (%s) specified in SSML document.", lang);
+                        ALOGE("Failed to switch to language (%s) specified in SSML document.", lang);
                         delete parser;
                         return TTS_FAILURE;
                     }
@@ -1512,7 +1512,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                     if (picoCurrentLangIndex == -1) {
                         // no current language loaded, pick the first one and load it
                         if (doLanguageSwitchFromLangIndex(0) == TTS_FAILURE) {
-                            LOGE("Failed to switch to default language.");
+                            ALOGE("Failed to switch to default language.");
                             delete parser;
                             return TTS_FAILURE;
                         }
@@ -1521,12 +1521,12 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
                 }
                 delete parser;
             } else {
-                LOGE("Failed to parse SSML document");
+                ALOGE("Failed to parse SSML document");
                 delete parser;
                 return TTS_FAILURE;
             }
         } else {
-            LOGE("Failed to create SSML parser");
+            ALOGE("Failed to create SSML parser");
             if (parser) {
                 delete parser;
             }
@@ -1541,7 +1541,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
             free( expanded_text );
         }
         if (!local_text) {
-            LOGE("Failed to allocate memory for text string");
+            ALOGE("Failed to allocate memory for text string");
             return TTS_FAILURE;
         }
     }
@@ -1562,7 +1562,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
         /* Feed the text into the engine.   */
         ret = pico_putTextUtf8( picoEngine, inp, text_remaining, &bytes_sent );
         if (ret != PICO_OK) {
-            LOGE("Error synthesizing string '%s': [%d]", text, ret);
+            ALOGE("Error synthesizing string '%s': [%d]", text, ret);
             if (local_text) {
                 free( local_text );
             }
@@ -1610,7 +1610,7 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
 
         if (ret != PICO_STEP_IDLE) {
             if (ret != 0){
-                LOGE("Error occurred during synthesis [%d]", ret);
+                ALOGE("Error occurred during synthesis [%d]", ret);
             }
             if (local_text) {
                 free(local_text);
