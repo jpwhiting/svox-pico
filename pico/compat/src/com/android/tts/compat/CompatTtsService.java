@@ -101,7 +101,10 @@ public abstract class CompatTtsService extends TextToSpeechService {
     protected int onLoadLanguage(String lang, String country, String variant) {
         if (DBG) Log.d(TAG, "onLoadLanguage(" + lang + "," + country + "," + variant + ")");
         int result = onIsLanguageAvailable(lang, country, variant);
-        // TODO: actually load language
+        if (result >= TextToSpeech.LANG_AVAILABLE) {
+            mNativeSynth.setLanguage(lang, country, variant);
+        }
+
         return result;
     }
 
