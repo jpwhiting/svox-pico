@@ -20,11 +20,14 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="3853942104135735825">"Program d\'installaziun da las datas da la sintesa vocala"</string>
-    <!-- outdated translation 8792926973732354514 -->     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"Installar las datas da la sintesa vocala sin la carta SD."</string>
+    <!-- no translation found for installing_message (737236126329813405) -->
+    <skip />
     <string name="installing_message" product="default" msgid="8792926973732354514">"Installar las datas da la sintesa vocala sin la carta SD."</string>
     <string name="uninstall_message" msgid="174096141356529599">"Las datas da la sintesa vocala èn vegnidas installadas correctamain. Vus pudais ussa allontanar a moda segira quest program d\'installaziun."</string>
     <string name="uninstall" msgid="6195983436684617741">"Deinstallar"</string>
-    <!-- outdated translation 6519833625675608678 -->     <string name="retry_message" product="nosdcard" msgid="8048316007107408391">"\"L\'installaziun da las datas da la sintesa vocala n\'è betg reussida. Controllai per plaschair che Vus avais inserì endretg Vossa carta SD en Voss telefonin e che quel dispona dad almain 6 MB spazi disponibel. Sche Vossa carta SD è gia inserida en l\'apparat, empruvai da la retrair ed inserir ella danovamain.\""</string>
-    <!-- outdated translation 6519833625675608678 -->     <string name="retry_message" product="default" msgid="4262829785604216441">"\"L\'installaziun da las datas da la sintesa vocala n\'è betg reussida. Controllai per plaschair che Vus avais inserì endretg Vossa carta SD en Voss telefonin e che quel dispona dad almain 6 MB spazi disponibel. Sche Vossa carta SD è gia inserida en l\'apparat, empruvai da la retrair ed inserir ella danovamain.\""</string>
+    <!-- no translation found for retry_message (8048316007107408391) -->
+    <skip />
+    <!-- no translation found for retry_message (4262829785604216441) -->
+    <skip />
     <string name="retry" msgid="7470276488993209974">"Empruvar danovamain"</string>
 </resources>
