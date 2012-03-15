@@ -5,7 +5,7 @@ LOCAL_MODULE:= libttscompat
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES:= \
-	android_tts_SynthProxy.cpp
+	com_android_tts_compat_SynthProxy.cpp
 
 LOCAL_C_INCLUDES += \
 	frameworks/base/native/include \
@@ -15,6 +15,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libandroid_runtime \
 	libnativehelper \
 	libmedia \
+	libmedia_native \
 	libutils \
 	libcutils
 

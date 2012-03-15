@@ -125,6 +125,7 @@ LOCAL_SHARED_LIBRARIES := \
         libandroid_runtime \
         libnativehelper \
         libmedia \
+        libmedia_native \
         libutils \
         libcutils \
         libdl
