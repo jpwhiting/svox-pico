@@ -37,7 +37,6 @@ public abstract class CompatTtsService extends TextToSpeechService {
     @Override
     public void onCreate() {
         if (DBG) Log.d(TAG, "onCreate()");
-        super.onCreate();
 
         String soFilename = getSoFilename();
 
@@ -71,6 +70,13 @@ public abstract class CompatTtsService extends TextToSpeechService {
             c.close();
         }
         mNativeSynth = new SynthProxy(soFilename, engineConfig);
+
+        // mNativeSynth is used by TextToSpeechService#onCreate so it must be set prior
+        // to that call.
+        // getContentResolver() is also moved prior to super.onCreate(), and it works
+        // because the super method don't sets a field or value that affects getContentResolver();
+        // (including the content resolver itself).
+        super.onCreate();
     }
 
     @Override
