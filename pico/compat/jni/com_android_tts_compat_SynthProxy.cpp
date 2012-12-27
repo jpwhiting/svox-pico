@@ -23,7 +23,6 @@
 #include <nativehelper/jni.h>
 #include <nativehelper/JNIHelp.h>
 #include <android_runtime/AndroidRuntime.h>
-#include <media/AudioTrack.h>
 #include <math.h>
 
 #include <dlfcn.h>
