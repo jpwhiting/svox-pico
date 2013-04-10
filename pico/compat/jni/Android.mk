@@ -16,6 +16,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libmedia \
 	libutils \
 	libcutils \
+	liblog \
 	libdl
 
 include $(BUILD_SHARED_LIBRARY)

@@ -21,7 +21,8 @@ LOCAL_STATIC_LIBRARIES := libsvoxpico
 LOCAL_SHARED_LIBRARIES := \
 	libcutils \
 	libexpat \
-	libutils
+	libutils \
+	liblog
 
 LOCAL_ARM_MODE := arm
 
@@ -45,10 +46,6 @@ LOCAL_C_INCLUDES += \
 	external/svox/pico/compat/include
 
 LOCAL_STATIC_LIBRARIES := libsvoxpico
-LOCAL_SHARED_LIBRARIES := libcutils libexpat libutils
+LOCAL_SHARED_LIBRARIES := libcutils libexpat libutils liblog
 
 include $(BUILD_SHARED_LIBRARY)
-
-
-
-
