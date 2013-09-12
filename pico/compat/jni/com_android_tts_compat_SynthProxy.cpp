@@ -23,6 +23,7 @@
 #include <nativehelper/jni.h>
 #include <nativehelper/JNIHelp.h>
 #include <android_runtime/AndroidRuntime.h>
+#include <android_runtime/Log.h>
 #include <math.h>
 
 #include <dlfcn.h>
