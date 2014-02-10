@@ -3209,11 +3209,11 @@ pico_status_t prReset(register picodata_ProcessingUnit this, picoos_int32 resetM
     pr->actCtxChanged = FALSE;
     pr->prodList = NULL;
 
-    if (((picoos_uint32)pr->pr_WorkMem % PICOOS_ALIGN_SIZE) == 0) {
+    if (((uintptr_t)pr->pr_WorkMem % PICOOS_ALIGN_SIZE) == 0) {
         pr->workMemTop = 0;
     }
     else {
-        pr->workMemTop = PICOOS_ALIGN_SIZE - ((picoos_uint32)pr->pr_WorkMem % PICOOS_ALIGN_SIZE);
+        pr->workMemTop = PICOOS_ALIGN_SIZE - ((uintptr_t)pr->pr_WorkMem % PICOOS_ALIGN_SIZE);
     }
     pr->maxWorkMemTop=0;
     pr->dynMemSize=0;

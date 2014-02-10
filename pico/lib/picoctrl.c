@@ -508,10 +508,10 @@ typedef struct picoctrl_engine {
 #define MAGIC_MASK 0x5069436F  /* PiCo */
 
 #define SET_MAGIC_NUMBER(eng) \
-    (eng)->magic = ((picoos_uint32) (eng)) ^ MAGIC_MASK
+    (eng)->magic = ((picoos_uint32) (uintptr_t) (eng)) ^ MAGIC_MASK
 
 #define CHECK_MAGIC_NUMBER(eng) \
-    ((eng)->magic == (((picoos_uint32) (eng)) ^ MAGIC_MASK))
+    ((eng)->magic == (((picoos_uint32) (uintptr_t) (eng)) ^ MAGIC_MASK))
 
 /**
  * performs an engine reset
