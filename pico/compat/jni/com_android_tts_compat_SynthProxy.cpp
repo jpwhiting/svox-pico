@@ -308,7 +308,7 @@ __ttsSynthDoneCB(void **pUserdata, uint32_t rate,
 
 
 // ----------------------------------------------------------------------------
-static int
+static jint
 com_android_tts_compat_SynthProxy_setLowShelf(JNIEnv *env, jobject thiz, jboolean applyFilter,
         jfloat filterGain, jfloat attenuationInDb, jfloat freqInHz, jfloat slope)
 {
@@ -331,11 +331,11 @@ com_android_tts_compat_SynthProxy_setLowShelf(JNIEnv *env, jobject thiz, jboolea
 }
 
 // ----------------------------------------------------------------------------
-static jint
+static jlong
 com_android_tts_compat_SynthProxy_native_setup(JNIEnv *env, jobject thiz,
         jstring nativeSoLib, jstring engConfig)
 {
-    int result = 0;
+    jlong result = 0;
     bUseFilter = false;
 
     const char *nativeSoLibNativeString =  env->GetStringUTFChars(nativeSoLib, 0);
@@ -363,7 +363,7 @@ com_android_tts_compat_SynthProxy_native_setup(JNIEnv *env, jobject thiz,
             SynthProxyJniStorage *pSynthData = new SynthProxyJniStorage();
             pSynthData->mEngine = engine;
             pSynthData->mEngineLibHandle = engine_lib_handle;
-            result = reinterpret_cast<jint>(pSynthData);
+            result = reinterpret_cast<jlong>(pSynthData);
         }
     }
 
@@ -373,7 +373,7 @@ com_android_tts_compat_SynthProxy_native_setup(JNIEnv *env, jobject thiz,
     return result;
 }
 
-static SynthProxyJniStorage *getSynthData(jint jniData)
+static SynthProxyJniStorage *getSynthData(jlong jniData)
 {
     if (jniData == 0) {
         ALOGE("Engine not initialized");
@@ -383,7 +383,7 @@ static SynthProxyJniStorage *getSynthData(jint jniData)
 }
 
 static void
-com_android_tts_compat_SynthProxy_native_finalize(JNIEnv *env, jobject thiz, jint jniData)
+com_android_tts_compat_SynthProxy_native_finalize(JNIEnv *env, jobject thiz, jlong jniData)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
     if (pSynthData == NULL) {
@@ -396,13 +396,13 @@ com_android_tts_compat_SynthProxy_native_finalize(JNIEnv *env, jobject thiz, jin
 }
 
 static void
-com_android_tts_compat_SynthProxy_shutdown(JNIEnv *env, jobject thiz, jint jniData)
+com_android_tts_compat_SynthProxy_shutdown(JNIEnv *env, jobject thiz, jlong jniData)
 {
     com_android_tts_compat_SynthProxy_native_finalize(env, thiz, jniData);
 }
 
-static int
-com_android_tts_compat_SynthProxy_isLanguageAvailable(JNIEnv *env, jobject thiz, jint jniData,
+static jint
+com_android_tts_compat_SynthProxy_isLanguageAvailable(JNIEnv *env, jobject thiz, jlong jniData,
         jstring language, jstring country, jstring variant)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
@@ -426,11 +426,11 @@ com_android_tts_compat_SynthProxy_isLanguageAvailable(JNIEnv *env, jobject thiz,
     env->ReleaseStringUTFChars(country, countryNativeString);
     env->ReleaseStringUTFChars(variant, variantNativeString);
 
-    return result;
+    return (jint) result;
 }
 
-static int
-com_android_tts_compat_SynthProxy_setLanguage(JNIEnv *env, jobject thiz, jint jniData,
+static jint
+com_android_tts_compat_SynthProxy_setLanguage(JNIEnv *env, jobject thiz, jlong jniData,
         jstring language, jstring country, jstring variant)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
@@ -456,12 +456,12 @@ com_android_tts_compat_SynthProxy_setLanguage(JNIEnv *env, jobject thiz, jint jn
     env->ReleaseStringUTFChars(country, countryNativeString);
     env->ReleaseStringUTFChars(variant, variantNativeString);
 
-    return result;
+    return (jint) result;
 }
 
 
-static int
-com_android_tts_compat_SynthProxy_loadLanguage(JNIEnv *env, jobject thiz, jint jniData,
+static jint
+com_android_tts_compat_SynthProxy_loadLanguage(JNIEnv *env, jobject thiz, jlong jniData,
         jstring language, jstring country, jstring variant)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
@@ -485,11 +485,11 @@ com_android_tts_compat_SynthProxy_loadLanguage(JNIEnv *env, jobject thiz, jint j
     env->ReleaseStringUTFChars(country, countryNativeString);
     env->ReleaseStringUTFChars(variant, variantNativeString);
 
-    return result;
+    return (jint) result;
 }
 
-static int
-com_android_tts_compat_SynthProxy_setProperty(JNIEnv *env, jobject thiz, jint jniData,
+static jint
+com_android_tts_compat_SynthProxy_setProperty(JNIEnv *env, jobject thiz, jlong jniData,
         jstring name, jstring value)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
@@ -513,11 +513,11 @@ com_android_tts_compat_SynthProxy_setProperty(JNIEnv *env, jobject thiz, jint jn
     env->ReleaseStringUTFChars(name, nameChars);
     env->ReleaseStringUTFChars(name, valueChars);
 
-    return result;
+    return (jint) result;
 }
 
-static int
-com_android_tts_compat_SynthProxy_speak(JNIEnv *env, jobject thiz, jint jniData,
+static jint
+com_android_tts_compat_SynthProxy_speak(JNIEnv *env, jobject thiz, jlong jniData,
         jstring textJavaString, jobject request)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
@@ -547,11 +547,11 @@ com_android_tts_compat_SynthProxy_speak(JNIEnv *env, jobject thiz, jint jniData,
             pSynthData->mBuffer, pSynthData->mBufferSize, static_cast<void *>(pRequestData));
     env->ReleaseStringUTFChars(textJavaString, textNativeString);
 
-    return result;
+    return (jint) result;
 }
 
-static int
-com_android_tts_compat_SynthProxy_stop(JNIEnv *env, jobject thiz, jint jniData)
+static jint
+com_android_tts_compat_SynthProxy_stop(JNIEnv *env, jobject thiz, jlong jniData)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
     if (pSynthData == NULL) {
@@ -563,11 +563,11 @@ com_android_tts_compat_SynthProxy_stop(JNIEnv *env, jobject thiz, jint jniData)
         return ANDROID_TTS_FAILURE;
     }
 
-    return engine->funcs->stop(engine);
+    return (jint) engine->funcs->stop(engine);
 }
 
-static int
-com_android_tts_compat_SynthProxy_stopSync(JNIEnv *env, jobject thiz, jint jniData)
+static jint
+com_android_tts_compat_SynthProxy_stopSync(JNIEnv *env, jobject thiz, jlong jniData)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
     if (pSynthData == NULL) {
@@ -581,11 +581,11 @@ com_android_tts_compat_SynthProxy_stopSync(JNIEnv *env, jobject thiz, jint jniDa
     engineMutex.lock();
     engineMutex.unlock();
 
-    return result;
+    return (jint) result;
 }
 
 static jobjectArray
-com_android_tts_compat_SynthProxy_getLanguage(JNIEnv *env, jobject thiz, jint jniData)
+com_android_tts_compat_SynthProxy_getLanguage(JNIEnv *env, jobject thiz, jlong jniData)
 {
     SynthProxyJniStorage* pSynthData = getSynthData(jniData);
     if (pSynthData == NULL) {
@@ -618,43 +618,43 @@ com_android_tts_compat_SynthProxy_getLanguage(JNIEnv *env, jobject thiz, jint jn
 // Dalvik VM type signatures
 static JNINativeMethod gMethods[] = {
     {   "native_stop",
-        "(I)I",
+        "(J)I",
         (void*)com_android_tts_compat_SynthProxy_stop
     },
     {   "native_stopSync",
-        "(I)I",
+        "(J)I",
         (void*)com_android_tts_compat_SynthProxy_stopSync
     },
     {   "native_speak",
-        "(ILjava/lang/String;Landroid/speech/tts/SynthesisCallback;)I",
+        "(JLjava/lang/String;Landroid/speech/tts/SynthesisCallback;)I",
         (void*)com_android_tts_compat_SynthProxy_speak
     },
     {   "native_isLanguageAvailable",
-        "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
+        "(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
         (void*)com_android_tts_compat_SynthProxy_isLanguageAvailable
     },
     {   "native_setLanguage",
-        "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
+        "(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
         (void*)com_android_tts_compat_SynthProxy_setLanguage
     },
     {   "native_loadLanguage",
-        "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
+        "(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
         (void*)com_android_tts_compat_SynthProxy_loadLanguage
     },
     {   "native_setProperty",
-        "(ILjava/lang/String;Ljava/lang/String;)I",
+        "(JLjava/lang/String;Ljava/lang/String;)I",
         (void*)com_android_tts_compat_SynthProxy_setProperty
     },
     {   "native_getLanguage",
-        "(I)[Ljava/lang/String;",
+        "(J)[Ljava/lang/String;",
         (void*)com_android_tts_compat_SynthProxy_getLanguage
     },
     {   "native_shutdown",
-        "(I)V",
+        "(J)V",
         (void*)com_android_tts_compat_SynthProxy_shutdown
     },
     {   "native_setup",
-        "(Ljava/lang/String;Ljava/lang/String;)I",
+        "(Ljava/lang/String;Ljava/lang/String;)J",
         (void*)com_android_tts_compat_SynthProxy_native_setup
     },
     {   "native_setLowShelf",
@@ -662,7 +662,7 @@ static JNINativeMethod gMethods[] = {
         (void*)com_android_tts_compat_SynthProxy_setLowShelf
     },
     {   "native_finalize",
-        "(I)V",
+        "(J)V",
         (void*)com_android_tts_compat_SynthProxy_native_finalize
     }
 };

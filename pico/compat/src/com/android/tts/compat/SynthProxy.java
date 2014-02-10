@@ -43,7 +43,7 @@ public class SynthProxy {
     private final static float PICO_FILTER_TRANSITION_FREQ = 1100.0f;     // in Hz
     private final static float PICO_FILTER_SHELF_SLOPE = 1.0f;            // Q
 
-    private int mJniData = 0;
+    private long mJniData = 0;
 
     /**
      * Constructor; pass the location of the native TTS .so to use.
@@ -154,32 +154,32 @@ public class SynthProxy {
         }
     }
 
-    private native final int native_setup(String nativeSoLib, String engineConfig);
+    private native final long native_setup(String nativeSoLib, String engineConfig);
 
     private native final int native_setLowShelf(boolean applyFilter, float filterGain,
             float attenuationInDb, float freqInHz, float slope);
 
-    private native final void native_finalize(int jniData);
+    private native final void native_finalize(long jniData);
 
-    private native final int native_stop(int jniData);
+    private native final int native_stop(long jniData);
 
-    private native final int native_stopSync(int jniData);
+    private native final int native_stopSync(long jniData);
 
-    private native final int native_speak(int jniData, String text, SynthesisCallback request);
+    private native final int native_speak(long jniData, String text, SynthesisCallback request);
 
-    private native final int  native_isLanguageAvailable(int jniData, String language,
+    private native final int  native_isLanguageAvailable(long jniData, String language,
             String country, String variant);
 
-    private native final int native_setLanguage(int jniData, String language, String country,
+    private native final int native_setLanguage(long jniData, String language, String country,
             String variant);
 
-    private native final int native_loadLanguage(int jniData, String language, String country,
+    private native final int native_loadLanguage(long jniData, String language, String country,
             String variant);
 
-    private native final int native_setProperty(int jniData, String name, String value);
+    private native final int native_setProperty(long jniData, String name, String value);
 
-    private native final String[] native_getLanguage(int jniData);
+    private native final String[] native_getLanguage(long jniData);
 
-    private native final void native_shutdown(int jniData);
+    private native final void native_shutdown(long jniData);
 
 }

@@ -75,10 +75,10 @@ typedef struct picorsrc_resource {
 #define MAGIC_MASK 0x7049634F  /* pIcO */
 
 #define SET_MAGIC_NUMBER(res) \
-    (res)->magic = ((picoos_uint32) (res)) ^ MAGIC_MASK
+    (res)->magic = ((picoos_uint32) (uintptr_t) (res)) ^ MAGIC_MASK
 
 #define CHECK_MAGIC_NUMBER(res) \
-    ((res)->magic == (((picoos_uint32) (res)) ^ MAGIC_MASK))
+    ((res)->magic == (((picoos_uint32) (uintptr_t) (res)) ^ MAGIC_MASK))
 
 
 
@@ -603,7 +603,7 @@ pico_status_t picorsrc_loadResource(picorsrc_ResourceManager this,
             status = (NULL == res->raw_mem) ? PICO_EXC_OUT_OF_MEM : PICO_OK;
         }
         if (PICO_OK == status) {
-            rem = (picoos_uint32) res->raw_mem % PICOOS_ALIGN_SIZE;
+            rem = (uintptr_t) res->raw_mem % PICOOS_ALIGN_SIZE;
             if (rem > 0) {
                 res->start = res->raw_mem + (PICOOS_ALIGN_SIZE - rem);
             } else {

@@ -41,10 +41,10 @@ extern "C" {
 #define MAGIC_MASK 0x5069636F  /* Pico */
 
 #define SET_MAGIC_NUMBER(sys) \
-    (sys)->magic = ((picoos_uint32) (sys)) ^ MAGIC_MASK
+    (sys)->magic = ((picoos_uint32) (uintptr_t) (sys)) ^ MAGIC_MASK
 
 #define CHECK_MAGIC_NUMBER(sys) \
-    ((sys)->magic == (((picoos_uint32) (sys)) ^ MAGIC_MASK))
+    ((sys)->magic == (((picoos_uint32) (uintptr_t) (sys)) ^ MAGIC_MASK))
 
 
 
@@ -90,7 +90,7 @@ pico_Status pico_initialize_priv(
         status = PICO_ERR_NULLPTR_ACCESS;
     } else {
         byte_ptr_t rest_mem;
-        picoos_uint32 rest_mem_size;
+        picoos_objsize_t rest_mem_size;
         pico_System sys;
         picoos_MemoryManager sysMM;
         picoos_ExceptionManager sysEM;
