@@ -23,7 +23,7 @@ public class PicoService extends CompatTtsService {
 
     @Override
     protected String getSoFilename() {
-        return "/system/lib/libttspico.so";
+        return "libttspico.so";
     }
 
 }
