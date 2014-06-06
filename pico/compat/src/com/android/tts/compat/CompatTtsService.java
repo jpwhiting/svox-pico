@@ -40,12 +40,6 @@ public abstract class CompatTtsService extends TextToSpeechService {
 
         String soFilename = getSoFilename();
 
-        File f = new File(soFilename);
-        if (!f.exists()) {
-            Log.e(TAG, "Invalid TTS Binary: " + soFilename);
-            return;
-        }
-
         if (mNativeSynth != null) {
             mNativeSynth.stopSync();
             mNativeSynth.shutdown();
