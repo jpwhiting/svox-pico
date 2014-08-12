@@ -19,7 +19,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" msgid="3853942104135735825">"वाक् संश्लेषण डेटा इंस्टॉलर"</string>
+    <string name="app_name" msgid="3853942104135735825">"बोली संश्लेषण डेटा इंस्टॉलर"</string>
     <string name="installing_message" product="nosdcard" msgid="737236126329813405">"USB संग्रहण पर ध्वनि डेटा इंस्टॉल करना."</string>
     <string name="installing_message" product="default" msgid="8792926973732354514">"SD कार्ड पर ध्वनि डेटा इंस्टॉल कर रहा है."</string>
     <string name="uninstall_message" msgid="174096141356529599">"ध्वनि डेटा सफलतापूर्वक इंस्टॉल कर दिया गया है. अब आप इस इंस्टॉलर को सुरक्षित रूप से निकाल सकते हैं."</string>
