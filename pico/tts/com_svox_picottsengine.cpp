@@ -39,7 +39,6 @@
 
 #include <utils/Log.h>
 #include <utils/String16.h>                     /* for strlen16 */
-#include <android_runtime/AndroidRuntime.h>
 #include <TtsEngine.h>
 
 #include <cutils/jstring.h>
