@@ -1068,7 +1068,13 @@ tts_result TtsEngine::init( synthDoneCB_t synthDoneCBPtr, const char *config )
 
     // was the initialization given an alternative path for the lingware location?
     if ((config != NULL) && (strlen(config) > 0)) {
-        pico_alt_lingware_path = (char*)malloc(strlen(config));
+        int max_filename_length = PICO_MAX_DATAPATH_NAME_SIZE + PICO_MAX_FILE_NAME_SIZE;
+        if (strlen(config) >= max_filename_length) {
+            ALOGE("The length of engine config is too long (should be less than %d bytes).",
+                max_filename_length);
+            return TTS_FAILURE;
+        }
+        pico_alt_lingware_path = (char*)malloc(strlen(config) + 1);
         strcpy((char*)pico_alt_lingware_path, config);
         ALOGV("Alternative lingware path %s", pico_alt_lingware_path);
     } else {
