@@ -1,7 +1,7 @@
 # SVOX Pico TTS Engine
 # This makefile builds both an activity and a shared library.
 
-#disble build in PDK
+#disable build in PDK
 ifneq ($(TARGET_BUILD_PDK),true)
 
 LOCAL_PATH := $(call my-dir)
