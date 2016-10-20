@@ -17,4 +17,5 @@ ndk_headers {
     from: "pico/compat/jni",
     to: "android",
     srcs: ["pico/compat/jni/tts.h"],
+    license: "pico/compat/jni/NOTICE",
 }
