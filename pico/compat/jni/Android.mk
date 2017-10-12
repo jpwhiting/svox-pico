@@ -20,4 +20,8 @@ LOCAL_SHARED_LIBRARIES := \
 	liblog \
 	libdl
 
+LOCAL_CFLAGS := \
+    -Wall -Werror \
+    -Wno-unused-parameter
+
 include $(BUILD_SHARED_LIBRARY)

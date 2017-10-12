@@ -40,6 +40,15 @@ LOCAL_SRC_FILES := \
 LOCAL_CFLAGS+= $(TOOL_CFLAGS)
 LOCAL_LDFLAGS+= $(TOOL_LDFLAGS)
 
+LOCAL_CFLAGS += \
+    -Wall -Werror \
+    -Wno-error=infinite-recursion \
+    -Wno-parentheses-equality \
+    -Wno-self-assign \
+    -Wno-sign-compare \
+    -Wno-unneeded-internal-declaration \
+    -Wno-unused-parameter \
+
 include $(BUILD_STATIC_LIBRARY)
 
 
