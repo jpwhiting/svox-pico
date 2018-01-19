@@ -162,7 +162,7 @@ typedef struct kpr_subobj
 
 static picoos_uint32 kpr_getUInt32(picoos_uint8 * p)
 {
-    return p[0] + 256*p[1] + 256*256*p[2] + 256*256*256*p[3];
+    return (p[0]) | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
 
 
@@ -342,10 +342,7 @@ extern picokpr_LexCat picokpr_getLexCat(picokpr_Preproc preproc, picokpr_LexCatA
 extern picoos_int32 picokpr_getAttrValArrInt32(picokpr_Preproc preproc, picokpr_AttrValArrOffset ofs)
 {
     picoos_uint8 * p = (picoos_uint8 *)&(((kpr_SubObj)preproc)->rAttrValArr[ofs]);
-    picoos_uint32 c =              p[KPR_ATTRVAL_INT_OFS] +
-                               256*p[KPR_ATTRVAL_INT_OFS+1] +
-                           256*256*p[KPR_ATTRVAL_INT_OFS+2] +
-                       256*256*256*p[KPR_ATTRVAL_INT_OFS+3];
+    picoos_uint32 c = kpr_getUInt32(&p[KPR_ATTRVAL_INT_OFS]);
 
     if (c > KPR_MAX_INT32) {
         return (c - KPR_MAX_INT32) - 1;
@@ -399,10 +396,7 @@ extern picokpr_VarStrPtr picokpr_getOutItemStr(picokpr_Preproc preproc, picokpr_
 extern picoos_int32 picokpr_getOutItemVal(picokpr_Preproc preproc, picokpr_OutItemArrOffset ofs)
 {
     picoos_uint8 * p = (picoos_uint8 *)&(((kpr_SubObj)preproc)->rOutItemArr[ofs]);
-    picoos_uint32 c =  p[KPR_OUTITEM_VAL_OFS+0] +
-                   256*p[KPR_OUTITEM_VAL_OFS+1] +
-               256*256*p[KPR_OUTITEM_VAL_OFS+2] +
-           256*256*256*p[KPR_OUTITEM_VAL_OFS+3];
+    picoos_uint32 c = kpr_getUInt32(&p[KPR_OUTITEM_VAL_OFS]);
 
     if (c > KPR_MAX_INT32) {
         return (c - KPR_MAX_INT32) - 1;
@@ -552,11 +546,7 @@ extern picoos_int32 picokpr_getProdArrLen(picokpr_Preproc preproc)
 extern picoos_int32 picokpr_getProdPrefCost(picokpr_Preproc preproc, picokpr_ProdArrOffset ofs)
 {
     picoos_uint8 * p = (picoos_uint8 *)&(((kpr_SubObj)preproc)->rProdArr[ofs]);
-    picoos_uint32 c =  p[KPR_PROD_PRODPREFCOST_OFS+0] +
-                   256*p[KPR_PROD_PRODPREFCOST_OFS+1] +
-               256*256*p[KPR_PROD_PRODPREFCOST_OFS+2] +
-           256*256*256*p[KPR_PROD_PRODPREFCOST_OFS+3];
-
+    picoos_uint32 c =  kpr_getUInt32(&p[KPR_PROD_PRODPREFCOST_OFS]);
 
     if (c > KPR_MAX_INT32) {
         return (c - KPR_MAX_INT32) - 1;
