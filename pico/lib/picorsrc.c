@@ -638,9 +638,9 @@ pico_status_t picorsrc_loadResource(picorsrc_ResourceManager this,
                 res->type = PICORSRC_TYPE_TEXTANA;
             } else if (!picoos_strcmp(header.field[PICOOS_HEADER_CONTENT_TYPE].value, PICORSRC_FIELD_VALUE_SIGGEN)) {
                 res->type = PICORSRC_TYPE_SIGGEN;
-            } else if (!picoos_strcmp(header.field[PICOOS_HEADER_CONTENT_TYPE].value, PICORSRC_FIELD_VALUE_SIGGEN)) {
+            } else if (!picoos_strcmp(header.field[PICOOS_HEADER_CONTENT_TYPE].value, PICORSRC_FIELD_VALUE_USERLEX)) {
                 res->type = PICORSRC_TYPE_USER_LEX;
-            } else if (!picoos_strcmp(header.field[PICOOS_HEADER_CONTENT_TYPE].value, PICORSRC_FIELD_VALUE_SIGGEN)) {
+            } else if (!picoos_strcmp(header.field[PICOOS_HEADER_CONTENT_TYPE].value, PICORSRC_FIELD_VALUE_USERTPP)) {
                 res->type = PICORSRC_TYPE_USER_PREPROC;
             } else {
                 res->type = PICORSRC_TYPE_OTHER;
