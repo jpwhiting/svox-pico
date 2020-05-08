@@ -100,6 +100,7 @@ int main(int argc, const char *argv[]) {
     char * lang = "en-US";
     int langIndex = -1, langIndexTmp = -1;
     char * text = NULL;
+    int8_t using_stdin = 0;
     int8_t * buffer;
     size_t bufferSize = 256;
 
@@ -162,6 +163,7 @@ int main(int argc, const char *argv[]) {
 		text = (char *) &(*extra_argv)[0];
     } else {
         // read from stdin
+        using_stdin = 1;
         size_t len = myread(stdin, &text);
         // debug buffered read: make this command a pass-though cat-like command and compare input with output
         // printf("read %ld characters\n", len);
@@ -371,7 +373,7 @@ terminate:
         pico_terminate(&picoSystem);
         picoSystem = NULL;
     }
-    if (text)
+    if (using_stdin && text)
       free(text);
     exit(ret);
 }
