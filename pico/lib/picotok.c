@@ -754,7 +754,7 @@ static void tok_interpretMarkup (picodata_ProcessingUnit this, tok_subobj_t * to
                     tok_putItem(this, tok, PICODATA_ITEM_CMD, PICODATA_ITEMINFO1_CMD_SPEAKER, PICODATA_ITEMINFO2_CMD_RELATIVE, uval, (picoos_uchar*)"");
                 } else {
                     uval = picoos_atoi((picoos_char*)tok->markupParams[0].paramVal);
-                    tok_checkLimits(this, & uval, PICO_SPEAKER_MIN, PICO_SPEAKER_MAX, (picoos_uchar*)"volume");
+                    tok_checkLimits(this, & uval, PICO_SPEAKER_MIN, PICO_SPEAKER_MAX, (picoos_uchar*)"speaker");
                     tok_putItem(this, tok, PICODATA_ITEM_CMD, PICODATA_ITEMINFO1_CMD_SPEAKER, PICODATA_ITEMINFO2_CMD_ABSOLUTE, uval, (picoos_uchar*)"");
                 }
                 done = TRUE;

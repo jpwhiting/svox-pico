@@ -172,7 +172,7 @@ static pico_status_t sigInitialize(register picodata_ProcessingUnit this, picoos
          * ------------------------------------------------------------------*/
         /*pitch , volume , speaker modifiers*/
         sig_subObj->pMod = 1.0f;
-        sig_subObj->vMod = 1.0f;
+        sig_subObj->vMod = 0.5f;
         sig_subObj->sMod = 1.0f;
     } else {
         /*-----------------------------------------------------------------
