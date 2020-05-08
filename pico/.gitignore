@@ -1,6 +1,7 @@
 #created by aclocal
 autom4te.cache
 aclocal.m4
+compile
 
 #created by libtoolize
 m4
