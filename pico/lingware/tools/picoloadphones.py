@@ -1,7 +1,7 @@
-#!python
+#!/usr/bin/env python3
 # python script picoloadphones.py --- creates pkb containing phones table.
 #
-# Based on pycoloadphones.lua script by SVOX
+# Based on picoloadphones.lua script by SVOX
 #
 # Copyright 2020 Jeremy Whiting <jpwhiting@kde.org>
 #
