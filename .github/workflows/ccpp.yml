@@ -13,15 +13,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: cd
-      run: cd pico
     - name: autogen
       run: ./autogen.sh
+      working-directory: pico
     - name: configure
       run: ./configure
+      working-directory: pico
     - name: make
       run: make
+      working-directory: pico
     - name: make check
       run: make check
+      working-directory: pico
     - name: make distcheck
       run: make distcheck
+      working-directory: pico
