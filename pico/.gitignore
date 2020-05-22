@@ -32,3 +32,5 @@ libtool
 libttspico.la
 pico2wave
 
+# Added manually to ignore meson build folder.
+builddir
