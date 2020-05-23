@@ -17,6 +17,7 @@ VERSION_SUFFIX_fr_FR_nk0="1.0.0.3-0-2"
 TOOLSDIR=./
 CONFIGSDIR=../configs/
 GLW=genlingware.pl
+LANGDIR=../../lang/
 
 if [ -n "$3" -o -z "$2" ]; then
     echo;
@@ -95,6 +96,6 @@ fi
 LANG=$1
 SID=$2
 
-perl  ${TOOLSDIR}/${GLW} ${CONFIGSDIR}/${LANG}/${LANG}_ta.txt ${LANG}_ta_${VERSION_SUFFIX}.bin
-perl  ${TOOLSDIR}/${GLW} ${CONFIGSDIR}/${LANG}/${LANG}_${SID}_sg.txt ${LANG}_${SID}_sg_${VERSION_SUFFIX}.bin
-perl  ${TOOLSDIR}/${GLW} ${CONFIGSDIR}/${LANG}/${LANG}_dbg.txt ${LANG}_dbg.bin
+perl  ${TOOLSDIR}/${GLW} ${CONFIGSDIR}/${LANG}/${LANG}_ta.txt ${LANGDIR}/${LANG}_ta_${VERSION_SUFFIX}.bin
+perl  ${TOOLSDIR}/${GLW} ${CONFIGSDIR}/${LANG}/${LANG}_${SID}_sg.txt ${LANGDIR}/${LANG}_${SID}_sg_${VERSION_SUFFIX}.bin
+perl  ${TOOLSDIR}/${GLW} ${CONFIGSDIR}/${LANG}/${LANG}_dbg.txt ${LANGDIR}/${LANG}_dbg.bin
