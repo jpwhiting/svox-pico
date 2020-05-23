@@ -3,7 +3,7 @@
 #
 # Copyright 2020 Jeremy Whiting <jpwhiting@kde.org>
 #
-# load pico pos src file and create pos pkb file
+# load pico pos utf file and create pos pkb file
 #
 # accepted syntax:
 # - parses line of the following format:
@@ -12,8 +12,10 @@
 
 import argparse
 import os
-import re
 import struct
+
+# symboltable used to parse utf input files
+import symboltable
 
 # valid property names
 propertyNames = {
@@ -42,12 +44,11 @@ if not args.outfile:
     exit(1)
 
 # tables
-# table with symbol name keys used to do lookup of combined symbols
+# table with all symbols read from pos file
 partsOfSpeech = {}
 
-# table with symbol name number keys (specified with property mapval)
-# combined symbols also contain a list of symbols they are a combination of
-symbolNumbers = {}
+# table with symbol name keys used to do lookup of combined symbols
+primaryPartsOfSpeech = {}
 
 # table of combined symbols key is how many symbols were combined (2-8)
 # single parts of speech are in partsOfSpeech, 2-8 symbol combinations are
@@ -57,105 +58,55 @@ combinations = {}
 # array of symbol name numer keys used (to check for unique mapvals)
 symbolUsed = {}
 
-# Comment regular expression
-commentLine = re.compile('^\\s*!.*$')
-# Double quote SYM definition
-doubleSYM = re.compile(':SYM\\s+"([^"]+)"\\s+(.*)')
-# Single quote SYM definition
-singleSYM = re.compile(":SYM\\s+'([^']+)'\\s+(.*)")
-# Properties regular expression
-propertiesLine = re.compile("^:PROP\\s+mapval\\s*=\\s*(\\d+)\\s*,*(.*)")
+table = symboltable.SymbolTable()
+partsOfSpeech = table.parseFile(args.infile)
+args.infile.close()
 
-# parse input file, build up syms and symnrs tables
-line = args.infile.readline()
-while line:
-    #  if string.match(line, "^%s*!.*$") or string.match(line, "^%s*$") then
-    #    -- discard comment-only lines
-    if commentLine.match(line):
-        line = args.infile.readline()
-        continue
-
-    #    -- Remove whitespace
-    line = line.strip()
-    symbol = None
-    rest = None
-
-    m = doubleSYM.match(line)
-    if m:
-        symbol = m.group(1)
-        rest = m.group(2)
-    else:
-        m = singleSYM.match(line)
-        if m:
-            symbol = m.group(1)
-            rest = m.group(2)
-
-    if symbol and rest:
-
-        m = propertiesLine.match(rest)
-        mappedValue = int(m.group(1))
-
-        otherProperties = None
-
-        if len(m.groups()) > 1:
-            otherProperties = m.group(2).strip()
-
-        if mappedValue:
-            properties = {'mapval': mappedValue}
-
-            if otherProperties:
+# parse dictionary checking for invalid values, duplicates, etc.
+for symbol in partsOfSpeech.keys():
+    properties = partsOfSpeech[symbol]
+    mapValue = properties.get('mapval')
+    if mapValue:
+        for property in properties.keys():
+            if property != 'mapval' and properties[property] != '1':
                 # Parse otherProperties setting flags as appropriate
-                otherPropList = otherProperties.split(',')
-                for property in otherPropList:
-                    words = property.split('=')
-                    key = words[0].strip()
-                    value = words[1].strip()
-                    if not value == '1':
-                        print("*** error in property list, optional properties"
-                              " only accept \"1\": " + property)
-                        continue
+                print("*** error in property list, optional properties"
+                      " only accept \"1\": " + property)
+                continue
 
-                    properties[key] = value
             else:
                 pass
 
-            # Make sure this value isn't used yet
-            if mappedValue in symbolUsed:
-                print("*** error: mapval values must be unique, " +
-                      str(mappedValue))
-            else:
-                symbolUsed[mappedValue] = True
+        # Make sure this value isn't used yet
+        if mapValue in symbolUsed:
+            print("*** error: mapval values must be unique, symbol: " +
+                  symbol + ", value: " + str(mapValue))
+        else:
+            symbolUsed[mapValue] = True
 
-            # Only add to partsOfSpeech list if it's not a combined symbol
-            if 'iscombined' not in properties:
-                partsOfSpeech[symbol] = properties
-            else:
-                # It is combined, so parse which symbols it's a combination of
-                symbollist = symbol.split('^')
-                combinedNumbers = []
-                for lookup in symbollist:
-                    if lookup not in partsOfSpeech:
-                        print("*** error: unable to find symbol " + lookup + " in combined symbol " + symbol)
-                        exit(1)
-                    else:
-                        combinedNumbers.append(partsOfSpeech[lookup]['mapval'])
-
-                properties['values'] = combinedNumbers
-                length = len(combinedNumbers)
-                if length in combinations:
-                    combinations[length][mappedValue] = combinedNumbers
+        # Only add to partsOfSpeech list if it's not a combined symbol
+        if 'iscombined' not in properties:
+            primaryPartsOfSpeech[symbol] = properties
+        else:
+            # It is combined, so parse which symbols it's a combination of
+            symbollist = symbol.split('^')
+            combinedNumbers = []
+            for lookup in symbollist:
+                if lookup not in primaryPartsOfSpeech:
+                    print("*** error: unable to find symbol " + lookup + " in combined symbol " + symbol)
+                    exit(1)
                 else:
-                    combinations[length] = { mappedValue: combinedNumbers }
+                    combinedNumbers.append(primaryPartsOfSpeech[lookup]['mapval'])
 
-            symbolNumbers[mappedValue] = properties
+            properties['values'] = combinedNumbers
+            length = len(combinedNumbers)
+            if length in combinations:
+                combinations[length][mapValue] = combinedNumbers
+            else:
+                combinations[length] = { mapValue: combinedNumbers }
 
-    line = args.infile.readline()
 
-
-args.infile.close()
-
-
-# check symbolNumbers
+# check table
 def checkSymbolTable(table):
     for i in propertyNames:
         propertyNames[i] = 0
@@ -172,7 +123,7 @@ def checkSymbolTable(table):
                 propertyNames[key] = propertyNames[key] + 1
 
 
-checkSymbolTable(symbolNumbers)
+checkSymbolTable(partsOfSpeech)
 
 # write out Phones pkb
 def encodeProperties(dict):
@@ -188,7 +139,7 @@ for i in range(1, 9):
     # Offset starts at 32, then grows by how many the previous had
     if i == 1:
         offset = runningoffset
-        howmany = len(partsOfSpeech)
+        howmany = len(primaryPartsOfSpeech)
     else:
         if i == 2:
             offset = runningoffset + howmany # Each single took 1 byte
@@ -208,8 +159,8 @@ for i in range(1, 9):
     args.outfile.write(struct.pack('<H', offset))
 
 # Next write out parts of speech
-for i in partsOfSpeech:
-    args.outfile.write(struct.pack('<B', partsOfSpeech[i]['mapval']))
+for i in primaryPartsOfSpeech:
+    args.outfile.write(struct.pack('<B', primaryPartsOfSpeech[i]['mapval']))
 
 # Finally write out the combined symbols and what they are combinations of 
 for i in range(2, 9):
