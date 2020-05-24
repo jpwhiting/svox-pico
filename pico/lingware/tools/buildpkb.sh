@@ -94,11 +94,7 @@ if [ $LANG = "en-GB" ]; then
 elif [ $LANG = "en-US" ]; then
     WPHO_RANGE="1 2"
     SPHO_RANGE="1"
-    if [ "$VOICE" = "mh5" ]; then
-        SPHO_VOICE_RANGE="2 3 4 5"
-    elif [ "$VOICE" = "kr0" ]; then
-        SPHO_VOICE_RANGE="2 3 4"
-    elif [ "$VOICE" = "lh0" ]; then
+    if [ "$VOICE" = "lh0" ]; then
         SPHO_VOICE_RANGE="2 3 4 5"
     else
         echo [ERROR] \<voice\> is needed;

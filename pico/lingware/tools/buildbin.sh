@@ -37,13 +37,7 @@ if [ $1 = "en-GB" ]; then
         exit;
     fi
 elif [ $1 = "en-US" ]; then
-    if [ $2 = "mh5" ]; then
-    	VERSION_SUFFIX="${VERSION_SUFFIX_en_US_mh5}"
-        echo
-    elif [ $2 = "kr0" ]; then
-    	VERSION_SUFFIX="${VERSION_SUFFIX_en_US_kr0}"
-        echo
-    elif [ $2 = "lh0" ]; then
+    if [ $2 = "lh0" ]; then
     	VERSION_SUFFIX="${VERSION_SUFFIX_en_US_lh0}"
         echo
     else
