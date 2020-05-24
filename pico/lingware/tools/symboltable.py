@@ -42,6 +42,7 @@ class SymbolTable:
             line = line.strip()
             symbol = None
             rest = None
+            properties = {}
 
             m = self.doubleSYM.match(line)
             if m:
@@ -54,13 +55,17 @@ class SymbolTable:
                     rest = m.group(2)
 
             if symbol and rest:
-                m = self.propertiesLine.match(rest)
-                mappedValue = int(m.group(1))
-
                 otherProperties = None
+                mappedValue = None
+                m = self.propertiesLine.match(rest)
+                if m:
+                    mappedValue = int(m.group(1))
 
-                if len(m.groups()) > 1:
-                    otherProperties = m.group(2).strip()
+
+                    if len(m.groups()) > 1:
+                        otherProperties = m.group(2).strip()
+                else:
+                    otherProperties = rest
 
                 if mappedValue:
                     properties = {'mapval': mappedValue}
