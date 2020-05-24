@@ -14,7 +14,8 @@
 
 import argparse
 import os
-import re
+
+import symboltable
 
 # valid property names
 propertyNames = {
@@ -57,88 +58,38 @@ if not args.outfile:
 
 # tables
 # table with symbol name keys (not really used currently)
-syms = {}
+symbols = {}
+
 # table with symbol name number keys (specified with property mapval)
 symbolNumbers = {}
+
 # array of symbol name numer keys used (to check for unique mapvals)
 symbolUsed = {}
 
-# Comment regular expression
-commentLine = re.compile('^\\s*!.*$')
-# Double quote SYM definition
-doubleSYM = re.compile(':SYM\\s+"([^"]+)"\\s+(.*)')
-# Single quote SYM definition
-singleSYM = re.compile(":SYM\\s+'([^']+)'\\s+(.*)")
-# Properties regular expression
-propertiesLine = re.compile("^:PROP\\s+mapval\\s*=\\s*(\\d+)\\s*,*(.*)")
-
-# parse input file, build up syms and symnrs tables
-line = args.infile.readline()
-while line:
-    #  if string.match(line, "^%s*!.*$") or string.match(line, "^%s*$") then
-    #    -- discard comment-only lines
-    if commentLine.match(line):
-        line = args.infile.readline()
-        continue
-
-    #    -- Remove whitespace
-    line = line.strip()
-    symbol = None
-    rest = None
-
-    m = doubleSYM.match(line)
-    if m:
-        symbol = m.group(1)
-        rest = m.group(2)
-    else:
-        m = singleSYM.match(line)
-        if m:
-            symbol = m.group(1)
-            rest = m.group(2)
-
-    if symbol and rest:
-
-        m = propertiesLine.match(rest)
-        mappedValue = int(m.group(1))
-
-        otherProperties = None
-
-        if len(m.groups()) > 1:
-            otherProperties = m.group(2).strip()
-
-        if mappedValue:
-            properties = {'mapval': mappedValue}
-
-            if otherProperties:
-                # Parse otherProperties setting flags as appropriate
-                otherPropList = otherProperties.split(',')
-                for property in otherPropList:
-                    words = property.split('=')
-                    key = words[0].strip()
-                    value = words[1].strip()
-                    if not value == '1':
-                        print("*** error in property list, optional properties"
-                              " only accept \"1\": " + property)
-                        continue
-
-                    properties[key] = value
-            else:
-                pass
-
-            # Make sure this value isn't used yet
-            if mappedValue in symbolUsed:
-                print("*** error: mapval values must be unique, " +
-                      str(mappedValue))
-            else:
-                symbolUsed[mappedValue] = True
-
-            symbolNumbers[mappedValue] = properties
-
-    line = args.infile.readline()
-
-
+table = symboltable.SymbolTable()
+symbols = table.parseFile(args.infile)
 args.infile.close()
 
+for symbol in symbols:
+    properties = symbols[symbol]
+    mappedValue = properties.get('mapval')
+
+    # Parse otherProperties setting flags as appropriate
+    for property in properties.keys():
+        value = properties[property]
+        if not property == 'mapval' and not value == '1':
+            print("*** error in property list, optional properties"
+                  " only accept \"1\": " + property)
+            continue
+
+    # Make sure this value isn't used yet
+    if mappedValue in symbolUsed:
+        print("*** error: mapval values must be unique, " +
+              str(mappedValue))
+    else:
+        symbolUsed[mappedValue] = True
+
+    symbolNumbers[mappedValue] = properties
 
 # check symbolNumbers
 def checkSymbolTable(table):
