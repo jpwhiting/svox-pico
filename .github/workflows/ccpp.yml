@@ -17,7 +17,6 @@ jobs:
       run: sudo apt-get install libpopt-dev meson
     - name: configure
       run: meson builddir
-      working-directory: pico
     - name: make
       run: ninja
-      working-directory: pico/builddir
+      working-directory: builddir
