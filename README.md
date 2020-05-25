@@ -9,29 +9,18 @@ new sources for the tools.
 
 ## Build and install in Linux
 
-The source code is inside folder 'pico'
-
-```
-cd pico
-```
-
-Create autotools files:
-
-```
-./autogen.sh
-```
-
 Configure & build:
 
 ```
-./configure --prefix=/usr
-make
+meson builddir
+cd builddir
+ninja
 ```
 
 Install (this install files to /usr/bin, /usr/lib and /usr/share/pico):
 
 ```
-make install
+ninja install
 ```
 
 ## Usage
