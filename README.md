@@ -12,12 +12,12 @@ new sources for the tools.
 Configure & build:
 
 ```
-meson builddir
+meson setup --prefix=/usr builddir
 cd builddir
 ninja
 ```
 
-Install (this install files to /usr/bin, /usr/lib and /usr/share/pico):
+Install (this install files to /usr/bin, /usr/include, /usr/lib and /usr/share/pico):
 
 ```
 ninja install
