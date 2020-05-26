@@ -23,7 +23,7 @@ class SymbolTable:
         # Single quote SYM definition
         self.singleSYM = re.compile(":SYM\\s+'([^']+)'\\s+(.*)")
         # Properties regular expression
-        self.propertiesLine = re.compile("^:PROP\\s+mapval\\s*=\\s*(\\d+)\\s*,*(.*)")
+        self.propertiesLine = re.compile("^:PROP\\s+(.*)")
 
 
     def parseFile(self, infile):
@@ -56,19 +56,9 @@ class SymbolTable:
 
             if symbol and rest:
                 otherProperties = None
-                mappedValue = None
                 m = self.propertiesLine.match(rest)
-                if m:
-                    mappedValue = int(m.group(1))
-
-
-                    if len(m.groups()) > 1:
-                        otherProperties = m.group(2).strip()
-                else:
-                    otherProperties = rest
-
-                if mappedValue:
-                    properties = {'mapval': mappedValue}
+                otherProperties = m.group(1).strip()
+#                print("Parsing symbol: " + symbol + " properties: " + otherProperties)
 
                 if otherProperties:
                     # Parse otherProperties setting flags as appropriate
@@ -77,6 +67,7 @@ class SymbolTable:
                         words = property.split('=')
                         key = words[0].strip()
                         value = words[1].strip()
+#                        print("Property: " + key + " value: " + value)
                         properties[key] = value
                 else:
                     pass

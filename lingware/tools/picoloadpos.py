@@ -160,15 +160,15 @@ for i in range(1, 9):
 
 # Next write out parts of speech
 for i in primaryPartsOfSpeech:
-    args.outfile.write(struct.pack('<B', primaryPartsOfSpeech[i]['mapval']))
+    args.outfile.write(struct.pack('<B', int(primaryPartsOfSpeech[i]['mapval'])))
 
 # Finally write out the combined symbols and what they are combinations of 
 for i in range(2, 9):
     if i in combinations:
         symbolList = combinations[i]
         for symbol, values in symbolList.items():
-            args.outfile.write(struct.pack('<B', symbol))
+            args.outfile.write(struct.pack('<B', int(symbol)))
             for value in values:
-                args.outfile.write(struct.pack('<B', value))
+                args.outfile.write(struct.pack('<B', int(value)))
 
 args.outfile.close()

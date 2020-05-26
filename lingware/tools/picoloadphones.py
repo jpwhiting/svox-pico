@@ -89,7 +89,7 @@ for symbol in symbols:
     else:
         symbolUsed[mappedValue] = True
 
-    symbolNumbers[mappedValue] = properties
+    symbolNumbers[int(mappedValue)] = properties
 
 # check symbolNumbers
 def checkSymbolTable(table):
@@ -137,7 +137,7 @@ uniqueKeys = {'primstress': 1,
 for key, element in symbolNumbers.items():
     for test, value in uniqueKeys.items():
         if test in element:
-            specialIDs[value] = element['mapval']
+            specialIDs[value] = int(element['mapval'])
 
 # write out Phones pkb
 propertyValues = {'vowel': 1,
