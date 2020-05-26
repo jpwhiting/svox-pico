@@ -105,62 +105,62 @@ int main(int argc, const char *argv[]) {
     size_t bufferSize = 256;
 
     /* Parsing options */
-	poptContext optCon; /* context for parsing command-line options */
-	int opt; /* used for argument parsing */
+    poptContext optCon; /* context for parsing command-line options */
+    int opt; /* used for argument parsing */
 
-	struct poptOption optionsTable[] = {
-		{ "wave", 'w', POPT_ARG_STRING, &wavefile, 0,
-		  "Write output to this WAV file (extension SHOULD be .wav)", "filename.wav" },
-		{ "lang", 'l', POPT_ARG_STRING | POPT_ARGFLAG_SHOW_DEFAULT, &lang, 0,
-		  "Language", "lang" },
-		POPT_AUTOHELP
-		POPT_TABLEEND
-	};
-	optCon = poptGetContext(NULL, argc, argv, optionsTable, POPT_CONTEXT_POSIXMEHARDER);
+    struct poptOption optionsTable[] = {
+        { "wave", 'w', POPT_ARG_STRING, &wavefile, 0,
+          "Write output to this WAV file (extension SHOULD be .wav)", "filename.wav" },
+        { "lang", 'l', POPT_ARG_STRING | POPT_ARGFLAG_SHOW_DEFAULT, &lang, 0,
+          "Language", "lang" },
+        POPT_AUTOHELP
+        POPT_TABLEEND
+    };
+    optCon = poptGetContext(NULL, argc, argv, optionsTable, POPT_CONTEXT_POSIXMEHARDER);
     poptSetOtherOptionHelp(optCon, "<words>");
 
     /* Reporting about invalid extra options */
-	while ((opt = poptGetNextOpt(optCon)) != -1) {
-		switch (opt) {
-		default:
-			fprintf(stderr, "Invalid option %s: %s\n",
-				poptBadOption(optCon, 0), poptStrerror(opt));
-			poptPrintHelp(optCon, stderr, 0);
-			exit(1);
-		}
-	}
+    while ((opt = poptGetNextOpt(optCon)) != -1) {
+        switch (opt) {
+        default:
+            fprintf(stderr, "Invalid option %s: %s\n",
+                poptBadOption(optCon, 0), poptStrerror(opt));
+            poptPrintHelp(optCon, stderr, 0);
+            exit(1);
+        }
+    }
 
     /* Mandatory option: --wave */
-	if(!wavefile) {
-		fprintf(stderr, "Mandatory option: %s\n\n",
-			"--wave=filename.wav");
-		poptPrintHelp(optCon, stderr, 0);
-		exit(1);
-	}
-	/* option: --lang */
-	for(langIndexTmp =0; langIndexTmp<picoNumSupportedVocs; langIndexTmp++) {
-	    if(!strcmp(picoSupportedLang[langIndexTmp], lang)) {
-	        langIndex = langIndexTmp;
-	        break;
-	    }
-	}
-	if(langIndex == -1) {
-		fprintf(stderr, "Unknown language: %s\nValid languages:\n",
-			lang);
-	    for(langIndexTmp =0; langIndexTmp<picoNumSupportedVocs; langIndexTmp++) {
-	        fprintf(stderr, "%s\n", picoSupportedLang[langIndexTmp]);
-	    }
-	    lang = "en-US";
-		fprintf(stderr, "\n");
-		poptPrintHelp(optCon, stderr, 0);
-		exit(1);
-	}
+    if(!wavefile) {
+        fprintf(stderr, "Mandatory option: %s\n\n",
+            "--wave=filename.wav");
+        poptPrintHelp(optCon, stderr, 0);
+        exit(1);
+    }
+    /* option: --lang */
+    for(langIndexTmp =0; langIndexTmp<picoNumSupportedVocs; langIndexTmp++) {
+        if(!strcmp(picoSupportedLang[langIndexTmp], lang)) {
+            langIndex = langIndexTmp;
+            break;
+        }
+    }
+    if(langIndex == -1) {
+        fprintf(stderr, "Unknown language: %s\nValid languages:\n",
+            lang);
+        for(langIndexTmp =0; langIndexTmp<picoNumSupportedVocs; langIndexTmp++) {
+            fprintf(stderr, "%s\n", picoSupportedLang[langIndexTmp]);
+        }
+        lang = "en-US";
+        fprintf(stderr, "\n");
+        poptPrintHelp(optCon, stderr, 0);
+        exit(1);
+    }
 
-	/* Remaining argument is <words> */
-	const char **extra_argv;
-	extra_argv = poptGetArgs(optCon);
+    /* Remaining argument is <words> */
+    const char **extra_argv;
+    extra_argv = poptGetArgs(optCon);
     if(extra_argv) {
-		text = (char *) &(*extra_argv)[0];
+        text = (char *) &(*extra_argv)[0];
     } else {
         // read from stdin
         using_stdin = 1;
