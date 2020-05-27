@@ -12,6 +12,7 @@
 #   :SYM "<sym>" :PROP mapval = <uint8> { , <propname> = <int> }
 # - initial '!' and trailing '!.*' are treated as comments, no '[]'
 
+import json
 import re
 
 class SymbolTable:
@@ -58,7 +59,7 @@ class SymbolTable:
                 otherProperties = None
                 m = self.propertiesLine.match(rest)
                 otherProperties = m.group(1).strip()
-#                print("Parsing symbol: " + symbol + " properties: " + otherProperties)
+                print("Parsing symbol: " + symbol + " properties: " + otherProperties)
 
                 if otherProperties:
                     # Parse otherProperties setting flags as appropriate
@@ -66,7 +67,8 @@ class SymbolTable:
                     for property in otherPropList:
                         words = property.split('=')
                         key = words[0].strip()
-                        value = words[1].strip()
+                        # Use json.loads to remove "" around strings
+                        value = json.loads(words[1].strip())
 #                        print("Property: " + key + " value: " + value)
                         properties[key] = value
                 else:

@@ -68,7 +68,7 @@ for symbol in partsOfSpeech.keys():
     mapValue = properties.get('mapval')
     if mapValue:
         for property in properties.keys():
-            if property != 'mapval' and properties[property] != '1':
+            if property != 'mapval' and properties[property] != 1:
                 # Parse otherProperties setting flags as appropriate
                 print("*** error in property list, optional properties"
                       " only accept \"1\": " + property)

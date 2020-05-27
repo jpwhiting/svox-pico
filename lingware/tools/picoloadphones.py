@@ -77,7 +77,7 @@ for symbol in symbols:
     # Parse otherProperties setting flags as appropriate
     for property in properties.keys():
         value = properties[property]
-        if not property == 'mapval' and not value == '1':
+        if not property == 'mapval' and not value == 1:
             print("*** error in property list, optional properties"
                   " only accept \"1\": " + property)
             continue
