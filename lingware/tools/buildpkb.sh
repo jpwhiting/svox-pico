@@ -386,7 +386,7 @@ DEST_PDF_PKB_PHS=`cygpath -w $DEST_PKB_DIR_LANG/$PDF_PKB_PHS_FN`
 ###########################################
 
 SYMSHIFT=${TOOLS_DIR}/symshift.pl
-GRAPHS_TO_PKB=${TOOLS_DIR}/picoloadgraphs.exe
+GRAPHS_TO_PKB=${TOOLS_DIR}/picoloadgraphs.py
 PHONES_TO_PKB=${TOOLS_DIR}/picoloadphones.py
 DBG_TO_PKB=${TOOLS_DIR}/picoloaddbg.lua
 POS_TO_PKB=${TOOLS_DIR}/picoloadpos.py

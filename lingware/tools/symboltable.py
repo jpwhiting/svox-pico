@@ -59,7 +59,7 @@ class SymbolTable:
                 otherProperties = None
                 m = self.propertiesLine.match(rest)
                 otherProperties = m.group(1).strip()
-                print("Parsing symbol: " + symbol + " properties: " + otherProperties)
+                # print("Parsing symbol: " + symbol + " properties: " + otherProperties)
 
                 if otherProperties:
                     # Parse otherProperties setting flags as appropriate
@@ -69,7 +69,7 @@ class SymbolTable:
                         key = words[0].strip()
                         # Use json.loads to remove "" around strings
                         value = json.loads(words[1].strip())
-#                        print("Property: " + key + " value: " + value)
+                        # print("Property: " + key + " value: " + value)
                         properties[key] = value
                 else:
                     pass

@@ -136,16 +136,16 @@ def graphBytes(properties):
         result.extend(tokensubtype.encode('utf-8'))
     if 'value' in properties: # Also not sure about this one
         print("value: " + properties['value'])
-        result.extend(bytes([ord(properties['value'])]))
+        result.extend(properties['value'].encode('utf-8'))
     if 'lowercase' in properties:
         print("lowercase: " + properties['lowercase'])
-        result.extend(bytes([ord(properties['lowercase'])]))
+        result.extend(properties['lowercase'].encode('utf-8'))
     if 'graphsubs1' in properties:
         print("graphsubs1: " + properties['graphsubs1'])
-        result.extend(bytes([ord(properties['graphsubs1'])]))
+        result.extend(properties['graphsubs1'].encode('utf-8'))
     if 'graphsubs2' in properties:
         print("graphsubs2: " + properties['graphsubs2'])
-        result.extend(bytes([ord(properties['graphsubs2'])]))
+        result.extend(properties['graphsubs2'].encode('utf-8'))
     if 'punct' in properties:
         print("punct: " + str(properties['punct']))
         result.extend(bytes([int(properties['punct'])])) # 1 or 2
