@@ -54,7 +54,7 @@ extern "C" {
 
     phonesyms = {PHONESYM8}=256
 
-    PHONESYM6: 8 bytes, symbol name (must be 0 terminated), the
+    PHONESYM8: 8 bytes, symbol name (must be 0 terminated), the
                corresponding ID corresponds to the offset in the
                phonesyms array
 */

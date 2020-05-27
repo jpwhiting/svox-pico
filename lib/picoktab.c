@@ -149,7 +149,7 @@ void picoktab_disposeFixedIds(picoos_MemoryManager mm, picoktab_FixedIds * this)
 
     graphs = {graph}=NROFSENTRIES (contains NROFSENTRIES entries of graph)
 
-    graph = PROPSET FROM TO [TOKENTYPE] [TOKENSUBTYPE] [VALUE] [LOWERCASE] [GRAPHSUBS1] [GRAPHSUBS2]
+    graph = PROPSET FROM TO [TOKENTYPE] [TOKENSUBTYPE] [VALUE] [LOWERCASE] [GRAPHSUBS1] [GRAPHSUBS2] [PUNCT]
 
     FROM          : 1..4 unsigned bytes, UTF8 character without terminating 0
     TO            : 1..4 unsigned bytes, UTF8 character without terminating 0
@@ -168,7 +168,7 @@ void picoktab_disposeFixedIds(picoos_MemoryManager mm, picoktab_FixedIds * this)
     LOWERCASE    : 1..4 unsigned bytes, UTF8 character without terminating 0
     GRAPHSUBS1   : 1..4 unsigned bytes, UTF8 character without terminating 0
     GRAPHSUBS2   : 1..4 unsigned bytes, UTF8 character without terminating 0
-    PUNC         : 1 unsigned byte
+    PUNCT        : 1 unsigned byte
 */
 
 static picoos_uint32 ktab_propOffset (const picoktab_Graphs this, picoos_uint32 graphsOffset, picoos_uint32 prop);
@@ -293,9 +293,12 @@ static picoos_uint32 ktab_propOffset(const picoktab_Graphs this,
     picoos_uint32 n = 0;
     ktabgraphs_subobj_t * g = (ktabgraphs_SubObj) this;
 
+    // Check if the propset at the given offset includes the given property, otherwise return 0
     if ((g->graphTable[graphsOffset] & prop) == prop) {
+
         n = n + 1; /* overread PROPSET field */
         n = n + picobase_det_utf8_length(g->graphTable[graphsOffset+n]); /* overread FROM field */
+
         if (prop > KTAB_GRAPH_PROPSET_TO) {
             if ((g->graphTable[graphsOffset] & KTAB_GRAPH_PROPSET_TO)
                     == KTAB_GRAPH_PROPSET_TO) {
