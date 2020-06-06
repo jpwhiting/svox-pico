@@ -20,9 +20,10 @@
 !     1: not applicable
 !     5: used to mark :G2P handling need
 ! these values match the consts in the Pico application
-! never change it
+! specifically PICODATA_ACC0 through PICODATA_ACC4 in picodata.h
 
 :SYM "0"   :PROP mapval = 48
 :SYM "1"   :PROP mapval = 49
 :SYM "2"   :PROP mapval = 50
 :SYM "3"   :PROP mapval = 51
+:SYM "4"   :PROP mapval = 52
