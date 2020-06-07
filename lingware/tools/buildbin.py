@@ -21,11 +21,11 @@ parser.add_argument('speakerid', type=str,
 parser.parse_args(namespace=args)
 
 if not args.langcountryid:
-    print('*** error: langcountryid is required')
+    print('*** error: langcountryid is required', flush=True)
     exit(1)
 
 if not args.speakerid:
-    print('*** error: speakerid is rquired')
+    print('*** error: speakerid is rquired', flush=True)
     exit(1)
 
 ## version suffixes 
@@ -55,7 +55,7 @@ if args.langcountryid in validlangs:
     if args.speakerid in validlangs.get(args.langcountryid):
         VERSION_SUFFIX = VERSION_SUFFIXES[args.speakerid]
     else:
-        print('invalid speaker id')
+        print('invalid speaker id', flush=True)
         exit(1)
 
 LANG = args.langcountryid

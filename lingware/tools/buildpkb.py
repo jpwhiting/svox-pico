@@ -24,15 +24,15 @@ parser.add_argument('voice', type = str,
 parser.parse_args(namespace = args)
 
 if not args.language:
-    print('*** error: language is required')
+    print('*** error: language is required', flush=True)
     exit(1)
 
 if not args.countryid:
-    print('*** error: countryid is rquired')
+    print('*** error: countryid is rquired', flush=True)
     exit(1)
 
 if not args.voice:
-    print('*** error: voice is required')
+    print('*** error: voice is required', flush=True)
     exit(1)
 
 #tools
@@ -71,10 +71,10 @@ if args.language in validcountries:
     if args.countryid in validcountries.get(args.language):
         pass
     else:
-        print('invalid country for language ' + args.language)
+        print('invalid country for language ' + args.language, flush=True)
         exit(1)
 else:
-    print('invalid language: ' + args.language)
+    print('invalid language: ' + args.language, flush=True)
     exit(1)
 
 LANG = args.language + '-' + args.countryid
@@ -92,7 +92,7 @@ if LANG in validlangs:
     if VOICE in validlangs.get(LANG).get('voice'):
         SPHO_VOICE_RANGE = validlangs.get(LANG).get('voice').get(VOICE)
     else:
-        print('Error <voice> is incorrect')
+        print('Error <voice> is incorrect', flush=True)
         exit(1)
 
 TA_SRC_DIR_LANG = TA_SRC_DIR + '/' + LANG + '/'
