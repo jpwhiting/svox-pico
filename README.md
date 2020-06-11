@@ -23,6 +23,11 @@ Install (this install files to /usr/bin, /usr/include, /usr/lib and /usr/share/p
 ninja install
 ```
 
+Note: To build with debugging use:
+```
+meson setup --prefix=/usr -Dc_args=-DPICO_DEBUG builddir
+```
+
 ## Usage
 
 ```
