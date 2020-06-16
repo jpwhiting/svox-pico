@@ -20,7 +20,7 @@ jobs:
       run: sudo apt-get install libpopt-dev meson
       if: matrix.os == 'ubuntu-latest'
     - name: dependencies (MacOS)
-      run: brew install popt meson
+      run: brew install meson pkg-config popt
       if: matrix.os == 'macos-latest'
     - name: configure
       run: meson builddir
