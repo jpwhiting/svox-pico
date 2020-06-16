@@ -8,10 +8,9 @@ on:
 
 jobs:
   build:
-
     strategy:
       matrix:
-        platform: ['ubuntu-latest', 'macos-latest']
+        os: ['ubuntu-latest', 'macos-latest']
 
     runs-on: ${{ matrix.os }}
 
@@ -22,6 +21,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
     - name: dependencies (MacOS)
       run: brew install popt meson
+      if: matrix.os == 'macos-latest'
     - name: configure
       run: meson builddir
     - name: make
