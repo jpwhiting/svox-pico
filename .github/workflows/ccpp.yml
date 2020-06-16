@@ -9,12 +9,19 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: ['ubuntu-latest', 'macos-latest']
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
-    - name: dependencies
+    - name: dependencies (Linux)
       run: sudo apt-get install libpopt-dev meson
+      if: matrix.os == 'ubuntu-latest'
+    - name: dependencies (MacOS)
+      run: brew install popt meson
     - name: configure
       run: meson builddir
     - name: make
