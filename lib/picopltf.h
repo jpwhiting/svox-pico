@@ -66,11 +66,18 @@
 #define PICO_PLATFORM_STRING "UnknownPlatform"
 #endif
 
+#if (PICO_PLATFORM == PICO_MacOSX)
+// MacOS is little endian for now. Not sure if that will change
+// with MacOS on apple silicon or not.
+// May add a similar section for windows since it may not have endian.h..
+#define PICO_ENDIANNESS ENDIANNESS_LITTLE
+#else // On platforms that have endian.h use that.
 #include <endian.h>
 #if __BYTE_ORDER == __BIG_ENDIAN
 #define PICO_ENDIANNESS ENDIANNESS_BIG
 #else
 #define PICO_ENDIANNESS ENDIANNESS_LITTLE
+#endif
 #endif
 
 #endif /* !defined(__PICOPLTF_H__) */
