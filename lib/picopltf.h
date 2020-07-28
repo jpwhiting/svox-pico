@@ -66,7 +66,7 @@
 #define PICO_PLATFORM_STRING "UnknownPlatform"
 #endif
 
-#include <sys/types.h>
+#include <endian.h>
 #if __BYTE_ORDER == __BIG_ENDIAN
 #define PICO_ENDIANNESS ENDIANNESS_BIG
 #else
