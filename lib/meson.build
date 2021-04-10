@@ -1,5 +1,5 @@
 
-libttspico_sources = [
+ttspico_sources = [
     'picoacph.c',
     'picoapi.c',
     'picobase.c',
@@ -31,7 +31,7 @@ libttspico_sources = [
     'picowa.c'
 ]
 
-libttspico_public_headers = [
+ttspico_public_headers = [
     'picoacph.h',
     'picoapid.h',
     'picoapi.h',
@@ -68,13 +68,13 @@ libttspico_public_headers = [
 ]
 
 install_headers(
-    libttspico_public_headers,
+    ttspico_public_headers,
     subdir: 'pico'
 )
 
-libttspico = library(
-    'libttspico',
-    libttspico_sources + libttspico_public_headers,
+ttspico = library(
+    'ttspico',
+    ttspico_sources + ttspico_public_headers,
     dependencies: [math],
     soversion: abi_major,
     version: abi_major + '.' + abi_minor,
@@ -82,15 +82,15 @@ libttspico = library(
 )
 pkg.generate(
     description: 'svox pico tts library',
-    libraries: [libttspico],
-    name: 'libttspico' + abi_major,
+    libraries: [ttspico],
+    name: 'ttspico' + abi_major,
     subdirs: 'pico',
     version: meson.project_version()
 )
 
-libttspico_dep = declare_dependency(
+ttspico_dep = declare_dependency(
     include_directories: project_include_dirs,
-    link_with: libttspico,
-    sources: libttspico_public_headers
+    link_with: ttspico,
+    sources: ttspico_public_headers
 )
 
