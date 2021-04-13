@@ -80,12 +80,14 @@ ttspico = library(
     version: abi_major + '.' + abi_minor,
     install: true
 )
+
 pkg.generate(
     description: 'svox pico tts library',
     libraries: [ttspico],
     name: 'ttspico' + abi_major,
     subdirs: 'pico',
-    version: meson.project_version()
+    version: meson.project_version(),
+    variables: 'datadir=${prefix}/share/pico/lang'
 )
 
 ttspico_dep = declare_dependency(
