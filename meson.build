@@ -2,7 +2,7 @@
 
 project(
   'svox-pico', 'c',
-  version: '1.0',
+  version: '1.1',
   default_options: [
     'c_std=c99',
     'warning_level=2'
@@ -10,8 +10,9 @@ project(
 )
 
 api_major = '1'
+
 abi_major = '1'
-abi_minor = '20200522'
+abi_minor = '1'
 
 pkg = import('pkgconfig')
 
