@@ -1,0 +1,27 @@
+name: github pages
+
+on:
+  push:
+    branches:
+      - main  
+      - apidocs
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: false
+
+      - uses: mattnotmitt/doxygen-action@v1.2.3
+        with:
+          working-directory: 'lib/'
+          doxyfile-path: '../apidocs/Doxygen'
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./lib/html
+
