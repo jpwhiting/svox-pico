@@ -28,6 +28,12 @@ Note: To build with debugging use:
 meson setup --prefix=/usr -Dc_args=-DPICO_DEBUG builddir
 ```
 
+## Libttspico api documentation
+
+There's now automatically generated libttspico api documentation generated from main branch.
+
+Find it here: https://jpwhiting.github.io/svox-pico/index.html
+
 ## Usage
 
 ```
