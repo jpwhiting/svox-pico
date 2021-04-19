@@ -351,16 +351,17 @@ GRAPHS_TO_PKB = TOOLS_DIR + '/picoloadgraphs.py'
 PHONES_TO_PKB = TOOLS_DIR + '/picoloadphones.py'
 DBG_TO_PKB = TOOLS_DIR + '/picoloaddbg.py'
 POS_TO_PKB = TOOLS_DIR + '/picoloadpos.py'
+TPP_TO_PKB = TOOLS_DIR + '/picoloadpreproc.py'
 LEX_TO_PKB = TOOLS_DIR + '/picoloadlex.exe'
 AUT_TO_PKB = TOOLS_DIR + '/picoloadfst.exe'
-TPP_TO_PKB = TOOLS_DIR + '/picoloadpreproc.exe'
 DT_TO_PKB = TOOLS_DIR + '/dt2pkb.exe'
 PDF_TO_PKB = TOOLS_DIR + '/pdf2pkb.exe'
 
 ##### build intermediate files ############################
 
-print(SYMSHIFT + ' -phones ' + SRC_PHONES + ' -POS ' + SRC_POS + ' > ' + TMP_PHONES_SYM, flush=True)
-subprocess.run(['perl', SYMSHIFT, '-phones', SRC_PHONES, '-POS', SRC_POS, '>', TMP_PHONES_SYM], shell=True)
+command = 'perl ' + SYMSHIFT + ' -phones ' + SRC_PHONES + ' -POS ' + SRC_POS + ' > ' + TMP_PHONES_SYM
+print(command, flush=True)
+subprocess.run(command, shell=True)
 
 #####  TABLES  ############################
 
@@ -375,6 +376,14 @@ subprocess.run([sys.executable, POS_TO_PKB, SRC_POS, DEST_PKB_POS])
 
 print(DBG_TO_PKB + ' ' + SRC_PHONES + ' ' + DEST_PKB_DBG, flush=True)
 subprocess.run([sys.executable, DBG_TO_PKB, SRC_PHONES, DEST_PKB_DBG])
+
+#####  PREPROC  ###########################
+
+# print(TPP_TO_PKB + ' ' + SRC_GRAPHS + ' ' + SRC_TPP_NET + ' ' + DEST_TPP_NET_PKB, flush=True)
+# subprocess.run([TPP_TO_PKB, SRC_GRAPHS, SRC_TPP_NET, DEST_TPP_NET_PKB])
+
+print(TPP_TO_PKB + ' ' + ' ' + SRC_TPP_NET + ' ' + DEST_TPP_NET_PKB, flush=True)
+subprocess.run([sys.executable, TPP_TO_PKB, SRC_TPP_NET, DEST_TPP_NET_PKB])
 
 #####  LEXICON ############################
 
@@ -401,11 +410,6 @@ for i in SPHO_RANGE:
 for i in SPHO_VOICE_RANGE:
     print(AUT_TO_PKB + ' ' + SRC_AUT_SENT[i] + ' ' + TMP_PHONES_SYM + ' ' + DEST_AUT_PKB_SENT[i], flush=True)
     subprocess.run([AUT_TO_PKB, SRC_AUT_SENT[i], TMP_PHONES_SYM, DEST_AUT_PKB_SENT[i]])
-
-#####  PREPROC  ###########################
-
-print(TPP_TO_PKB + ' ' + SRC_GRAPHS + ' ' + SRC_TPP_NET + ' ' + DEST_TPP_NET_PKB, flush=True)
-subprocess.run([TPP_TO_PKB, SRC_GRAPHS, SRC_TPP_NET, DEST_TPP_NET_PKB])
 
 #####  DECISION TREES  ####################
 
