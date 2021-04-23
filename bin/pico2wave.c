@@ -101,6 +101,7 @@ int main(int argc, const char *argv[]) {
     int langIndex = -1, langIndexTmp = -1;
     char * text = NULL;
     int8_t using_stdin = 0;
+    int8_t using_stdout = 0;
     int8_t * buffer;
     size_t bufferSize = 256;
 
@@ -130,21 +131,19 @@ int main(int argc, const char *argv[]) {
         }
     }
 
-    /* Mandatory option: --wave */
-    if(!wavefile) {
-        fprintf(stderr, "Mandatory option: %s\n\n",
-            "--wave=filename.wav");
-        poptPrintHelp(optCon, stderr, 0);
-        exit(1);
+    /* Optional option: --wave */
+    if (!wavefile) {
+        using_stdout = 1;
     }
+
     /* option: --lang */
-    for(langIndexTmp =0; langIndexTmp<picoNumSupportedVocs; langIndexTmp++) {
+    for (langIndexTmp =0; langIndexTmp<picoNumSupportedVocs; langIndexTmp++) {
         if(!strcmp(picoSupportedLang[langIndexTmp], lang)) {
             langIndex = langIndexTmp;
             break;
         }
     }
-    if(langIndex == -1) {
+    if (langIndex == -1) {
         fprintf(stderr, "Unknown language: %s\nValid languages:\n",
             lang);
         for(langIndexTmp =0; langIndexTmp<picoNumSupportedVocs; langIndexTmp++) {
@@ -283,12 +282,14 @@ int main(int argc, const char *argv[]) {
     picoos_SDFile sdOutFile = NULL;
 
     picoos_bool done = TRUE;
-    if(TRUE != (done = picoos_sdfOpenOut(common, &sdOutFile,
-        (picoos_char *) wavefile, SAMPLE_FREQ_16KHZ, PICOOS_ENC_LIN)))
-    {
-        fprintf(stderr, "Cannot open output wave file\n");
-        ret = 1;
-        goto disposeEngine;
+    if (using_stdout == 0) {
+        if(TRUE != (done = picoos_sdfOpenOut(common, &sdOutFile,
+            (picoos_char *) wavefile, SAMPLE_FREQ_16KHZ, PICOOS_ENC_LIN)))
+        {
+            fprintf(stderr, "Cannot open output wave file\n");
+            ret = 1;
+            goto disposeEngine;
+        }
     }
 
     /* synthesis loop   */
@@ -320,10 +321,15 @@ int main(int argc, const char *argv[]) {
                     memcpy(buffer+bufused, (int8_t *) outbuf, bytes_recv);
                     bufused += bytes_recv;
                 } else {
-                    done = picoos_sdfPutSamples(
-                                        sdOutFile,
-                                        bufused / 2,
-                                        (picoos_int16*) (buffer));
+                    if (using_stdout) {
+                        fwrite(buffer, 2, bufused/2, stdout);
+                        fflush(stdout);
+                    } else {
+                        done = picoos_sdfPutSamples(
+                                            sdOutFile,
+                                            bufused / 2,
+                                            (picoos_int16*) (buffer));
+                    }
                     bufused = 0;
                     memcpy(buffer, (int8_t *) outbuf, bytes_recv);
                     bufused += bytes_recv;
@@ -332,19 +338,26 @@ int main(int argc, const char *argv[]) {
         } while (PICO_STEP_BUSY == getstatus);
         /* This chunk of synthesis is finished; pass the remaining samples. */
         if (!picoSynthAbort) {
-                    done = picoos_sdfPutSamples(
-                                        sdOutFile,
-                                        bufused / 2,
-                                        (picoos_int16*) (buffer));
+            if (using_stdout) {
+                fwrite(buffer, 2, bufused/2, stdout);
+                fflush(stdout);
+            } else {
+                done = picoos_sdfPutSamples(
+                    sdOutFile,
+                    bufused / 2,
+                    (picoos_int16*) (buffer));
+            }
         }
         picoSynthAbort = 0;
     }
 
-    if(TRUE != (done = picoos_sdfCloseOut(common, &sdOutFile)))
-    {
-        fprintf(stderr, "Cannot close output wave file\n");
-        ret = 1;
-        goto disposeEngine;
+    if (using_stdout == 0) {
+        if (TRUE != (done = picoos_sdfCloseOut(common, &sdOutFile)))
+        {
+            fprintf(stderr, "Cannot close output wave file\n");
+            ret = 1;
+            goto disposeEngine;
+    	}
     }
 
 disposeEngine:
