@@ -103,15 +103,19 @@ tokenNP = {
 def loadStrings(infile):
     global currentStringsLength
     stringRE = re.compile('(\\d+)\\s+"(.*)"', re.UNICODE)
+    otherStringRE = re.compile("(\\d+)\\s+'(.*)'", re.UNICODE)
     line = infile.readline()
     while line != '.\n':
         m = stringRE.match(line)
         if m == None:
-            print("*** error: string line didn't match syntax: {}".format(line))
-            exit(1)
+            m = otherStringRE.match(line)
+            if m == None:
+                print("*** error: string line didn't match syntax: {}".format(line))
+                exit(1)
 
         # Read offset
         offset = int(m.group(1))
+
         if offset != currentStringsLength:
             print("*** error: strings line {} offset doesn't match current offset {}".format(line, currentStringsLength))
             exit(1)
@@ -157,7 +161,7 @@ def loadAttrvals(infile):
 
 
 def loadOutitems(infile):
-    stringRE = re.compile('(\\d+)\\s+(\\d+)\\s+(\\w+)\\s+(\\d+)')
+    stringRE = re.compile('(\\d+)\\s+(\\d+)\\s+(\\w+)\\s+([+-]?\\d+)')
     line = infile.readline()
     while line != '.\n':
         m = stringRE.match(line)
