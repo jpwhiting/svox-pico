@@ -2,7 +2,7 @@
 executable(
     'pico2wave',
     'pico2wave.c',
-    dependencies: [popt, ttspico_dep],
+    dependencies: [ttspico_dep],
     install: true,
 )
 

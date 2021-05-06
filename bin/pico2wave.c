@@ -18,17 +18,16 @@
  *
  */
 
-
-#include <popt.h>
-#include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
+
 #include <string.h>
 #include <assert.h>
 
 #include <picoapi.h>
 #include <picoapid.h>
 #include <picoos.h>
-
 
 /* adaptation layer defines */
 #define PICO_MEM_SIZE       2500000
@@ -95,7 +94,16 @@ size_t myread(FILE *source, char **buffer) {
     } while (1);
 }
 
-int main(int argc, const char *argv[]) {
+void printUsage()
+{
+    printf("Usage: pico2wave <words>\n");
+    printf("  -w filename.wav     Write output to this WAV file (extension SHOULD be .wav)\n");
+    printf("  -l lang             Language (default: \"en-US\")\n");
+    printf("\n");
+    printf("Help options:\n");
+    printf("  -?, -h              Show this help message\n");
+}
+int main(int argc, char * const argv[]) {
     char * wavefile = NULL;
     char * lang = "en-US";
     int langIndex = -1, langIndexTmp = -1;
@@ -105,29 +113,28 @@ int main(int argc, const char *argv[]) {
     int8_t * buffer;
     size_t bufferSize = 256;
 
-    /* Parsing options */
-    poptContext optCon; /* context for parsing command-line options */
     int opt; /* used for argument parsing */
 
-    struct poptOption optionsTable[] = {
-        { "wave", 'w', POPT_ARG_STRING, &wavefile, 0,
-          "Write output to this WAV file (extension SHOULD be .wav)", "filename.wav" },
-        { "lang", 'l', POPT_ARG_STRING | POPT_ARGFLAG_SHOW_DEFAULT, &lang, 0,
-          "Language", "lang" },
-        POPT_AUTOHELP
-        POPT_TABLEEND
-    };
-    optCon = poptGetContext(NULL, argc, argv, optionsTable, POPT_CONTEXT_POSIXMEHARDER);
-    poptSetOtherOptionHelp(optCon, "<words>");
-
-    /* Reporting about invalid extra options */
-    while ((opt = poptGetNextOpt(optCon)) != -1) {
-        switch (opt) {
-        default:
-            fprintf(stderr, "Invalid option %s: %s\n",
-                poptBadOption(optCon, 0), poptStrerror(opt));
-            poptPrintHelp(optCon, stderr, 0);
-            exit(1);
+    while ((opt = getopt(argc, argv, "w:l:h")) != -1)
+    {
+        switch (opt)
+        {
+            case 'w':
+		printf("Setting wavfile to %s\n", optarg);
+                wavefile = optarg;
+                break;
+            case 'l':
+                lang = optarg;
+                break;
+            case 'h':
+            case '?':
+                printUsage();
+                exit(0);
+            default:
+                fprintf(stderr, "Invalid option %c: ", optopt);
+                printUsage();
+                exit(1);
+                break;
         }
     }
 
@@ -151,15 +158,21 @@ int main(int argc, const char *argv[]) {
         }
         lang = "en-US";
         fprintf(stderr, "\n");
-        poptPrintHelp(optCon, stderr, 0);
+	printUsage();
         exit(1);
     }
 
     /* Remaining argument is <words> */
-    const char **extra_argv;
-    extra_argv = poptGetArgs(optCon);
-    if(extra_argv) {
-        text = (char *) &(*extra_argv)[0];
+    if (optind < argc) {
+	text = strdup("");
+	for (; optind < argc; optind++) {
+	    char * word = argv[optind];
+            text = realloc(text, strlen(text) + strlen(word) + 1);
+	    strncat(text, word, strlen(word));
+	    strncat(text, " ", 1);
+	}
+
+	printf("Remaining text after options is %s\n", text);
     } else {
         // read from stdin
         using_stdin = 1;
@@ -173,8 +186,6 @@ int main(int argc, const char *argv[]) {
         // /usr/include/picoapi.h:typedef short pico_Int16;
         // /usr/include/limits.h:#  define SHRT_MAX        32767
     }
-
-    poptFreeContext(optCon);
 
     buffer = malloc( bufferSize );
 
@@ -386,7 +397,8 @@ terminate:
         pico_terminate(&picoSystem);
         picoSystem = NULL;
     }
-    if (using_stdin && text)
+
+    if (text)
       free(text);
     exit(ret);
 }

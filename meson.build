@@ -4,7 +4,6 @@ project(
   'svox-pico', 'c',
   version: '1.1',
   default_options: [
-    'c_std=c99',
     'warning_level=2'
   ],
 )
@@ -21,10 +20,6 @@ project_include_dirs = include_directories('lib/')
 c_compiler = meson.get_compiler('c')
 
 math = c_compiler.find_library('m')
-
-popt = dependency(
-    'popt'
-)
 
 bin_rpath = '${ORIGIN}/../'
 
