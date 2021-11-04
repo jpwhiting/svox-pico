@@ -305,8 +305,11 @@ int main(int argc, char * const argv[]) {
 
     /* synthesis loop   */
     while (text_remaining) {
-        /* Feed the text into the engine.   */
-        if((ret = pico_putTextUtf8( picoEngine, inp, text_remaining, &bytes_sent ))) {
+        /* Feed the text into the engine, splitting as needed to fit in int16.   */
+        short bytesToSend = text_remaining;
+        if ((unsigned short)bytesToSend > SHRT_MAX)
+            bytesToSend = SHRT_MAX;
+        if((ret = pico_putTextUtf8( picoEngine, inp, bytesToSend, &bytes_sent ))) {
             pico_getSystemStatusMessage(picoSystem, ret, outMessage);
             fprintf(stderr, "Cannot put Text (%i): %s\n", ret, outMessage);
             goto disposeEngine;
