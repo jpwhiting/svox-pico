@@ -1,6 +1,7 @@
 /* pico2wave.c
 
  * Copyright (C) 2009 Mathieu Parent <math.parent@gmail.com>
+ * Copyright (C) 2021-2022 Jeremy Whiting <jpwhiting@kde.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
