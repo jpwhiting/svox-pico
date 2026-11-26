@@ -168,9 +168,10 @@ int main(int argc, char * const argv[]) {
 	text = strdup("");
 	for (; optind < argc; optind++) {
 	    char * word = argv[optind];
-            text = realloc(text, strlen(text) + strlen(word) + 1);
-	    strncat(text, word, strlen(word));
-	    strncat(text, " ", 1);
+            /* word + separating space + terminating zero */
+            text = realloc(text, strlen(text) + strlen(word) + 2);
+	    strcat(text, word);
+	    strcat(text, " ");
 	}
 
 	printf("Remaining text after options is %s\n", text);
@@ -238,7 +239,7 @@ int main(int argc, char * const argv[]) {
     */
 
     /* Get the text analysis resource name.     */
-    picoTaResourceName  = (pico_Char *) malloc( PICO_MAX_RESOURCE_NAME_SIZE );
+    picoTaResourceName  = (pico_Char *) malloc( PICO_RETSTRINGSIZE ); /* pico_getResourceName() writes a pico_Retstring */
     if((ret = pico_getResourceName( picoSystem, picoTaResource, (char *) picoTaResourceName ))) {
         pico_getSystemStatusMessage(picoSystem, ret, outMessage);
         fprintf(stderr, "Cannot get the text analysis resource name (%i): %s\n", ret, outMessage);
@@ -246,7 +247,7 @@ int main(int argc, char * const argv[]) {
     }
 
     /* Get the signal generation resource name. */
-    picoSgResourceName  = (pico_Char *) malloc( PICO_MAX_RESOURCE_NAME_SIZE );
+    picoSgResourceName  = (pico_Char *) malloc( PICO_RETSTRINGSIZE ); /* pico_getResourceName() writes a pico_Retstring */
     if((ret = pico_getResourceName( picoSystem, picoSgResource, (char *) picoSgResourceName ))) {
         pico_getSystemStatusMessage(picoSystem, ret, outMessage);
         fprintf(stderr, "Cannot get the signal generation resource name (%i): %s\n", ret, outMessage);
