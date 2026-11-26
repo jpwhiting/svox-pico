@@ -189,7 +189,7 @@ def loadTokens(infile):
     while line != '.\n':
         m = stringRE.match(line)
         if m == None:
-            print("*** error: token line {} didn't match syntax, should be int, \{tokenattributes\}, then 4 integers".format(line))
+            print("*** error: token line {} didn't match syntax, should be int, {{tokenattributes}}, then 4 integers".format(line))
             exit(1)
         
         # read tokens
