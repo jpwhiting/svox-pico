@@ -60,6 +60,29 @@ executables: all 198 knowledge bases of the six languages match the reference
 `en-GB_ta_1.0.0.3-0-0.bin`; `--plain` gives the names `pico2wave` loads, e.g.
 `en-GB_ta.bin`.
 
+### Recovering sources from .bin files
+
+`decompile.py` updates the sources of a voice from a `.bin` pair of another
+version of it, e.g. the voices of `oldbinfiles/`:
+
+```
+cd lingware/tools
+python3 decompile.py fr FR nk0 ../../oldbinfiles/fr-FR_ta.bin ../../oldbinfiles/fr-FR_nk0_sg.bin
+```
+
+It compares the knowledge bases built from the current sources with the ones
+in the files and replaces the sources of those that differ by decompiled ones
+(in place, comments are lost; names that the binary does not keep, such as the
+symbols, the parts of speech and the automaton names, come from the current
+sources). One decompiler per kind of knowledge base: `pkb2lex.py`,
+`pkb2fst.py`, `pkb2dt.py`, `pkb2pdf.py`, `pkb2tpp.py`, `pkb2pos.py`;
+`lwunpack.py` lists or extracts the knowledge bases of a `.bin` file.
+
+Rebuilt, the text analysis files come out byte identical. The decision trees of
+the signal generation can differ in the order of values in their tables (the
+compiler orders them by the order of the tree nodes in the source, which the
+binary does not keep), but they are the same trees and give the same speech.
+
 ## Libttspico api documentation
 
 There's now automatically generated libttspico api documentation generated from main branch.
