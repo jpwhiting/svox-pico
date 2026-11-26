@@ -1,2 +1,4 @@
 *.pkb
 lang/*.bin
+__pycache__/
+lingware/tools/*_phones_symtab.utf
