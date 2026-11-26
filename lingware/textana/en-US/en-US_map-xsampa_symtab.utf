@@ -236,3 +236,5 @@
 :SYM "a_U"                  :PROP mapval =    55
 :SYM "'"                    :PROP mapval =    33
 :SYM "3"                    :PROP mapval =    36
+:SYM "3_r"                :PROP mapval =    90
+:SYM "@_r"                :PROP mapval =    91

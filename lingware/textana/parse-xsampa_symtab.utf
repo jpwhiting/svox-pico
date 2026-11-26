@@ -277,3 +277,12 @@
 :SYM "{XS:-}"               :PROP mapval =   689
 :SYM "{XS:/}"               :PROP mapval =   690
 :SYM "{XS:_}"               :PROP mapval =   691
+:SYM " "                  :PROP mapval =   288
+:SYM "$"                  :PROP mapval =   292
+:SYM "("                  :PROP mapval =   296
+:SYM ")"                  :PROP mapval =   297
+:SYM ","                  :PROP mapval =   300
+:SYM ";"                  :PROP mapval =   315
+:SYM "["                  :PROP mapval =   347
+:SYM "]"                  :PROP mapval =   349
+:SYM ""                  :PROP mapval =   383

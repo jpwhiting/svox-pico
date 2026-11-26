@@ -53,8 +53,16 @@ The compilers of the original SVOX build chain, which were Windows executables,
 are reimplemented in Python: `picoloadlex.py` (lexicon), `picoloadfst.py`
 (finite state transducers), `dt2pkb.py` (decision trees) and `pdf2pkb.py`
 (probability density functions). Their output is byte identical to the original
-executables: all 198 knowledge bases of the six languages match the reference
-`.pkb` files built by them, and so do the 18 `.bin` files.
+executables: with the 1.0.0.3 sources, all 198 knowledge bases of the six
+languages match the reference `.pkb` files built by them, and so do the 18
+`.bin` files.
+
+The sources are those of the SVOX lingware 1.1.0.0, the version of the voices in
+the Android tree (`oldbinfiles/`), reconstructed from those files on top of the
+1.0.0.3 sources. They rebuild the text analysis files of all languages and the
+signal generation files of en-GB and it-IT byte for byte; the signal generation
+files of de-DE, en-US, es-ES and fr-FR differ only in the order of values in
+the tables of their decision trees and give bit identical speech.
 
 `buildbin.py` names the files with their version, e.g.
 `en-GB_ta_1.0.0.3-0-0.bin`; `--plain` gives the names `pico2wave` loads, e.g.

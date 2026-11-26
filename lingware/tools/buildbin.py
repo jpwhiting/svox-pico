@@ -17,15 +17,15 @@ CONFIGSDIR = os.path.join(HERE, '..', 'configs')
 LANGDIR = os.path.join(HERE, '..', '..', 'lang')
 GLW = os.path.join(HERE, 'genlingware.pl')
 
-## version suffixes of the original SVOX lingware
-VERSION_SUFFIXES = {'cm0': '1.0.0.3-0-0',
-                    'zl0': '1.0.0.3-0-0',
-                    'gl0': '1.0.0.3-0-1',
-                    'kh0': '1.0.0.3-0-0',
-                    'lh0': '1.0.0.3-0-1',
-                    'nk0': '1.0.0.3-0-2',
+## version suffixes of the SVOX lingware (1.1.0.0, as in the Android tree)
+VERSION_SUFFIXES = {'cm0': '1.1.0.0-0-1',
+                    'zl0': '1.1.0.0-0-2',
+                    'gl0': '1.1.0.0-0-2',
+                    'kh0': '1.1.0.0-0-1',
+                    'lh0': '1.1.0.0-0-2',
+                    'nk0': '1.1.0.0-0-2',
                     }
-DEFAULT_SUFFIX = '1.0.0.3-0-0'
+DEFAULT_SUFFIX = '1.1.0.0-0-0'
 
 
 def main():
