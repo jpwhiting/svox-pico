@@ -56,7 +56,7 @@ meanpow = 1 , uint8 ; !specification for log fixed point base for stored vectors
 maxbigpow = 1 , uint8 ; !specification for maximum log fixed point base for smoothing
 17
 amplif = 1 , uint8 ; !specification for correction factor in percent for synthesized speech or smoothed f0
-170
+186
 meanpowum = 75 , uint8 ; !specification for log scaling factor for each stored cepstral dimension
 9
 8

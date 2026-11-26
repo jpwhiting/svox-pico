@@ -41,7 +41,7 @@ uniquePropertyNames = {
 args = argparse.Namespace()
 
 parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument('infile', type=argparse.FileType('r'),
+parser.add_argument('infile', type=argparse.FileType('r', encoding='UTF-8'),
                     help='source file name of dbg text data')
 parser.add_argument('outfile', type=argparse.FileType('wb'),
                     help='destination file name of dbg binary data')
@@ -96,9 +96,9 @@ for i in range(0, 256):
     value = '' 
     if i in symbolNumbers:
         value = symbolNumbers[i]
-    args.outfile.write(value.encode('utf-8'))
-    bytesleft = 8 - len(value)
-    for j in range(0, bytesleft):
-        args.outfile.write(b'\x00')
+    # like the original lua script: exactly 8 bytes per entry (byte length,
+    # truncated if longer, zero padded if shorter)
+    data = value.encode('utf-8')[:8]
+    args.outfile.write(data + b'\x00' * (8 - len(data)))
 
 args.outfile.close()

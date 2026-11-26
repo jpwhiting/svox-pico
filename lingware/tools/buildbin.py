@@ -4,63 +4,57 @@
 #                               from pkb files
 #
 # Based on buildbin.sh from SVOX
+#   usage: buildbin.py <langcountryid> <speakerid>     e.g. en-GB kh0
 #############################################################################
 
 import argparse
+import os
 import subprocess
+import sys
 
-# init
-args = argparse.Namespace()
+HERE = os.path.dirname(os.path.abspath(__file__))
+CONFIGSDIR = os.path.join(HERE, '..', 'configs')
+LANGDIR = os.path.join(HERE, '..', '..', 'lang')
+GLW = os.path.join(HERE, 'genlingware.pl')
 
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument('langcountryid', type=str,
-                    help='language country id, e.g. en-GB')
-parser.add_argument('speakerid', type=str,
-                    help='speaker id, e.g. kh0')
-
-parser.parse_args(namespace=args)
-
-if not args.langcountryid:
-    print('*** error: langcountryid is required', flush=True)
-    exit(1)
-
-if not args.speakerid:
-    print('*** error: speakerid is rquired', flush=True)
-    exit(1)
-
-## version suffixes 
-VERSION_SUFFIXES = {'cm0': '1.0.0.3-0-0',
-                    'zl0': '1.0.0.3-0-0',
-                    'gl0': '1.0.0.3-0-1',
-                    'kh0': '1.0.0.3-0-0',
-                    'lh0': '1.0.0.3-0-1',
-                    'nk0': '1.0.0.3-0-2',
+## version suffixes of the SVOX lingware (1.1.0.0, as in the Android tree)
+VERSION_SUFFIXES = {'cm0': '1.1.0.0-0-1',
+                    'zl0': '1.1.0.0-0-2',
+                    'gl0': '1.1.0.0-0-2',
+                    'kh0': '1.1.0.0-0-1',
+                    'lh0': '1.1.0.0-0-2',
+                    'nk0': '1.1.0.0-0-2',
                     }
+DEFAULT_SUFFIX = '1.1.0.0-0-0'
 
-TOOLSDIR='./'
-CONFIGSDIR='../configs/'
-GLW = 'genlingware.pl'
-LANGDIR = '../../lang/'
 
-validlangs = {'en-GB': ['kh0'],
-              'en-US': ['lh0'],
-              'fr-FR': ['nk0'],
-              'es-ES': ['zl0'],
-              'it-IT': ['cm0'],
-              'de-DE': ['gl0'],
-              }
+def main():
+    ap = argparse.ArgumentParser(description='build Pico lingware bin files')
+    ap.add_argument('langcountryid', help='e.g. en-GB')
+    ap.add_argument('speakerid', help='e.g. kh0')
+    ap.add_argument('--outdir', default=LANGDIR)
+    ap.add_argument('--plain', action='store_true',
+                    help='file names without version suffix (as expected by pico2wave)')
+    a = ap.parse_args()
 
-# check if language supported
-if args.langcountryid in validlangs:
-    if args.speakerid in validlangs.get(args.langcountryid):
-        VERSION_SUFFIX = VERSION_SUFFIXES[args.speakerid]
-    else:
-        print('invalid speaker id', flush=True)
-        exit(1)
+    LANG, SID = a.langcountryid, a.speakerid
+    suffix = VERSION_SUFFIXES.get(SID, DEFAULT_SUFFIX)
+    cfg = os.path.join(CONFIGSDIR, LANG)
+    if not os.path.isfile(os.path.join(cfg, '%s_%s_sg.txt' % (LANG, SID))):
+        print('invalid language / speaker id: %s %s' % (LANG, SID), flush=True)
+        sys.exit(1)
+    os.makedirs(a.outdir, exist_ok=True)
+    sfx = '' if a.plain else '_' + suffix
+    jobs = [('%s_ta.txt' % LANG, '%s_ta%s.bin' % (LANG, sfx)),
+            ('%s_%s_sg.txt' % (LANG, SID), '%s_%s_sg%s.bin' % (LANG, SID, sfx)),
+            ('%s_dbg.txt' % LANG, '%s_dbg.bin' % LANG)]
+    for c, out in jobs:
+        # the configs reference the pkbs relative to the tools directory
+        r = subprocess.run(['perl', GLW, os.path.join(cfg, c),
+                            os.path.abspath(os.path.join(a.outdir, out))], cwd=HERE)
+        if r.returncode != 0:
+            sys.exit(1)
 
-LANG = args.langcountryid
-SID = args.speakerid
 
-subprocess.run(['perl', TOOLSDIR + '/' + GLW, CONFIGSDIR + '/' + LANG + '/' + LANG + '_ta.txt', LANGDIR + '/' + LANG + '_ta_' + VERSION_SUFFIX + '.bin'])
-subprocess.run(['perl', TOOLSDIR + '/' + GLW, CONFIGSDIR + '/' + LANG + '/' + LANG + '_' + SID + '_sg.txt', LANGDIR + '/' + LANG + '_' + SID + '_sg_' + VERSION_SUFFIX + '.bin'])
-subprocess.run(['perl', TOOLSDIR + '/' + GLW, CONFIGSDIR + '/' + LANG + '/' + LANG + '_dbg.txt', LANGDIR + '/' + LANG + '_dbg.bin'])
+if __name__ == '__main__':
+    main()
